@@ -96,7 +96,7 @@ def get_resource_health_states(rscIds: list[str]) -> RHResult:
 
 app = func.FunctionApp()
 
-@app.route(route="HRRetriever", auth_level=func.AuthLevel.ANONYMOUS)
+@app.route(route="HRRetriever", auth_level=func.AuthLevel.FUNCTION)
 def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
 
     '''
@@ -129,24 +129,3 @@ def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
     except Exception as e:
         logger.debug(f'error occured: {str(e)}')
         return func.HttpResponse(str(e), status_code=500)
-    
-
-    # print(f"There are {len(availability_statuses_list)} items")
-    # for item in availability_statuses_list:
-    #     print(json.dumps(item.serialize()))
-
-    # if not name:
-    #     try:
-    #         req_body = req.get_json()
-    #     except ValueError:
-    #         pass
-    #     else:
-    #         name = req_body.get('name')
-
-    # if name:
-    #     return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    # else:
-    #     return func.HttpResponse(
-    #          "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-    #          status_code=200
-    #     )
