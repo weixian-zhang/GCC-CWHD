@@ -77,11 +77,11 @@ def get_resource_health_states(rscIds: list[str]) -> RHResult:
 
     for rscID in rscIds:
 
-        logger.debug(f'retrieving availability statuse for resource {rscID}')
+        logger.debug(f'retrieving availability status for resource {rscID}')
 
         asResult = client.availability_statuses.get_by_resource(resource_uri=rscID)
 
-        logger.debug(f'availability statuse retrieved successfully for resource {rscID}')
+        logger.debug(f'availability status retrieved successfully for resource {rscID}')
 
         apir = ResourceHealthAPIResult(location=asResult.location,
                                        availabilityState=asResult.properties.availability_state,
@@ -99,6 +99,13 @@ app = func.FunctionApp()
 @app.route(route="HRRetriever", auth_level=func.AuthLevel.ANONYMOUS)
 def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
 
+    '''
+    requires 4 environment variables:
+        AZURE_SUBSCRIPTION_ID,
+        AZURE_CLIENT_ID,
+        AZURE_CLIENT_SECRET,
+        AZURE_TENANT_ID,
+    '''
     
     try:
         logger.debug('request received')
@@ -106,6 +113,10 @@ def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
         req_body = req.get_json()
 
         resourceIds = get_resource_ids(req_body)
+
+        if not resourceIds:
+            logger.debug('no resource ID supplied')
+            return func.HttpResponse('no resource ID supplied', status_code=400)
 
         rhState = get_resource_health_states(resourceIds)
         
@@ -115,9 +126,8 @@ def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
                                 jsons.dumps(rhState),
                                 status_code=200)
 
-        
     except Exception as e:
-        logging.info(f'error occured: {str(e)}')
+        logger.debug(f'error occured: {str(e)}')
         return func.HttpResponse(str(e), status_code=500)
     
 
