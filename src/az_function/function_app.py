@@ -35,7 +35,7 @@ class ResourceHealthAPIResult:
         self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
         self.summaryForDisplay = f'''
         {self.summary}
-        last reported at: {self.reportedTime}
+        reported at: {self.reportedTime}
         '''
 
 
