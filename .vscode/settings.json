@@ -7,5 +7,5 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 2,
     "resourceGroup": "rg-lta-cwhd",
-    "funcNameToDeploy": "rg-lta-cwhd"
+    "funcNameToDeploy": "func-lta-cwhd"
 }
