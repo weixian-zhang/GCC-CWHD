@@ -19,7 +19,7 @@ class ResourceHealthAPIResult:
     # Available = 1, Unavailable = 0 or Unknown = 2
     # converting into number is easier to style by Grafana "threshold" 
 
-    def __init__(self, location='', availabilityState=2, summary='', occuredTime=None) -> None:
+    def __init__(self, location='', availabilityState=2, summary='', reportedTime=None, stateLastChangeTime=None) -> None:
 
         if availabilityState == 'Available':
             availabilityState = 1
@@ -31,7 +31,12 @@ class ResourceHealthAPIResult:
         self.location = location
         self.availabilityState = availabilityState
         self.summary = summary
-        self.occuredTime = occuredTime if not None else datetime.now()
+        self.reportedTime = (reportedTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
+        self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
+        self.summaryForDisplay = f'''
+        {self.summary}
+        last reported at: {self.reportedTime}
+        '''
 
 
 class RHResult:
@@ -42,6 +47,8 @@ class RHResult:
         # converting into number is easier to style by Grafana "threshold"
 
         self.overallHealth = 1
+        self.overallSummary = ''
+
         self.states: list[ResourceHealthAPIResult] = states
 
         self.set_overall_state()
@@ -53,10 +60,13 @@ class RHResult:
         
         if all([x.availabilityState == 1 for x in self.states]):
             self.overallHealth = 1
+            self.overallSummary = 'All dependent services are available'
         elif all([x.availabilityState == 0 for x in self.states]):
             self.overallHealth = 0
+            self.overallSummary = 'All dependent services are unavailable'
         else:
             self.overallHealth = 2
+            self.overallSummary = 'Partial dependent services are available'
 
 def get_resource_ids(reqBody) -> list[str]:
     if not reqBody:
@@ -86,7 +96,8 @@ def get_resource_health_states(rscIds: list[str]) -> RHResult:
         apir = ResourceHealthAPIResult(location=asResult.location,
                                        availabilityState=asResult.properties.availability_state,
                                        summary=asResult.properties.summary,
-                                       occuredTime=asResult.properties.occured_time)
+                                       reportedTime=asResult.properties.reported_time,
+                                       stateLastChangeTime=asResult.properties.occured_time)
         
         states.append(apir)
 
