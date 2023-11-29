@@ -109,7 +109,7 @@ def get_resource_health_states(resources: list[str]) -> RHResult:
 app = func.FunctionApp()
 
 @app.route(route="RHRetriever", auth_level=func.AuthLevel.FUNCTION)
-def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
+def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
 
     '''
     requires 4 environment variables:
