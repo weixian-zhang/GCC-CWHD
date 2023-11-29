@@ -30,9 +30,9 @@
 			}
 		},
 		{
-			"label": "func publish .zip",
+			"label": "func publish zip",
 			"type": "shell",
-			"command": "az functionapp deployment source config-zip -g ${config:resourceGrpup} -n zipdeploydemo --src 'func-app.zip'",
+			"command": "az functionapp deployment source config-zip -g ${config:resourceGroup} -n ${config:funcNameToDeploy} --build-remote --src 'func-app.zip'",
 			"options": {
 				"cwd": "${workspaceFolder}/src\\az_function"
 			}

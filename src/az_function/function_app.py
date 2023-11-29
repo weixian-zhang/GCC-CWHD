@@ -72,26 +72,27 @@ def get_resource_ids(reqBody) -> list[str]:
     if not reqBody:
         return []
     
-    return reqBody['resourceIds']
+    return reqBody['resources']
 
-def get_resource_health_states(rscIds: list[str]) -> RHResult:
+def get_resource_health_states(resources: list[str]) -> RHResult:
 
-    if not rscIds:
+    if not resources:
         return []
     
     states = []
     
-    sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
+    for rsc in resources:
 
-    client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+        subId = rsc['subscriptionId']
+        rscId = rsc['resourceId']
 
-    for rscID in rscIds:
+        logger.debug(f'retrieving availability status for resource {rscId}')
 
-        logger.debug(f'retrieving availability status for resource {rscID}')
+        client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id=subId)
 
-        asResult = client.availability_statuses.get_by_resource(resource_uri=rscID)
+        asResult = client.availability_statuses.get_by_resource(resource_uri=rscId)
 
-        logger.debug(f'availability status retrieved successfully for resource {rscID}')
+        logger.debug(f'availability status retrieved successfully for resource {rscId}')
 
         apir = ResourceHealthAPIResult(location=asResult.location,
                                        availabilityState=asResult.properties.availability_state,
@@ -107,7 +108,7 @@ def get_resource_health_states(rscIds: list[str]) -> RHResult:
 
 app = func.FunctionApp()
 
-@app.route(route="HRRetriever", auth_level=func.AuthLevel.FUNCTION)
+@app.route(route="RHRetriever", auth_level=func.AuthLevel.FUNCTION)
 def HRRetriever(req: func.HttpRequest) -> func.HttpResponse:
 
     '''
