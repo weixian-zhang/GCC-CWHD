@@ -28,6 +28,14 @@
 			"options": {
 				"cwd": "${workspaceFolder}/src\\az_function"
 			}
+		},
+		{
+			"label": "func publish .zip",
+			"type": "shell",
+			"command": "az functionapp deployment source config-zip -g ${config:resourceGrpup} -n zipdeploydemo --src 'func-app.zip'",
+			"options": {
+				"cwd": "${workspaceFolder}/src\\az_function"
+			}
 		}
 	]
 }
