@@ -474,7 +474,7 @@
     {
       "datasource": {
         "type": "marcusolsson-json-datasource",
-        "uid": "bff0fca7-2810-4d60-980c-99a7ee43ead3"
+        "uid": "defd63c3-f8a1-46a7-93d2-ffda107c21b5"
       },
       "description": "",
       "fieldConfig": {
@@ -531,11 +531,11 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Network/applicationGateways/appgw-intranetcsu-uatizweb-gw\"\r\n        }\r\n    ]\r\n}",
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.ApiManagement/service/apim-intranetcs-uatiz-appcommon\"\r\n        }\r\n    ]\r\n}",
           "cacheDurationSeconds": 300,
           "datasource": {
             "type": "marcusolsson-json-datasource",
-            "uid": "bff0fca7-2810-4d60-980c-99a7ee43ead3"
+            "uid": "defd63c3-f8a1-46a7-93d2-ffda107c21b5"
           },
           "fields": [
             {
@@ -556,7 +556,7 @@
           "urlPath": ""
         }
       ],
-      "title": "App Gateway - appgw-intranetcsu-uatizweb-gw",
+      "title": "APIM - apim-intranetcs-uatiz-appcommon",
       "transparent": true,
       "type": "stat"
     },
@@ -918,6 +918,95 @@
     },
     {
       "datasource": {
+        "type": "marcusolsson-json-datasource",
+        "uid": "fd2f5372-557f-43fe-a467-eeff69bf018a"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#EAB839",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 15,
+        "y": 4
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^availabilityState$/",
+          "values": true
+        },
+        "text": {
+          "titleSize": 30,
+          "valueSize": 25
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-rest-docservices\"\r\n        }\r\n    ]\r\n}",
+          "cacheDurationSeconds": 300,
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "fd2f5372-557f-43fe-a467-eeff69bf018a"
+          },
+          "fields": [
+            {
+              "jsonPath": "$.states[0].availabilityState",
+              "name": "availabilityState",
+              "type": "number"
+            },
+            {
+              "jsonPath": "$.states[0].displayText",
+              "language": "jsonpath",
+              "name": "reportedTime",
+              "type": "string"
+            }
+          ],
+          "method": "POST",
+          "queryParams": "",
+          "refId": "A",
+          "urlPath": ""
+        }
+      ],
+      "title": "App Service - uat-rest-docservices",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
         "type": "grafana-azure-monitor-datasource",
         "uid": "azure-monitor-oob"
       },
@@ -952,7 +1041,7 @@
           "refId": "A"
         }
       ],
-      "title": "App Service - onelogin",
+      "title": "App Service - uat-app-docservices",
       "transparent": true,
       "type": "text"
     },
@@ -1289,11 +1378,11 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 10,
+        "w": 12,
         "x": 12,
         "y": 8
       },
-      "id": 19,
+      "id": 36,
       "options": {
         "colWidth": 0.9,
         "legend": {
@@ -1312,7 +1401,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Grafana-StandardTest-oneloginuat\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Grafana-StandardTest-app-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -1328,6 +1417,7 @@
         }
       ],
       "title": "App Insights Standard Test",
+      "transparent": true,
       "type": "status-history"
     },
     {
@@ -2063,6 +2153,414 @@
         "x": 0,
         "y": 21
       },
+      "id": 38,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
+        "mode": "html"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "title": "App Service - uat-dctm-docservices",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "Success": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "pattern": "/^Failed/",
+                "result": {
+                  "color": "red",
+                  "index": 1
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 10,
+        "y": 23
+      },
+      "id": 37,
+      "options": {
+        "colWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in ( \"az-Garfana-StanddardTest-dctm-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "TimeGenerated"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "App Insights Standard Test",
+      "transparent": true,
+      "type": "status-history"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 21,
+        "x": 0,
+        "y": 27
+      },
+      "id": 41,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
+        "mode": "html"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "title": "App Service - uat-fileupload-docservices",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "Success": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "pattern": "/^Failed/",
+                "result": {
+                  "color": "red",
+                  "index": 1
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 10,
+        "y": 29
+      },
+      "id": 39,
+      "options": {
+        "colWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Grafana-StandardTest-fileupload-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "TimeGenerated"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "App Insights Standard Test",
+      "transparent": true,
+      "type": "status-history"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 21,
+        "x": 0,
+        "y": 33
+      },
+      "id": 42,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
+        "mode": "html"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "title": "App Service - uat-rest-docservices",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "Success": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "pattern": "/^Failed/",
+                "result": {
+                  "color": "red",
+                  "index": 1
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 10,
+        "y": 35
+      },
+      "id": 40,
+      "options": {
+        "colWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Grafana-StanddardTest- rest-docservices\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "TimeGenerated"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "App Insights Standard Test",
+      "transparent": true,
+      "type": "status-history"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 21,
+        "x": 0,
+        "y": 39
+      },
       "id": 11,
       "options": {
         "code": {
@@ -2141,7 +2639,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2156,7 +2655,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 23
+        "y": 41
       },
       "id": 7,
       "options": {
@@ -2243,7 +2742,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -2255,7 +2755,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 23
+        "y": 41
       },
       "id": 17,
       "options": {
@@ -2365,7 +2865,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -2377,7 +2878,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 23
+        "y": 41
       },
       "id": 21,
       "options": {
@@ -2488,7 +2989,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -2500,7 +3002,7 @@
         "h": 6,
         "w": 4,
         "x": 12,
-        "y": 23
+        "y": 41
       },
       "id": 22,
       "options": {
@@ -2672,7 +3174,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 29
+        "y": 47
       },
       "id": 8,
       "options": {
@@ -2740,7 +3242,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 35
+        "y": 53
       },
       "id": 14,
       "options": {
@@ -2833,7 +3335,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 37
+        "y": 55
       },
       "id": 23,
       "options": {
@@ -2952,7 +3454,7 @@
         "h": 6,
         "w": 9,
         "x": 4,
-        "y": 37
+        "y": 55
       },
       "id": 26,
       "options": {
@@ -3075,7 +3577,7 @@
         "h": 6,
         "w": 8,
         "x": 13,
-        "y": 37
+        "y": 55
       },
       "id": 25,
       "options": {
@@ -3201,7 +3703,7 @@
         "h": 5,
         "w": 7,
         "x": 0,
-        "y": 43
+        "y": 61
       },
       "id": 24,
       "options": {
@@ -3272,6 +3774,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 7,
+  "version": 11,
   "weekStart": ""
 }
