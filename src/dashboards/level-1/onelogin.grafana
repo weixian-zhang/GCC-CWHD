@@ -55,7 +55,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 3,
         "w": 4,
         "x": 0,
         "y": 0
@@ -142,7 +142,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 3,
         "w": 4,
         "x": 4,
         "y": 0
@@ -231,7 +231,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 3,
         "w": 5,
         "x": 8,
         "y": 0
@@ -296,7 +296,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 6
+        "y": 3
       },
       "id": 10,
       "options": {
@@ -391,7 +391,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 8
+        "y": 5
       },
       "id": 9,
       "options": {
@@ -512,7 +512,7 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 8
+        "y": 5
       },
       "id": 12,
       "options": {
@@ -662,7 +662,7 @@
         "h": 4,
         "w": 10,
         "x": 12,
-        "y": 8
+        "y": 5
       },
       "id": 19,
       "options": {
@@ -813,7 +813,7 @@
         "h": 5,
         "w": 10,
         "x": 12,
-        "y": 12
+        "y": 9
       },
       "id": 20,
       "options": {
@@ -935,7 +935,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 14
+        "y": 11
       },
       "id": 15,
       "options": {
@@ -1026,7 +1026,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 14
+        "y": 11
       },
       "id": 16,
       "options": {
@@ -1146,7 +1146,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 14
+        "y": 11
       },
       "id": 13,
       "options": {
@@ -1365,7 +1365,7 @@
         "h": 4,
         "w": 10,
         "x": 12,
-        "y": 17
+        "y": 14
       },
       "id": 18,
       "options": {
@@ -1432,7 +1432,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 21
+        "y": 18
       },
       "id": 11,
       "options": {
@@ -1512,8 +1512,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1528,7 +1527,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 23
+        "y": 20
       },
       "id": 7,
       "options": {
@@ -1615,8 +1614,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1628,7 +1626,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 23
+        "y": 20
       },
       "id": 17,
       "options": {
@@ -1738,8 +1736,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1751,7 +1748,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 23
+        "y": 20
       },
       "id": 21,
       "options": {
@@ -1862,8 +1859,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1875,7 +1871,7 @@
         "h": 6,
         "w": 4,
         "x": 12,
-        "y": 23
+        "y": 20
       },
       "id": 22,
       "options": {
@@ -1959,8 +1955,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2048,7 +2043,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 29
+        "y": 26
       },
       "id": 8,
       "options": {
@@ -2116,7 +2111,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 35
+        "y": 32
       },
       "id": 14,
       "options": {
@@ -2194,8 +2189,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2210,7 +2204,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 37
+        "y": 34
       },
       "id": 23,
       "options": {
@@ -2314,8 +2308,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2330,7 +2323,7 @@
         "h": 6,
         "w": 9,
         "x": 4,
-        "y": 37
+        "y": 34
       },
       "id": 26,
       "options": {
@@ -2442,8 +2435,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               }
             ]
           }
@@ -2454,7 +2446,7 @@
         "h": 6,
         "w": 8,
         "x": 13,
-        "y": 37
+        "y": 34
       },
       "id": 25,
       "options": {
@@ -2565,8 +2557,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2581,7 +2572,7 @@
         "h": 5,
         "w": 7,
         "x": 0,
-        "y": 43
+        "y": 40
       },
       "id": 24,
       "options": {
@@ -2638,20 +2629,20 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2023-11-30T04:49:39.409Z",
+    "to": "2023-11-30T10:49:39.409Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Level 1 - OneLogin",
   "uid": "a7f3ea2c-0a06-498e-a4e5-7d609a19a4e2",
-  "version": 48,
+  "version": 49,
   "weekStart": ""
 }
