@@ -1016,6 +1016,1138 @@
         "x": 0,
         "y": 6
       },
+      "id": 38,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
+        "mode": "html"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "title": "App Service - uat-dctm-docservices",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 0,
+        "y": 8
+      },
+      "id": 49,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "Requests",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-dctm-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Total Requests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 4,
+        "y": 8
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "MemoryWorkingSet",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-dctm-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        },
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "CpuTime",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-dctm-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "B",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "CPU/Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "Success": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "pattern": "/^Failed/",
+                "result": {
+                  "color": "red",
+                  "index": 1
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 11,
+        "x": 12,
+        "y": 8
+      },
+      "id": 36,
+      "options": {
+        "colWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Garfana-StanddardTest-dctm-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "TimeGenerated"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "App Insights Standard Test",
+      "type": "status-history"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Failures"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Users Affected"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failed with Result Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 220
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Users Affected"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 11,
+        "x": 12,
+        "y": 12
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Users Affected"
+          }
+        ]
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "let startTime = ago(8h);\r\nlet grain = 30m;\r\nlet bigWindowTimeRange = 7d;\r\nlet bigWindow = requests\r\n    | where timestamp >= ago(bigWindowTimeRange) and timestamp < bin(startTime, grain)\r\n    | where success == false\r\n    | where operation_Name in ('*') or '*' in ('*')\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 10000);\r\nrequests\r\n| where timestamp > ago(1d)\r\n| where operation_Name in ('*') or '*' in ('*')\r\n| where name in ('*') or '*' in ('*')\r\n| where resultCode in ('*')\r\n    or '*' in ('*')\r\n    or iff('@' in ('*'), resultCode startswith '5', false)\r\n    or iff('#' in ('*'), resultCode startswith '4', false)\r\n| where success == false\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| order by Count desc, name asc\r\n| project\r\n    ['Request Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Request Failures'] = Count",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-dctm-docservice"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "timestamp"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Failed Requests",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Failed with Result Code": "Code",
+              "Request Failures": "Failures",
+              "Request Name": "Request"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "description": "Each resource group has 500 GB of aggregated storage limit of App Service plans.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds",
+            "seriesBy": "last"
+          },
+          "mappings": [],
+          "min": -1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "gbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 4,
+        "y": 14
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "titleSize": 15
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "FileSystemUsage",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-dctm-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "File System Usage",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 14
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "Http5xx",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-dctm-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "5xx Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": -1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 15
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "HttpResponseTime",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-dctm-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "PT1M"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Avg Response Time",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Failures"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Users Affected"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failed with Result Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 220
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Users Affected"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failures"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 99
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Dependency Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 235
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trend"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "sparkline"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failures"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 11,
+        "x": 12,
+        "y": 17
+      },
+      "id": 18,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Users Affected"
+          }
+        ]
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "let bigWindow = dependencies\r\n    | where timestamp >= ago(1d) - 14d and timestamp <= ago(1d)\r\n    | where success == false\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 100000);\r\nlet data = dependencies\r\n    | where timestamp > ago(1d)\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | where success == false;\r\ndata\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| join kind=inner (data\r\n    | make-series Trend = count() default = 0 on timestamp in range(ago(1d), now(), 30m) by name\r\n    | project name, Trend\r\n    )\r\n    on name\r\n| order by Users desc, Count desc, name asc\r\n| project\r\n    ['Dependency Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Failures'] = Count\r\n",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/microsoft.insights/components/uat-dctm-docservice"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "timestamp"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "App Insights Dependency Failed",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Failed with Result Code": "Code",
+              "Request Failures": "Failures",
+              "Request Name": "Request"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 21,
+        "x": 0,
+        "y": 21
+      },
       "id": 10,
       "options": {
         "code": {
@@ -1109,9 +2241,9 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 8
+        "y": 23
       },
-      "id": 9,
+      "id": 43,
       "options": {
         "legend": {
           "calcs": [],
@@ -1146,8 +2278,8 @@
               {
                 "metricNamespace": "Microsoft.Web/sites",
                 "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "onelogindev",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-app-docservices",
                 "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
               }
             ],
@@ -1230,15 +2362,15 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 8
+        "y": 23
       },
-      "id": 12,
+      "id": 44,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -1248,7 +2380,7 @@
       "targets": [
         {
           "azureMonitor": {
-            "aggregation": "Total",
+            "aggregation": "Average",
             "allowedTimeGrainsMs": [
               60000,
               300000,
@@ -1267,8 +2399,8 @@
               {
                 "metricNamespace": "Microsoft.Web/sites",
                 "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "onelogindev",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-app-docservices",
                 "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
               }
             ],
@@ -1304,8 +2436,8 @@
               {
                 "metricNamespace": "Microsoft.Web/sites",
                 "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "oneloginuat",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-app-docservices",
                 "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
               }
             ],
@@ -1380,9 +2512,9 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 23
       },
-      "id": 36,
+      "id": 37,
       "options": {
         "colWidth": 0.9,
         "legend": {
@@ -1401,7 +2533,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Grafana-StandardTest-app-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in ( \"az-Grafana-StandardTest-app-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -1532,9 +2664,9 @@
         "h": 5,
         "w": 10,
         "x": 12,
-        "y": 12
+        "y": 27
       },
-      "id": 20,
+      "id": 48,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -1560,7 +2692,7 @@
             "dashboardTime": false,
             "query": "let startTime = ago(8h);\r\nlet grain = 30m;\r\nlet bigWindowTimeRange = 7d;\r\nlet bigWindow = requests\r\n    | where timestamp >= ago(bigWindowTimeRange) and timestamp < bin(startTime, grain)\r\n    | where success == false\r\n    | where operation_Name in ('*') or '*' in ('*')\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 10000);\r\nrequests\r\n| where timestamp > ago(1d)\r\n| where operation_Name in ('*') or '*' in ('*')\r\n| where name in ('*') or '*' in ('*')\r\n| where resultCode in ('*')\r\n    or '*' in ('*')\r\n    or iff('@' in ('*'), resultCode startswith '5', false)\r\n    or iff('#' in ('*'), resultCode startswith '4', false)\r\n| where success == false\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| order by Count desc, name asc\r\n| project\r\n    ['Request Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Request Failures'] = Count",
             "resources": [
-              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/microsoft.insights/components/oneloginuat"
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/microsoft.insights/components/appi-uat-app-docservices"
             ],
             "resultFormat": "table",
             "timeColumn": "timestamp"
@@ -1599,8 +2731,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds",
-            "seriesBy": "last"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": false,
@@ -1610,7 +2741,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "bars",
+            "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
@@ -1625,7 +2756,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1636,17 +2767,19 @@
             }
           },
           "mappings": [],
-          "min": -1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
-          },
-          "unit": "ms"
+          }
         },
         "overrides": []
       },
@@ -1654,17 +2787,15 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 14
+        "y": 29
       },
-      "id": 15,
+      "id": 45,
       "options": {
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -1674,7 +2805,7 @@
       "targets": [
         {
           "azureMonitor": {
-            "aggregation": "Average",
+            "aggregation": "Total",
             "allowedTimeGrainsMs": [
               60000,
               300000,
@@ -1693,12 +2824,12 @@
               {
                 "metricNamespace": "Microsoft.Web/sites",
                 "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "oneloginuat",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-app-docservices",
                 "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
               }
             ],
-            "timeGrain": "PT15M"
+            "timeGrain": "auto"
           },
           "datasource": {
             "type": "grafana-azure-monitor-datasource",
@@ -1710,8 +2841,7 @@
           "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
         }
       ],
-      "title": "Avg Response Time",
-      "transformations": [],
+      "title": "Response Time",
       "type": "timeseries"
     },
     {
@@ -1723,21 +2853,18 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds",
-            "seriesBy": "last"
+            "mode": "thresholds"
           },
           "mappings": [],
-          "min": -1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "blue",
                 "value": null
               }
             ]
-          },
-          "unit": "ms"
+          }
         },
         "overrides": []
       },
@@ -1745,9 +2872,9 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 14
+        "y": 29
       },
-      "id": 16,
+      "id": 46,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -1759,9 +2886,6 @@
           ],
           "fields": "",
           "values": false
-        },
-        "text": {
-          "titleSize": 15
         },
         "textMode": "auto"
       },
@@ -1783,8 +2907,8 @@
               {
                 "metricNamespace": "Microsoft.Web/sites",
                 "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "oneloginuat",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-app-docservices",
                 "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
               }
             ],
@@ -1794,15 +2918,12 @@
             "type": "grafana-azure-monitor-datasource",
             "uid": "azure-monitor-oob"
           },
-          "hide": false,
           "queryType": "Azure Monitor",
           "refId": "A",
           "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
         }
       ],
       "title": "File System Usage",
-      "transformations": [],
-      "transparent": true,
       "type": "stat"
     },
     {
@@ -1865,9 +2986,9 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 14
+        "y": 29
       },
-      "id": 13,
+      "id": 47,
       "options": {
         "legend": {
           "calcs": [],
@@ -1883,7 +3004,7 @@
       "targets": [
         {
           "azureMonitor": {
-            "aggregation": "Average",
+            "aggregation": "Total",
             "allowedTimeGrainsMs": [
               60000,
               300000,
@@ -1902,8 +3023,8 @@
               {
                 "metricNamespace": "Microsoft.Web/sites",
                 "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "onelogindev",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-app-docservices",
                 "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
               }
             ],
@@ -2082,11 +3203,11 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 10,
+        "w": 11,
         "x": 12,
-        "y": 17
+        "y": 32
       },
-      "id": 18,
+      "id": 50,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -2112,7 +3233,7 @@
             "dashboardTime": false,
             "query": "let bigWindow = dependencies\r\n    | where timestamp >= ago(1d) - 14d and timestamp <= ago(1d)\r\n    | where success == false\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 100000);\r\nlet data = dependencies\r\n    | where timestamp > ago(1d)\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | where success == false;\r\ndata\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| join kind=inner (data\r\n    | make-series Trend = count() default = 0 on timestamp in range(ago(1d), now(), 30m) by name\r\n    | project name, Trend\r\n    )\r\n    on name\r\n| order by Users desc, Count desc, name asc\r\n| project\r\n    ['Dependency Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Failures'] = Count\r\n",
             "resources": [
-              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Insights/components/appi-intranetcs-uatizappcs"
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/microsoft.insights/components/appi-uat-app-docservices"
             ],
             "resultFormat": "table",
             "timeColumn": "timestamp"
@@ -2151,143 +3272,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 21
-      },
-      "id": 38,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
-        "mode": "html"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "azureMonitor": {
-            "allowedTimeGrainsMs": [],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "queryType": "Azure Monitor",
-          "refId": "A"
-        }
-      ],
-      "title": "App Service - uat-dctm-docservices",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "grafana-azure-monitor-datasource",
-        "uid": "azure-monitor-oob"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "fillOpacity": 70,
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1
-          },
-          "mappings": [
-            {
-              "options": {
-                "Success": {
-                  "color": "green",
-                  "index": 0
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "pattern": "/^Failed/",
-                "result": {
-                  "color": "red",
-                  "index": 1
-                }
-              },
-              "type": "regex"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 10,
-        "y": 23
-      },
-      "id": 37,
-      "options": {
-        "colWidth": 0.9,
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "rowHeight": 0.9,
-        "showValue": "never",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "azureLogAnalytics": {
-            "dashboardTime": false,
-            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in ( \"az-Garfana-StanddardTest-dctm-docservice\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
-            "resources": [
-              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
-            ],
-            "resultFormat": "table",
-            "timeColumn": "TimeGenerated"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "queryType": "Azure Log Analytics",
-          "refId": "A"
-        }
-      ],
-      "title": "App Insights Standard Test",
-      "transparent": true,
-      "type": "status-history"
-    },
-    {
-      "datasource": {
-        "type": "grafana-azure-monitor-datasource",
-        "uid": "azure-monitor-oob"
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 21,
-        "x": 0,
-        "y": 27
+        "y": 36
       },
       "id": 41,
       "options": {
@@ -2326,6 +3311,125 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 0,
+        "y": 38
+      },
+      "id": 51,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "Requests",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-fileupload-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Total Requests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
           "custom": {
@@ -2374,7 +3478,7 @@
         "h": 4,
         "w": 12,
         "x": 10,
-        "y": 29
+        "y": 38
       },
       "id": 39,
       "options": {
@@ -2419,11 +3523,132 @@
         "type": "grafana-azure-monitor-datasource",
         "uid": "azure-monitor-oob"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 45
+      },
+      "id": 52,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "HttpResponseTime",
+            "metricNamespace": "microsoft.web/sites",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Web/sites",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "uat-fileupload-docservice",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Response Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
       "gridPos": {
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 33
+        "y": 51
       },
       "id": 42,
       "options": {
@@ -2510,7 +3735,7 @@
         "h": 4,
         "w": 12,
         "x": 10,
-        "y": 35
+        "y": 53
       },
       "id": 40,
       "options": {
@@ -2559,7 +3784,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 39
+        "y": 57
       },
       "id": 11,
       "options": {
@@ -2655,7 +3880,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 41
+        "y": 59
       },
       "id": 7,
       "options": {
@@ -2755,7 +3980,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 41
+        "y": 59
       },
       "id": 17,
       "options": {
@@ -2878,7 +4103,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 41
+        "y": 59
       },
       "id": 21,
       "options": {
@@ -3002,7 +4227,7 @@
         "h": 6,
         "w": 4,
         "x": 12,
-        "y": 41
+        "y": 59
       },
       "id": 22,
       "options": {
@@ -3086,7 +4311,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3174,7 +4400,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 47
+        "y": 65
       },
       "id": 8,
       "options": {
@@ -3242,7 +4468,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 53
+        "y": 71
       },
       "id": 14,
       "options": {
@@ -3335,7 +4561,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 55
+        "y": 73
       },
       "id": 23,
       "options": {
@@ -3454,7 +4680,7 @@
         "h": 6,
         "w": 9,
         "x": 4,
-        "y": 55
+        "y": 73
       },
       "id": 26,
       "options": {
@@ -3577,7 +4803,7 @@
         "h": 6,
         "w": 8,
         "x": 13,
-        "y": 55
+        "y": 73
       },
       "id": 25,
       "options": {
@@ -3703,7 +4929,7 @@
         "h": 5,
         "w": 7,
         "x": 0,
-        "y": 61
+        "y": 79
       },
       "id": 24,
       "options": {
@@ -3774,6 +5000,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 11,
+  "version": 17,
   "weekStart": ""
 }
