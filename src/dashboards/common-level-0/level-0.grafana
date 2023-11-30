@@ -1,0 +1,228 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 14,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "marcusolsson-json-datasource",
+        "uid": "d30166f7-5e98-4f30-963a-11d3eb9d3b20"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#EAB839",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "links": [
+        {
+          "title": "OneLogin Level 1 Dashboard",
+          "url": "https://uat-azmanagedgrafana-cjagdbh9d2hufzch.sing.grafana.azure.com/d/a7f3ea2c-0a06-498e-a4e5-7d609a19a4e2/level-1-onelogin?orgId=1&from=1701319779409&to=1701341379409"
+        }
+      ],
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^overallHealth$/",
+          "values": true
+        },
+        "text": {
+          "titleSize": 30,
+          "valueSize": 30
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Web/sites/oneloginuat\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.KeyVault/vaults/kv-izcs-uatiz-kscmgmt\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.ApiManagement/service/apim-intranetcs-uatiz-appcommon\"\r\n        }\r\n    ]\r\n}",
+          "cacheDurationSeconds": 300,
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "d30166f7-5e98-4f30-963a-11d3eb9d3b20"
+          },
+          "fields": [
+            {
+              "jsonPath": "$.overallHealth",
+              "name": "overallHealth"
+            },
+            {
+              "jsonPath": "$.overallSummary",
+              "language": "jsonpath",
+              "name": ""
+            }
+          ],
+          "method": "POST",
+          "queryParams": "",
+          "refId": "A",
+          "urlPath": ""
+        }
+      ],
+      "title": "OneLogin Availability",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "marcusolsson-json-datasource",
+        "uid": "e4c6ffe4-dd05-4892-9fb2-7ae05e4d34a5"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#EAB839",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 4,
+      "links": [
+        {
+          "title": "Documentum Level 1 Dashboard",
+          "url": "https://uat-azmanagedgrafana-cjagdbh9d2hufzch.sing.grafana.azure.com/d/bf2db279-fcd8-41d1-9dee-1a11171fcd37/level-1-documentum?orgId=1&from=1701328377319&to=1701349977319"
+        }
+      ],
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^overallHealth$/",
+          "values": true
+        },
+        "text": {
+          "titleSize": 40,
+          "valueSize": 30
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs01\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs02\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumis01\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizdbdocumentumdb\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Network/applicationGateways/appgw-intranetcsu-uatizweb-gw\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Network/applicationGateways/appgw-intranetcsu-uatizweb-gw\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.ApiManagement/service/apim-intranetcs-uatiz-appcommon\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Storage/storageAccounts/sstsv2ltauatizdocstg2\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-app-docservices\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-dctm-docservice\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-fileupload-docservice\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-rest-docservices\"\r\n        }\r\n    ]\r\n}\r\n",
+          "cacheDurationSeconds": 300,
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "e4c6ffe4-dd05-4892-9fb2-7ae05e4d34a5"
+          },
+          "fields": [
+            {
+              "jsonPath": "$.overallHealth",
+              "name": "overallHealth"
+            },
+            {
+              "jsonPath": "$.overallSummary",
+              "language": "jsonpath",
+              "name": ""
+            }
+          ],
+          "method": "POST",
+          "queryParams": "",
+          "refId": "A",
+          "urlPath": ""
+        }
+      ],
+      "title": "Documentum Availability",
+      "transparent": true,
+      "type": "stat"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Level 0",
+  "uid": "aa675086-7b24-4d29-a4eb-7d160638922b",
+  "version": 17,
+  "weekStart": ""
+}
