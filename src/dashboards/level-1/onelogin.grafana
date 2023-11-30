@@ -1468,6 +1468,7 @@
         "type": "grafana-azure-monitor-datasource",
         "uid": "azure-monitor-oob"
       },
+      "description": "Overall latency \nStatistics of overall latency (in miliseconds) between the time API Mangement starts receiving a request and the time API Management finishes sending the response back to the client. ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1544,43 +1545,23 @@
       },
       "targets": [
         {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "dimensionFilters": [],
-            "metricName": "BackendDuration",
-            "metricNamespace": "microsoft.apimanagement/service",
-            "region": "southeastasia",
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "ApiManagementGatewayLogs\r\n| where TimeGenerated > ago(1d)\r\n| summarize Average=avg(TotalTime), Median=percentile(TotalTime, 50), 90th_Percentile=percentile(TotalTime, 90) by bin(TimeGenerated, 15m) ",
             "resources": [
-              {
-                "metricNamespace": "Microsoft.ApiManagement/service",
-                "region": "southeastasia",
-                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
-                "resourceName": "apim-intranetcs-uatiz-appcommon",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
-            "timeGrain": "auto"
+            "resultFormat": "table"
           },
           "datasource": {
             "type": "grafana-azure-monitor-datasource",
             "uid": "azure-monitor-oob"
           },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
         }
       ],
-      "title": "Duration of Backend Requests",
+      "title": "Avg Latency (ms)",
       "transparent": true,
       "type": "timeseries"
     },
@@ -1645,8 +1626,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 5,
+        "w": 4,
+        "x": 4,
         "y": 23
       },
       "id": 17,
@@ -1679,7 +1660,7 @@
               86400000
             ],
             "dimensionFilters": [],
-            "metricName": "dependencies/duration",
+            "metricName": "requests/duration",
             "metricNamespace": "microsoft.insights/components",
             "region": "southeastasia",
             "resources": [
@@ -1704,6 +1685,254 @@
         }
       ],
       "title": "Avg Response Time",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": -1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 8,
+        "y": 23
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "Azure.ApplicationInsights",
+            "dimensionFilters": [],
+            "metricName": "Request Size",
+            "metricNamespace": "microsoft.insights/components",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Insights/components",
+                "region": "southeastasia",
+                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
+                "resourceName": "appi-intranetcs-uatizappcs",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Avg Request Size",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": -1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 23
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "Azure.ApplicationInsights",
+            "dimensionFilters": [],
+            "metricName": "Response Size",
+            "metricNamespace": "microsoft.insights/components",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Insights/components",
+                "region": "southeastasia",
+                "resourceGroup": "rg-intranetcs-uatiz-appcommon",
+                "resourceName": "appi-intranetcs-uatizappcs",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Avg Response  Size",
       "transformations": [],
       "type": "timeseries"
     },
@@ -1816,10 +2045,10 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 10,
-        "y": 23
+        "h": 7,
+        "w": 9,
+        "x": 0,
+        "y": 29
       },
       "id": 8,
       "options": {
@@ -1887,7 +2116,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 29
+        "y": 36
       },
       "id": 14,
       "options": {
@@ -1933,6 +2162,6 @@
   "timezone": "",
   "title": "Level 1 - OneLogin",
   "uid": "a7f3ea2c-0a06-498e-a4e5-7d609a19a4e2",
-  "version": 42,
+  "version": 44,
   "weekStart": ""
 }
