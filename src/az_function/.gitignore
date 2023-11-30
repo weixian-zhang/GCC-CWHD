@@ -11,6 +11,8 @@ Publish
 *.Cache
 project.lock.json
 
+func-app.zip
+
 /packages
 /TestResults
 
