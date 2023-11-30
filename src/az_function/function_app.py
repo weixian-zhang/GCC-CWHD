@@ -19,24 +19,24 @@ class ResourceHealthAPIResult:
     # Available = 1, Unavailable = 0 or Unknown = 2
     # converting into number is easier to style by Grafana "threshold" 
 
-    def __init__(self, location='', availabilityState=2, summary='', reportedTime=None, stateLastChangeTime=None) -> None:
-
-        if availabilityState == 'Available':
-            availabilityState = 1
-        elif availabilityState == 'Unavailable':
-            availabilityState = 0
-        else:
-            availabilityState = 2
+    def __init__(self, location='', availabilityState='', summary='', reportedTime=None, stateLastChangeTime=None) -> None:
 
         self.location = location
         self.availabilityState = availabilityState
         self.summary = summary
         self.reportedTime = (reportedTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
         self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
-        self.summaryForDisplay = f'''
-        {self.summary}
-        reported at: {self.reportedTime}
-        '''
+        self.displayText = ''
+
+        if availabilityState == 'Available':
+            self.availabilityState = 1
+            self.displayText = 'Available'
+        elif availabilityState == 'Unavailable':
+            self.availabilityState = 0
+            self.displayText = 'Unavailable'
+        else:
+            self.availabilityState = 2
+            self.displayText = 'Unknown'
 
 
 class RHResult:
@@ -60,13 +60,10 @@ class RHResult:
         
         if all([x.availabilityState == 1 for x in self.states]):
             self.overallHealth = 1
-            self.overallSummary = 'All dependent services are available'
-        elif all([x.availabilityState == 0 for x in self.states]):
+            self.overallSummary = 'Available'
+        else: #any([x.availabilityState == 0 for x in self.states]):
             self.overallHealth = 0
-            self.overallSummary = 'All dependent services are unavailable'
-        else:
-            self.overallHealth = 2
-            self.overallSummary = 'Partial dependent services are available'
+            self.overallSummary = 'Unavailable'
 
 def get_resource_ids(reqBody) -> list[str]:
     if not reqBody:
