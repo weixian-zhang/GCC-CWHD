@@ -25,92 +25,6 @@
     {
       "datasource": {
         "type": "marcusolsson-json-datasource",
-        "uid": "d30166f7-5e98-4f30-963a-11d3eb9d3b20"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              },
-              {
-                "color": "#EAB839",
-                "value": 2
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 0,
-        "y": 0
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "background_solid",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^overallHealth$/",
-          "values": true
-        },
-        "text": {
-          "titleSize": 30,
-          "valueSize": 30
-        },
-        "textMode": "name"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Web/sites/oneloginuat\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.KeyVault/vaults/kv-izcs-uatiz-kscmgmt\"\r\n        },\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.ApiManagement/service/apim-intranetcs-uatiz-appcommon\"\r\n        }\r\n    ]\r\n}",
-          "cacheDurationSeconds": 300,
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "d30166f7-5e98-4f30-963a-11d3eb9d3b20"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.overallHealth",
-              "name": "overallHealth"
-            },
-            {
-              "jsonPath": "$.overallSummary",
-              "language": "jsonpath",
-              "name": ""
-            }
-          ],
-          "method": "POST",
-          "queryParams": "",
-          "refId": "A",
-          "urlPath": ""
-        }
-      ],
-      "title": "OneLogin Overall",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "marcusolsson-json-datasource",
         "uid": "a29a83be-00ba-4b41-92a4-c106c2650248"
       },
       "description": "App Service",
@@ -142,8 +56,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 5,
+        "w": 5,
+        "x": 0,
         "y": 0
       },
       "id": 1,
@@ -229,8 +143,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 9,
+        "w": 5,
+        "x": 5,
         "y": 0
       },
       "id": 6,
@@ -318,8 +232,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 13,
+        "w": 7,
+        "x": 10,
         "y": 0
       },
       "id": 4,
@@ -475,7 +389,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
+        "w": 4,
         "x": 0,
         "y": 8
       },
@@ -532,7 +446,6 @@
         }
       ],
       "title": "Total Requests",
-      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -597,8 +510,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 7,
-        "x": 5,
+        "w": 8,
+        "x": 4,
         "y": 8
       },
       "id": 12,
@@ -691,8 +604,102 @@
         }
       ],
       "title": "CPU/Memory",
-      "transparent": true,
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "Success": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "pattern": "/^Failed/",
+                "result": {
+                  "color": "red",
+                  "index": 1
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 10,
+        "x": 12,
+        "y": 8
+      },
+      "id": 19,
+      "options": {
+        "colWidth": 0.9,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AppAvailabilityResults \r\n| extend rscIdArr = split(_ResourceId, '/')\r\n| extend appInsightsName = tostring(rscIdArr[array_length(rscIdArr) - 1])\r\n| extend StandardTestName = strcat(appInsightsName) //, '/',Name)\r\n| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))\r\n| where Location == 'Southeast Asia'\r\n| where Name in (\"az-Grafana-StandardTest-oneloginuat\")\r\n| where TimeGenerated >= ago(8h)\r\n| project TimeGenerated, StandardTestName, Success, SuccessFailStatusAndMessage\r\n| summarize by Time=bin(TimeGenerated, 10min), StandardTestName, SuccessFailStatusAndMessage\r\n| evaluate pivot(StandardTestName, any(SuccessFailStatusAndMessage))",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "TimeGenerated"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "App Insights Standard Test",
+      "type": "status-history"
     },
     {
       "datasource": {
@@ -803,12 +810,12 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 11,
+        "h": 5,
+        "w": 10,
         "x": 12,
-        "y": 8
+        "y": 12
       },
-      "id": 8,
+      "id": 20,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -832,9 +839,9 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "let startTime = ago(8h);\r\nlet grain = 30m;\r\nlet bigWindowTimeRange = 7d;\r\nlet bigWindow = requests\r\n    | where timestamp >= ago(bigWindowTimeRange) and timestamp < bin(startTime, grain)\r\n    | where success == false\r\n    | where operation_Name in ('*') or '*' in ('*')\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 10000);\r\nrequests\r\n| where timestamp > ago(1d)\r\n| where operation_Name in ('*') or '*' in ('*')\r\n| where name in ('*') or '*' in ('*')\r\n| where resultCode in ('*')\r\n    or '*' in ('*')\r\n    or iff('@' in ('*'), resultCode startswith '5', false)\r\n    or iff('#' in ('*'), resultCode startswith '4', false)\r\n| where success == false\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| order by Users desc, Count desc, name asc\r\n| project\r\n    ['Request Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Request Failures'] = Count,\r\n    ['Users Affected'] = Users",
+            "query": "let startTime = ago(8h);\r\nlet grain = 30m;\r\nlet bigWindowTimeRange = 7d;\r\nlet bigWindow = requests\r\n    | where timestamp >= ago(bigWindowTimeRange) and timestamp < bin(startTime, grain)\r\n    | where success == false\r\n    | where operation_Name in ('*') or '*' in ('*')\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 10000);\r\nrequests\r\n| where timestamp > ago(1d)\r\n| where operation_Name in ('*') or '*' in ('*')\r\n| where name in ('*') or '*' in ('*')\r\n| where resultCode in ('*')\r\n    or '*' in ('*')\r\n    or iff('@' in ('*'), resultCode startswith '5', false)\r\n    or iff('#' in ('*'), resultCode startswith '4', false)\r\n| where success == false\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| order by Count desc, name asc\r\n| project\r\n    ['Request Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Request Failures'] = Count",
             "resources": [
-              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Insights/components/appi-intranetcs-uatizappcs"
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/microsoft.insights/components/oneloginuat"
             ],
             "resultFormat": "table",
             "timeColumn": "timestamp"
@@ -847,6 +854,7 @@
           "refId": "A"
         }
       ],
+      "title": "Failed Requests",
       "transformations": [
         {
           "id": "organize",
@@ -925,7 +933,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
+        "w": 4,
         "x": 0,
         "y": 14
       },
@@ -1017,7 +1025,7 @@
       "gridPos": {
         "h": 6,
         "w": 4,
-        "x": 5,
+        "x": 4,
         "y": 14
       },
       "id": 16,
@@ -1032,6 +1040,9 @@
           ],
           "fields": "",
           "values": false
+        },
+        "text": {
+          "titleSize": 15
         },
         "textMode": "auto"
       },
@@ -1072,6 +1083,7 @@
       ],
       "title": "File System Usage",
       "transformations": [],
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -1132,8 +1144,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 9,
+        "w": 4,
+        "x": 8,
         "y": 14
       },
       "id": 13,
@@ -1189,7 +1201,6 @@
         }
       ],
       "title": "5xx Errors",
-      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -1351,10 +1362,10 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 9,
-        "x": 14,
-        "y": 14
+        "h": 4,
+        "w": 10,
+        "x": 12,
+        "y": 17
       },
       "id": 18,
       "options": {
@@ -1395,6 +1406,7 @@
           "refId": "A"
         }
       ],
+      "title": "App Insights Dependency Failed",
       "transformations": [
         {
           "id": "organize",
@@ -1409,7 +1421,6 @@
           }
         }
       ],
-      "transparent": true,
       "type": "table"
     },
     {
@@ -1421,7 +1432,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 11,
       "options": {
@@ -1500,7 +1511,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1515,7 +1527,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 7,
       "options": {
@@ -1622,7 +1634,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -1634,7 +1647,7 @@
         "h": 6,
         "w": 5,
         "x": 5,
-        "y": 22
+        "y": 23
       },
       "id": 17,
       "options": {
@@ -1699,11 +1712,182 @@
         "type": "grafana-azure-monitor-datasource",
         "uid": "azure-monitor-oob"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Failures"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Users Affected"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "color"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failed with Result Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 220
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Users Affected"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 10,
+        "y": 23
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Users Affected"
+          }
+        ]
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "let startTime = ago(8h);\r\nlet grain = 30m;\r\nlet bigWindowTimeRange = 7d;\r\nlet bigWindow = requests\r\n    | where timestamp >= ago(bigWindowTimeRange) and timestamp < bin(startTime, grain)\r\n    | where success == false\r\n    | where operation_Name in ('*') or '*' in ('*')\r\n    | where name in ('*') or '*' in ('*')\r\n    | where resultCode in ('*')\r\n        or '*' in ('*')\r\n        or iff('@' in ('*'), resultCode startswith '5', false)\r\n        or iff('#' in ('*'), resultCode startswith '4', false)\r\n    | summarize by name, resultCode\r\n    | summarize makelist(strcat(name, '-', resultCode), 10000);\r\nrequests\r\n| where timestamp > ago(1d)\r\n| where operation_Name in ('*') or '*' in ('*')\r\n| where name in ('*') or '*' in ('*')\r\n| where resultCode in ('*')\r\n    or '*' in ('*')\r\n    or iff('@' in ('*'), resultCode startswith '5', false)\r\n    or iff('#' in ('*'), resultCode startswith '4', false)\r\n| where success == false\r\n| summarize Count = count(), Users = dcount(user_Id) by name, resultCode\r\n| extend IsNew = strcat(name, '-', resultCode) !in (bigWindow)\r\n| where \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" == \"['New Failure Rate (%)'], ['Existing Failure Rate (%)']\" or IsNew == true\r\n| order by Count desc, name asc\r\n| project\r\n    ['Request Name'] = iff(IsNew, strcat('🔸 ', name), strcat('🔹 ', name)),\r\n    ['Failed with Result Code'] = resultCode,\r\n    ['Request Failures'] = Count",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Insights/components/appi-intranetcs-uatizappcs"
+            ],
+            "resultFormat": "table",
+            "timeColumn": "timestamp"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Failed Requests",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Failed with Result Code": "Code",
+              "Request Failures": "Failures",
+              "Request Name": "Request"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
       "gridPos": {
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 14,
       "options": {
@@ -1749,6 +1933,6 @@
   "timezone": "",
   "title": "Level 1 - OneLogin",
   "uid": "a7f3ea2c-0a06-498e-a4e5-7d609a19a4e2",
-  "version": 39,
+  "version": 42,
   "weekStart": ""
 }
