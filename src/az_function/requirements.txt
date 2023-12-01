@@ -6,3 +6,4 @@ azure-functions
 jsons
 azure.identity
 azure.mgmt.resourcehealth
+pytest

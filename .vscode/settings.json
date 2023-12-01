@@ -7,5 +7,10 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 2,
     "resourceGroup": "rg-lta-cwhd",
-    "funcNameToDeploy": "func-lta-cwhd"
+    "funcNameToDeploy": "func-lta-cwhd",
+    "python.testing.pytestArgs": [
+        "src"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
 }

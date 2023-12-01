@@ -19,7 +19,12 @@ class ResourceHealthAPIResult:
     # Available = 1, Unavailable = 0 or Unknown = 2
     # converting into number is easier to style by Grafana "threshold" 
 
-    def __init__(self, location='', availabilityState='', summary='', reportedTime=None, stateLastChangeTime=None) -> None:
+    def __init__(self, 
+                 location='', 
+                 availabilityState='', 
+                 summary='', 
+                 reportedTime=None, 
+                 stateLastChangeTime=None) -> None:
 
         self.location = location
         self.availabilityState = availabilityState
