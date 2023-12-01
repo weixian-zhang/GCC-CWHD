@@ -76,6 +76,9 @@ def get_resource_ids(reqBody) -> list[str]:
     
     return reqBody['resources']
 
+def create_rh_client(subscriptionId):
+    return ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
+
 def get_resource_health_states(resources: list[str]) -> RHResult:
 
     if not resources:
@@ -90,7 +93,7 @@ def get_resource_health_states(resources: list[str]) -> RHResult:
 
         logger.debug(f'retrieving availability status for resource {rscId}')
 
-        client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id=subId)
+        client = create_rh_client(subId)
 
         asResult = client.availability_statuses.get_by_resource(resource_uri=rscId)
 
@@ -105,6 +108,8 @@ def get_resource_health_states(resources: list[str]) -> RHResult:
         states.append(apir)
 
     return RHResult(states)
+
+
     
 
 
