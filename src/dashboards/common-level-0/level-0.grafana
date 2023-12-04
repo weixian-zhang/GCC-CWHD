@@ -55,7 +55,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 0
@@ -148,10 +148,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 9
       },
       "id": 4,
       "links": [
@@ -223,6 +223,6 @@
   "timezone": "",
   "title": "Level 0",
   "uid": "aa675086-7b24-4d29-a4eb-7d160638922b",
-  "version": 17,
+  "version": 18,
   "weekStart": ""
 }
