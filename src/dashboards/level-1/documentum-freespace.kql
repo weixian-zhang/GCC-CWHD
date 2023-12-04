@@ -4,6 +4,6 @@ InsightsMetrics
 | extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
 | extend gbVal = round(Val / 1000, 1)
 | parse Tags with * "{\"vm.azm.ms/mountId\":\"" tagOnly "\"," rest
-| where VMName in ("vmuatizapcsdocumentumcs01")
-| where TimeGenerated >= ago(180d)
+| where VMName in ("vmuatizapcsdocumentumcs01") // change VM name
+| where $__timeFilter(TimeGenerated)
 | summarize arg_max(TimeGenerated, gbVal) by tagOnly

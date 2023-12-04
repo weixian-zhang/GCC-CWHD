@@ -1581,7 +1581,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumcs01\")\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
+            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumcs01\") // change VM name\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -13608,6 +13608,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 45,
+  "version": 46,
   "weekStart": ""
 }
