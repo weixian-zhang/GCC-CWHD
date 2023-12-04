@@ -1042,7 +1042,7 @@
           "refId": "A"
         }
       ],
-      "title": "VM - vmuatizapcsdocumentumcs01",
+      "title": "VM - vmuatizapcsdocumentumcs01 (Linux)",
       "transparent": true,
       "type": "text"
     },
@@ -2307,7 +2307,7 @@
           "refId": "A"
         }
       ],
-      "title": "VM - vmuatizapcsdocumentumcs02",
+      "title": "VM - vmuatizapcsdocumentumcs02 (Linux",
       "transparent": true,
       "type": "text"
     },
@@ -3572,47 +3572,7 @@
           "refId": "A"
         }
       ],
-      "title": "VM - vmuatizapcsdocumentumis01",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "grafana-azure-monitor-datasource",
-        "uid": "azure-monitor-oob"
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 21,
-        "x": 0,
-        "y": 40
-      },
-      "id": 78,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
-        "mode": "html"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "azureMonitor": {
-            "allowedTimeGrainsMs": [],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "queryType": "Azure Monitor",
-          "refId": "A"
-        }
-      ],
-      "title": "VM - vmuatizdbdocumentumdb",
+      "title": "VM - vmuatizapcsdocumentumis01 (Windows)",
       "transparent": true,
       "type": "text"
     },
@@ -3679,7 +3639,1272 @@
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 42
+        "y": 40
+      },
+      "id": 108,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "Percentage CPU",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        },
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "dimensionFilters": [],
+            "metricName": "Available Memory Bytes",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "B",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "CPU% / Available Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 7,
+        "y": 40
+      },
+      "id": 109,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "Network In Total",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Network In",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 11,
+        "y": 40
+      },
+      "id": 110,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "Network Out Total",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Network Out",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 2,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 2
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 6,
+                "result": {
+                  "color": "green",
+                  "index": 2
+                },
+                "to": 10000000000000
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gbVal"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 127
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TimeGenerated"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 174
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Drive"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 154
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 15,
+        "y": 40
+      },
+      "id": 111,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumis01\")\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
+            ],
+            "resultFormat": "table"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Free Space",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "TimeGenerated": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "gbVal": "Free Space (GB)",
+              "tagOnly": "Drive"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 0,
+        "y": 47
+      },
+      "id": 112,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "Disk Read Bytes",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Disk Read",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 4,
+        "y": 47
+      },
+      "id": 113,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Total",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "Disk Write Bytes",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Disk Write",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 47
+      },
+      "id": 114,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "OS Disk Latency",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "OS Disk Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 47
+      },
+      "id": 115,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "microsoft.compute/virtualmachines",
+            "dimensionFilters": [],
+            "metricName": "Data Disk Latency",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Data Disk Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "swap/used"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "swap/free"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 16,
+        "y": 47
+      },
+      "id": 116,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "Azure.VM.Windows.GuestMetrics",
+            "dimensionFilters": [],
+            "metricName": "\\System\\Context Switches/sec",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023",
+                "resourceName": "vmuatizapcsdocumentumis01",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        },
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              60000,
+              300000,
+              900000,
+              1800000,
+              3600000,
+              21600000,
+              43200000,
+              86400000
+            ],
+            "customNamespace": "Azure.VM.Linux.GuestMetrics",
+            "dimensionFilters": [],
+            "metricName": "swap/free",
+            "metricNamespace": "microsoft.compute/virtualmachines",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Compute/virtualMachines",
+                "region": "southeastasia",
+                "resourceGroup": "CMT-20730023-1",
+                "resourceName": "vmuatizapcsdocumentumcs02",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "hide": false,
+          "queryType": "Azure Monitor",
+          "refId": "B",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Context Switches",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 21,
+        "x": 0,
+        "y": 54
+      },
+      "id": 78,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
+        "mode": "html"
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "title": "VM - vmuatizdbdocumentumdb (Linux",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 0,
+        "y": 56
       },
       "id": 77,
       "options": {
@@ -3836,7 +5061,7 @@
         "h": 7,
         "w": 4,
         "x": 7,
-        "y": 42
+        "y": 56
       },
       "id": 79,
       "options": {
@@ -3956,7 +5181,7 @@
         "h": 7,
         "w": 4,
         "x": 11,
-        "y": 42
+        "y": 56
       },
       "id": 80,
       "options": {
@@ -4130,7 +5355,7 @@
         "h": 7,
         "w": 6,
         "x": 15,
-        "y": 42
+        "y": 56
       },
       "id": 86,
       "options": {
@@ -4230,7 +5455,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4245,7 +5471,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 49
+        "y": 63
       },
       "id": 81,
       "options": {
@@ -4349,7 +5575,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4364,7 +5591,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 49
+        "y": 63
       },
       "id": 82,
       "options": {
@@ -4468,7 +5695,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -4479,7 +5707,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 49
+        "y": 63
       },
       "id": 97,
       "options": {
@@ -4583,7 +5811,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -4594,7 +5823,7 @@
         "h": 7,
         "w": 4,
         "x": 12,
-        "y": 49
+        "y": 63
       },
       "id": 83,
       "options": {
@@ -4699,7 +5928,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4741,7 +5971,7 @@
         "h": 7,
         "w": 5,
         "x": 16,
-        "y": 49
+        "y": 63
       },
       "id": 85,
       "options": {
@@ -4845,7 +6075,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 56
+        "y": 70
       },
       "id": 76,
       "options": {
@@ -4923,7 +6153,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4938,7 +6169,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 58
+        "y": 72
       },
       "id": 49,
       "options": {
@@ -5057,7 +6288,7 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 58
+        "y": 72
       },
       "id": 12,
       "options": {
@@ -5195,7 +6426,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -5206,7 +6438,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 58
+        "y": 72
       },
       "id": 36,
       "options": {
@@ -5356,7 +6588,7 @@
         "h": 5,
         "w": 11,
         "x": 12,
-        "y": 62
+        "y": 76
       },
       "id": 20,
       "options": {
@@ -5444,7 +6676,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 64
+        "y": 78
       },
       "id": 16,
       "options": {
@@ -5562,7 +6794,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 64
+        "y": 78
       },
       "id": 13,
       "options": {
@@ -5681,7 +6913,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 65
+        "y": 79
       },
       "id": 15,
       "options": {
@@ -5902,7 +7134,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 67
+        "y": 81
       },
       "id": 18,
       "options": {
@@ -5969,7 +7201,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 71
+        "y": 85
       },
       "id": 10,
       "options": {
@@ -6063,7 +7295,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 73
+        "y": 87
       },
       "id": 43,
       "options": {
@@ -6183,7 +7415,7 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 73
+        "y": 87
       },
       "id": 44,
       "options": {
@@ -6332,7 +7564,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 73
+        "y": 87
       },
       "id": 37,
       "options": {
@@ -6482,7 +7714,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 77
+        "y": 91
       },
       "id": 48,
       "options": {
@@ -6603,7 +7835,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 79
+        "y": 93
       },
       "id": 45,
       "options": {
@@ -6687,7 +7919,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 79
+        "y": 93
       },
       "id": 46,
       "options": {
@@ -6800,7 +8032,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 79
+        "y": 93
       },
       "id": 47,
       "options": {
@@ -7018,7 +8250,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 81
+        "y": 95
       },
       "id": 50,
       "options": {
@@ -7085,7 +8317,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 85
+        "y": 99
       },
       "id": 41,
       "options": {
@@ -7178,7 +8410,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 87
+        "y": 101
       },
       "id": 51,
       "options": {
@@ -7297,7 +8529,7 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 87
+        "y": 101
       },
       "id": 53,
       "options": {
@@ -7446,7 +8678,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 87
+        "y": 101
       },
       "id": 39,
       "options": {
@@ -7596,7 +8828,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 91
+        "y": 105
       },
       "id": 56,
       "options": {
@@ -7717,7 +8949,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 93
+        "y": 107
       },
       "id": 52,
       "options": {
@@ -7801,7 +9033,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 93
+        "y": 107
       },
       "id": 54,
       "options": {
@@ -7914,7 +9146,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 93
+        "y": 107
       },
       "id": 55,
       "options": {
@@ -8132,7 +9364,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 95
+        "y": 109
       },
       "id": 57,
       "options": {
@@ -8199,7 +9431,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 99
+        "y": 113
       },
       "id": 42,
       "options": {
@@ -8292,7 +9524,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 101
+        "y": 115
       },
       "id": 58,
       "options": {
@@ -8411,7 +9643,7 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 101
+        "y": 115
       },
       "id": 60,
       "options": {
@@ -8560,7 +9792,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 101
+        "y": 115
       },
       "id": 40,
       "options": {
@@ -8711,7 +9943,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 105
+        "y": 119
       },
       "id": 63,
       "options": {
@@ -8832,7 +10064,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 107
+        "y": 121
       },
       "id": 59,
       "options": {
@@ -8916,7 +10148,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 107
+        "y": 121
       },
       "id": 61,
       "options": {
@@ -9029,7 +10261,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 107
+        "y": 121
       },
       "id": 62,
       "options": {
@@ -9247,7 +10479,7 @@
         "h": 4,
         "w": 11,
         "x": 12,
-        "y": 109
+        "y": 123
       },
       "id": 64,
       "options": {
@@ -9314,7 +10546,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 113
+        "y": 127
       },
       "id": 14,
       "options": {
@@ -9407,7 +10639,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 115
+        "y": 129
       },
       "id": 65,
       "options": {
@@ -9526,7 +10758,7 @@
         "h": 5,
         "w": 5,
         "x": 4,
-        "y": 115
+        "y": 129
       },
       "id": 72,
       "options": {
@@ -9641,7 +10873,7 @@
         "h": 5,
         "w": 6,
         "x": 9,
-        "y": 115
+        "y": 129
       },
       "id": 69,
       "options": {
@@ -9757,7 +10989,7 @@
         "h": 5,
         "w": 6,
         "x": 15,
-        "y": 115
+        "y": 129
       },
       "id": 70,
       "options": {
@@ -9873,7 +11105,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 120
+        "y": 134
       },
       "id": 67,
       "options": {
@@ -9988,7 +11220,7 @@
         "h": 5,
         "w": 5,
         "x": 4,
-        "y": 120
+        "y": 134
       },
       "id": 71,
       "options": {
@@ -10103,7 +11335,7 @@
         "h": 5,
         "w": 6,
         "x": 9,
-        "y": 120
+        "y": 134
       },
       "id": 74,
       "options": {
@@ -10218,7 +11450,7 @@
         "h": 5,
         "w": 6,
         "x": 15,
-        "y": 120
+        "y": 134
       },
       "id": 68,
       "options": {
@@ -10283,7 +11515,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 125
+        "y": 139
       },
       "id": 11,
       "options": {
@@ -10378,7 +11610,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 127
+        "y": 141
       },
       "id": 7,
       "options": {
@@ -10477,7 +11709,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 127
+        "y": 141
       },
       "id": 17,
       "options": {
@@ -10599,7 +11831,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 127
+        "y": 141
       },
       "id": 21,
       "options": {
@@ -10722,7 +11954,7 @@
         "h": 6,
         "w": 4,
         "x": 12,
-        "y": 127
+        "y": 141
       },
       "id": 22,
       "options": {
@@ -10894,7 +12126,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 133
+        "y": 147
       },
       "id": 8,
       "options": {
@@ -10962,7 +12194,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 139
+        "y": 153
       },
       "id": 75,
       "options": {
@@ -11008,6 +12240,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 38,
+  "version": 40,
   "weekStart": ""
 }
