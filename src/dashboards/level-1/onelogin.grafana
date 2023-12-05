@@ -33,6 +33,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "oneloginuat (App Service)",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -55,8 +56,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
+        "h": 2,
+        "w": 5,
         "x": 0,
         "y": 0
       },
@@ -70,13 +71,13 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^availabilityState$/",
+          "fields": "",
           "limit": 2,
           "values": true
         },
         "text": {
           "titleSize": 30,
-          "valueSize": 25
+          "valueSize": 18
         },
         "textMode": "name"
       },
@@ -105,7 +106,6 @@
           "urlPath": ""
         }
       ],
-      "title": "App Service - oneloginuat",
       "transparent": true,
       "type": "stat"
     },
@@ -120,6 +120,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "kv-izcs-uatiz-kscmgmt (AKV)",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -142,9 +143,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 4,
+        "h": 2,
+        "w": 5,
+        "x": 5,
         "y": 0
       },
       "id": 6,
@@ -157,12 +158,12 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^availabilityState$/",
+          "fields": "",
           "values": true
         },
         "text": {
           "titleSize": 30,
-          "valueSize": 25
+          "valueSize": 18
         },
         "textMode": "name"
       },
@@ -194,7 +195,6 @@
           "urlPath": ""
         }
       ],
-      "title": "AKV - kv-izcs-uatiz-kscmgmt",
       "transparent": true,
       "type": "stat"
     },
@@ -209,6 +209,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "apim-intranetcs-uatiz-appcommon (APIM))",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -231,10 +232,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 5,
-        "x": 8,
-        "y": 0
+        "h": 2,
+        "w": 10,
+        "x": 0,
+        "y": 2
       },
       "id": 4,
       "links": [
@@ -253,12 +254,12 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^availabilityState$/",
+          "fields": "",
           "values": true
         },
         "text": {
           "titleSize": 30,
-          "valueSize": 25
+          "valueSize": 18
         },
         "textMode": "name"
       },
@@ -290,7 +291,6 @@
           "urlPath": ""
         }
       ],
-      "title": "APIM - apim-intranetcs-uatiz-appcommon",
       "transparent": true,
       "type": "stat"
     },
@@ -303,7 +303,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "id": 10,
       "options": {
@@ -398,7 +398,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 9,
       "options": {
@@ -519,7 +519,7 @@
         "h": 6,
         "w": 8,
         "x": 4,
-        "y": 5
+        "y": 6
       },
       "id": 12,
       "options": {
@@ -669,7 +669,7 @@
         "h": 4,
         "w": 10,
         "x": 12,
-        "y": 5
+        "y": 6
       },
       "id": 19,
       "options": {
@@ -820,7 +820,7 @@
         "h": 5,
         "w": 10,
         "x": 12,
-        "y": 9
+        "y": 10
       },
       "id": 20,
       "options": {
@@ -942,7 +942,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 11
+        "y": 12
       },
       "id": 15,
       "options": {
@@ -1033,7 +1033,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 11
+        "y": 12
       },
       "id": 16,
       "options": {
@@ -1153,7 +1153,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 11
+        "y": 12
       },
       "id": 13,
       "options": {
@@ -1372,7 +1372,7 @@
         "h": 4,
         "w": 10,
         "x": 12,
-        "y": 14
+        "y": 15
       },
       "id": 18,
       "options": {
@@ -1439,7 +1439,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 11,
       "links": [
@@ -1526,8 +1526,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1542,7 +1541,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 7,
       "options": {
@@ -1629,8 +1628,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1642,7 +1640,7 @@
         "h": 6,
         "w": 4,
         "x": 4,
-        "y": 20
+        "y": 21
       },
       "id": 17,
       "options": {
@@ -1752,8 +1750,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1765,7 +1762,7 @@
         "h": 6,
         "w": 4,
         "x": 8,
-        "y": 20
+        "y": 21
       },
       "id": 21,
       "options": {
@@ -1876,8 +1873,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1889,7 +1885,7 @@
         "h": 6,
         "w": 4,
         "x": 12,
-        "y": 20
+        "y": 21
       },
       "id": 22,
       "options": {
@@ -1973,8 +1969,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2062,7 +2057,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 26
+        "y": 27
       },
       "id": 8,
       "options": {
@@ -2130,7 +2125,7 @@
         "h": 2,
         "w": 21,
         "x": 0,
-        "y": 32
+        "y": 33
       },
       "id": 14,
       "options": {
@@ -2208,8 +2203,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2224,7 +2218,7 @@
         "h": 6,
         "w": 4,
         "x": 0,
-        "y": 34
+        "y": 35
       },
       "id": 23,
       "options": {
@@ -2328,8 +2322,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2344,7 +2337,7 @@
         "h": 6,
         "w": 9,
         "x": 4,
-        "y": 34
+        "y": 35
       },
       "id": 26,
       "options": {
@@ -2456,8 +2449,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               }
             ]
           }
@@ -2468,7 +2460,7 @@
         "h": 6,
         "w": 8,
         "x": 13,
-        "y": 34
+        "y": 35
       },
       "id": 25,
       "options": {
@@ -2579,8 +2571,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2595,7 +2586,7 @@
         "h": 5,
         "w": 7,
         "x": 0,
-        "y": 40
+        "y": 41
       },
       "id": 24,
       "options": {
@@ -2666,6 +2657,6 @@
   "timezone": "",
   "title": "Level 1 - OneLogin",
   "uid": "a7f3ea2c-0a06-498e-a4e5-7d609a19a4e2",
-  "version": 51,
+  "version": 53,
   "weekStart": ""
 }

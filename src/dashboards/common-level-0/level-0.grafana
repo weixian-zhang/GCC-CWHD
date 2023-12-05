@@ -33,6 +33,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "OneLogin",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -55,8 +56,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 24,
+        "h": 4,
+        "w": 6,
         "x": 0,
         "y": 0
       },
@@ -69,15 +70,15 @@
       ],
       "options": {
         "colorMode": "background_solid",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^overallHealth$/",
-          "values": true
+          "fields": "",
+          "values": false
         },
         "text": {
           "titleSize": 30,
@@ -111,7 +112,16 @@
           "urlPath": ""
         }
       ],
-      "title": "OneLogin Availability",
+      "title": "OneLogin",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.Available*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
       "transparent": true,
       "type": "stat"
     },
@@ -126,6 +136,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "Documentum",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -148,10 +159,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 9
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 0
       },
       "id": 4,
       "links": [
@@ -169,7 +180,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^overallHealth$/",
+          "fields": "",
           "values": true
         },
         "text": {
@@ -204,7 +215,7 @@
           "urlPath": ""
         }
       ],
-      "title": "Documentum Availability",
+      "title": "Documentum",
       "transparent": true,
       "type": "stat"
     }
@@ -223,6 +234,6 @@
   "timezone": "",
   "title": "Level 0",
   "uid": "aa675086-7b24-4d29-a4eb-7d160638922b",
-  "version": 18,
+  "version": 21,
   "weekStart": ""
 }
