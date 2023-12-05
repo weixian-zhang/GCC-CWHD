@@ -22,5 +22,12 @@ Resource Health Retriever Function calls [Resource Health API](https://learn.mic
 
 ### Level 1 - Documentum  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8824791f-0f29-406a-952a-7ec996b0af1b)
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8824791f-0f29-406a-952a-7ec996b0af1b)  
+
+### Level1 - Azure API Management Dashboard, 3rd-Party
+
+Dashboard courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
+
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/35b24813-7335-42ea-b43d-9ff68a718be4)
+
 
