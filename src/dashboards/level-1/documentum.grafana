@@ -511,6 +511,12 @@
         "y": 2
       },
       "id": 32,
+      "links": [
+        {
+          "title": "APIM Dashboard",
+          "url": "https://uat-azmanagedgrafana-cjagdbh9d2hufzch.sing.grafana.azure.com/d/Tv25QC3nk/chwd-azure-api-management?orgId=1&var-ds=azure-monitor-oob&var-sub=404cdea1-452e-4dd3-b9e7-cba774caa58a&var-rg=rg-intranetcs-uatiz-appcommon&var-ns_appinsights=microsoft.insights%2Fcomponents%2Fappi-hris-intranetcsu-uatizappcs&var-ns_logs=Microsoft.OperationalInsights%2Fworkspaces%2Flta0001-azr-183-intranetcsu-default&var-resource_apim=apim-intranetcs-uatiz-appcommon&var-ns_apim=Microsoft.ApiManagement%2Fservice&var-resource_appinsights=appi-intranetcs-uatizappcs&var-resource_logs=129f26eb-9f32-4cd4-b6a7-74cf5e628499-dashboard&from=1699167271360&to=1701759271360"
+        }
+      ],
       "options": {
         "colorMode": "background_solid",
         "graphMode": "area",
@@ -11490,6 +11496,12 @@
         "y": 139
       },
       "id": 11,
+      "links": [
+        {
+          "title": "APIM Dashboard",
+          "url": "https://uat-azmanagedgrafana-cjagdbh9d2hufzch.sing.grafana.azure.com/d/Tv25QC3nk/chwd-azure-api-management?orgId=1&var-ds=azure-monitor-oob&var-sub=404cdea1-452e-4dd3-b9e7-cba774caa58a&var-rg=rg-intranetcs-uatiz-appcommon&var-ns_appinsights=microsoft.insights%2Fcomponents%2Fappi-hris-intranetcsu-uatizappcs&var-ns_logs=Microsoft.OperationalInsights%2Fworkspaces%2Flta0001-azr-183-intranetcsu-default&var-resource_apim=apim-intranetcs-uatiz-appcommon&var-ns_apim=Microsoft.ApiManagement%2Fservice&var-resource_appinsights=appi-intranetcs-uatizappcs&var-resource_logs=129f26eb-9f32-4cd4-b6a7-74cf5e628499-dashboard&from=1699167271360&to=1701759271360"
+        }
+      ],
       "options": {
         "code": {
           "language": "plaintext",
@@ -13524,6 +13536,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 48,
+  "version": 49,
   "weekStart": ""
 }
