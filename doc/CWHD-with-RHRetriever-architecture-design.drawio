@@ -1,0 +1,55 @@
+<mxfile host="Electron" modified="2023-12-04T13:43:55.879Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="HEOwt_Z855e7vliCppBv" version="22.1.2" type="device">
+  <diagram name="Page-1" id="6zI-wv7lg0STu66uEUuO">
+    <mxGraphModel dx="1004" dy="1845" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="0" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="-m4xShKr6746js8uL_8x-3" value="Azure&lt;br&gt;Subscription" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Key.svg;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;" parent="1" vertex="1">
+          <mxGeometry x="223.4" y="-600" width="31" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-10" value="Azure&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Resource Health&lt;/span&gt;&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;API&lt;/span&gt;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.health_monitoring;" parent="1" vertex="1">
+          <mxGeometry x="540" y="-449.5" width="40" height="33" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-12" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="-m4xShKr6746js8uL_8x-2" target="-m4xShKr6746js8uL_8x-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-13" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="180" y="-473" width="74.4" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-2" value="managed&lt;br&gt;identity" style="image;sketch=0;aspect=fixed;html=1;points=[];align=right;fontSize=12;image=img/lib/mscae/Managed_Identities.svg;verticalAlign=middle;labelPosition=left;verticalLabelPosition=middle;" parent="-m4xShKr6746js8uL_8x-13" vertex="1">
+          <mxGeometry x="44" width="30.4" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-1" value="Resource Health Retriever" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Functions.svg;" parent="-m4xShKr6746js8uL_8x-13" vertex="1">
+          <mxGeometry y="34" width="50" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-14" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.183;entryY=0.99;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-m4xShKr6746js8uL_8x-1" target="-m4xShKr6746js8uL_8x-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-15" value="get resource health&lt;br&gt;HTTP POST&lt;br&gt;[&lt;br&gt;{&lt;br&gt;&quot;resourceId: &quot;&quot;,&lt;br&gt;&quot;subscriptionId: &quot;&quot;&lt;br&gt;}&lt;br&gt;]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="130" y="-290" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-17" value="Azure&lt;br&gt;Managed Grafana" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/other/Grafana.svg;" parent="1" vertex="1">
+          <mxGeometry x="180" y="-190" width="51.52" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-18" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.547;entryY=1.138;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-m4xShKr6746js8uL_8x-17" target="-m4xShKr6746js8uL_8x-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-20" value="HTTP GET" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="360" y="-410" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-22" value="function-key&lt;br&gt;authn" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="210" y="-230" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-23" value="Azure&lt;br&gt;Monitor" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Monitor.svg;" parent="1" vertex="1">
+          <mxGeometry x="520" y="-210" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-24" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.067;entryY=0.813;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-m4xShKr6746js8uL_8x-17" target="-m4xShKr6746js8uL_8x-23" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-25" value="Grafana Azure Monitor plugin -&amp;nbsp;&lt;br&gt;query logs and metrics" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="320" y="-150" width="110" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
