@@ -13,16 +13,19 @@ Resource Health Retriever Function calls [Resource Health API](https://learn.mic
 
 ### Level 0 Dashboard  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/79eacfc8-dce5-49ff-8eaa-27425fb9c909)  
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c194b280-a742-440c-8017-7837c322a30e)
+
 
 ### Level 1 - OneLogin  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/b05f44f9-41a0-42ec-a10e-c0623a8120e4)
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/d8fb3ed6-659b-4c81-ace9-970fa4f99695)
+
 
 
 ### Level 1 - Documentum  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8824791f-0f29-406a-952a-7ec996b0af1b)  
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/5ea45b3c-b39b-41f6-94a9-2c446494f6e7)
+
 
 ### Level1 - Azure API Management Dashboard, 3rd-Party
 
