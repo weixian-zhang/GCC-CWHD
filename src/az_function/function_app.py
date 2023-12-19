@@ -1,10 +1,11 @@
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
-import os
+from healthstatus import HealthStatusClient, HealthReport
 import logging
 from datetime import datetime
 import jsons
+from config import AppConfig
 
 #override Azure's root logger to be able to log to console
 logger = logging.getLogger('akshay')
@@ -12,6 +13,10 @@ logger.setLevel(logging.DEBUG)
 sh = logging.StreamHandler()
 sh.setLevel(logging.DEBUG)
 logger.addHandler(sh)
+
+# load environment variables
+appconfig = AppConfig(logger)
+appconfig.load_from_envar()
 
 class ResourceHealthAPIResult:
 
@@ -45,7 +50,7 @@ class ResourceHealthAPIResult:
 
 
 class RHResult:
-    def __init__(self, states: list[ResourceHealthAPIResult]) -> None:
+    def __init__(self, states: list[HealthReport]) -> None: #list[ResourceHealthAPIResult]) -> None:
 
         # overallHealth
         # Available = 1, Unavailable = 0, Partial = 2
@@ -54,7 +59,7 @@ class RHResult:
         self.overallHealth = 1
         self.overallSummary = ''
 
-        self.states: list[ResourceHealthAPIResult] = states
+        self.states: list[HealthReport] = states #list[ResourceHealthAPIResult] = states
 
         self.set_overall_state()
 
@@ -93,19 +98,23 @@ def get_resource_health_states(resources: list[str]) -> RHResult:
 
         logger.debug(f'retrieving availability status for resource {rscId}')
 
-        client = create_rh_client(subId)
+        client = HealthStatusClient(logger, appconfig)
+        healthReport = client.get_health(resourceId=rscId, subscriptionId=subId)
 
-        asResult = client.availability_statuses.get_by_resource(resource_uri=rscId)
+        # client = create_rh_client(subId)
+
+        # asResult = client.availability_statuses.get_by_resource(resource_uri=rscId)
 
         logger.debug(f'availability status retrieved successfully for resource {rscId}')
 
-        apir = ResourceHealthAPIResult(location=asResult.location,
-                                       availabilityState=asResult.properties.availability_state,
-                                       summary=asResult.properties.summary,
-                                       reportedTime=asResult.properties.reported_time,
-                                       stateLastChangeTime=asResult.properties.occured_time)
+        # apir = ResourceHealthAPIResult(location=asResult.location,
+        #                                availabilityState=asResult.properties.availability_state,
+        #                                summary=asResult.properties.summary,
+        #                                reportedTime=asResult.properties.reported_time,
+        #                                stateLastChangeTime=asResult.properties.occured_time)
         
-        states.append(apir)
+        states.append(healthReport)
+        # states.append(apir)
 
     return RHResult(states)
 
@@ -118,15 +127,22 @@ app = func.FunctionApp()
 @app.route(route="RHRetriever", auth_level=func.AuthLevel.FUNCTION)
 def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
 
-    '''
-    requires 4 environment variables:
+    """
+    azure.identity.DefaultAzureCredential in Azure uses managed identity.
+    on local machine, requires 4 environment variables:
         AZURE_SUBSCRIPTION_ID,
         AZURE_CLIENT_ID,
         AZURE_CLIENT_SECRET,
         AZURE_TENANT_ID,
-    '''
+
+    environment variables:
+        WorkspaceID
+        AppServiceAppInsightStandardTestMap
+    """
     
     try:
+        
+
         logger.debug('request received')
 
         req_body = req.get_json()
