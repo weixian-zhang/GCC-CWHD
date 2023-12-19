@@ -39,12 +39,27 @@ class HealthReport:
             self.availabilityState = 2
             self.displayText = 'Unknown'
 
-class HealthStatusStrategy(ABC):
+
+
+
+# strategy design pattern
+class HealthStatusRetriever(ABC):
     @abstractclassmethod
     def get_health_status(self, resourceId: str):
         pass
 
-class AppServiceHealthStatus(HealthStatusStrategy):
+# decorator design pattern
+# for future enhancement to health status influence by additional metrics and log result
+# class HealthStatusInfluencer(HealthStatusRetriever):
+#     def __init__(self, HealthStatusRetriever) -> None:
+#         self.HealthStatusRetriever = HealthStatusRetriever
+
+#     @abstractclassmethod
+#     def get_health_status(self, resourceId: str):
+#         pass
+
+
+class AppServiceHealthStatus(HealthStatusRetriever):
 
     def __init__(self, logger: Logger, appconfig: AppConfig) -> None:
         self.logger = logger
@@ -92,13 +107,13 @@ class AppServiceHealthStatus(HealthStatusStrategy):
         except Exception as e:
             self.logger.debug(e)
 
-# for future enhancements
-class VMHealthStatus:
-    def __init__(self, logger: Logger) -> None:
-        self.logger = logger
+# for future enhancement
+# class VMHealthStatus:
+#     def __init__(self, logger: Logger) -> None:
+#         self.logger = logger
 
-    def get_health_status(self, resourceId: str):
-        pass
+#     def get_health_status(self, resourceId: str):
+#         pass
 
 
 class GeneralHealthStatus:
