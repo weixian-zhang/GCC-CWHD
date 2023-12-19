@@ -2,8 +2,10 @@
 # The Python Worker is managed by the Azure Functions platform
 # Manually managing azure-functions-worker may cause unexpected issues
 
+pandas
 azure-functions
 jsons
 azure.identity
 azure.mgmt.resourcehealth
 pytest
+azure-monitor-query
