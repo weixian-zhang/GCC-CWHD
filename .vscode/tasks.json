@@ -34,7 +34,7 @@
 			"type": "shell",
 			"command": "az functionapp deployment source config-zip -g ${config:resourceGroup} -n ${config:funcNameToDeploy} --build-remote --src 'func-app.zip'",
 			"options": {
-				"cwd": "${workspaceFolder}/src\\az_function"
+				"cwd": "${workspaceFolder}/deploy"
 			}
 		}
 	]
