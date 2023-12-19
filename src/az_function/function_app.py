@@ -110,7 +110,7 @@ def get_resource_health_states(resources: list[str]) -> RHResult:
     return RHResult(states)
 
 
-    
+
 
 
 app = func.FunctionApp()
