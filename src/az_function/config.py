@@ -7,14 +7,23 @@ class AppConfig:
         self.logger = logger
         self.workspaceID = ''
         self.appServiceAppInsightStandardTestMap = {}
+        self.loaded = False
 
     def load_from_envar(self):
-        try:
-            
-            self.workspaceID = os.environ.get('WorkspaceID')
-            map = os.environ.get('AppServiceAppInsightStandardTestMap')
-            self.appServiceAppInsightStandardTestMap = json.loads(map)
-            
-        except Exception as e:
-            self.logger.debug(e)
+        if self.loaded:
+            return
+        
+        self.workspaceID = os.environ.get('WorkspaceID')
+        map = os.environ.get('AppServiceAppInsightStandardTestMap')
+        mapJson = json.loads(map)
+
+        for k in mapJson.keys():
+            keyCleansed = k if k[0] != '/' else ''.join(k[1:])
+            self.appServiceAppInsightStandardTestMap[keyCleansed] = mapJson[k]
+
+        self.loaded = True
+
+    def get_standardTestName_by_appsvc_rscId(self, appsvcRscId: str):
+        appsvcRscId = appsvcRscId if appsvcRscId[0] != '/' else ''.join(appsvcRscId[1:])
+        return self.appServiceAppInsightStandardTestMap[appsvcRscId]
         

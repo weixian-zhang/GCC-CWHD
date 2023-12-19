@@ -16,7 +16,6 @@ logger.addHandler(sh)
 
 # load environment variables
 appconfig = AppConfig(logger)
-appconfig.load_from_envar()
 
 class ResourceHealthAPIResult:
 
@@ -99,26 +98,14 @@ def get_resource_health_states(resources: list[str]) -> RHResult:
         logger.debug(f'retrieving availability status for resource {rscId}')
 
         client = HealthStatusClient(logger, appconfig)
+
         healthReport = client.get_health(resourceId=rscId, subscriptionId=subId)
 
-        # client = create_rh_client(subId)
-
-        # asResult = client.availability_statuses.get_by_resource(resource_uri=rscId)
-
         logger.debug(f'availability status retrieved successfully for resource {rscId}')
-
-        # apir = ResourceHealthAPIResult(location=asResult.location,
-        #                                availabilityState=asResult.properties.availability_state,
-        #                                summary=asResult.properties.summary,
-        #                                reportedTime=asResult.properties.reported_time,
-        #                                stateLastChangeTime=asResult.properties.occured_time)
         
         states.append(healthReport)
-        # states.append(apir)
 
     return RHResult(states)
-
-
 
 
 
@@ -145,6 +132,9 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
 
         logger.debug('request received')
 
+        # load env vars
+        appconfig.load_from_envar()
+
         req_body = req.get_json()
 
         resourceIds = get_resource_ids(req_body)
@@ -162,5 +152,5 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
                                 status_code=200)
 
     except Exception as e:
-        logger.debug(f'error occured: {str(e)}')
+        logger.error(f'error occured: {str(e)}')
         return func.HttpResponse(str(e), status_code=500)

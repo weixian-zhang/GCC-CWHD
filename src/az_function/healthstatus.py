@@ -2,10 +2,12 @@ from enum import Enum
 from abc import ABC, abstractclassmethod
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus, LogsQueryResult
 from logging import Logger
 from config import AppConfig
 import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta, timezone
 
 class HealthReport:
     """
@@ -25,9 +27,12 @@ class HealthReport:
         self.location = location
         self.availabilityState = availabilityState
         self.summary = summary
-        self.reportedTime = (reportedTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
-        self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
+        self.reportedTime = (reportedTime if not None else datetime.now())
+        self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now())
         self.displayText = ''
+        # self.reportedTime = (reportedTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
+        # self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
+        # self.displayText = ''
 
         if availabilityState == 'Available':
             self.availabilityState = 1
@@ -48,6 +53,19 @@ class HealthStatusRetriever(ABC):
     def get_health_status(self, resourceId: str):
         pass
 
+    def query_monitor_log(self, query, timeSpan: timedelta) -> LogsQueryResult:
+
+        credential = DefaultAzureCredential()
+        client = LogsQueryClient(credential)
+
+        response = client.query_workspace(
+            workspace_id= self.appconfig.workspaceID,
+            query=query,
+            timespan=timeSpan
+        )
+
+        return response
+
 # decorator design pattern
 # for future enhancement to health status influence by additional metrics and log result
 # class HealthStatusInfluencer(HealthStatusRetriever):
@@ -60,6 +78,10 @@ class HealthStatusRetriever(ABC):
 
 
 class AppServiceHealthStatus(HealthStatusRetriever):
+    """
+    sample usage of LogQueryClient can be  found in the link
+    https://github.com/Azure/azure-sdk-for-python/tree/azure-monitor-query_1.2.0/sdk/monitor/azure-monitor-query/samples
+    """
 
     def __init__(self, logger: Logger, appconfig: AppConfig) -> None:
         self.logger = logger
@@ -67,45 +89,45 @@ class AppServiceHealthStatus(HealthStatusRetriever):
 
     def get_health_status(self, resourceId: str):
 
-        try:
+        standardTestName = self.appconfig.get_standardTestName_by_appsvc_rscId(resourceId)
 
-            standardTestName = self.appconfig.appServiceAppInsightStandardTestMap[resourceId]
+        query = f"""AppAvailabilityResults 
+        | where Name == '{standardTestName}' 
+        | where TimeGenerated >= ago(2h) 
+        | extend availabilityState = iif(Success == true, 'Available', 'Unavailable') 
+        | order by TimeGenerated desc 
+        | take 1 
+        | project ['reportedTime']=TimeGenerated, ['location']=Location, ['Name']=Name, availabilityState"""
 
-            query = f"""AppAvailabilityResults
-                    | where Name == '{standardTestName}'
-                    | extend availabilityState = iif(Success == true, 'Available', 'Unavailable')
-                    | order by TimeGenerated desc 
-                    | take 1
-                    | project ['reportedTime']=TimeGenerated, ['location']=Location, ['Name']=Name, availabilityState
-                    """
+        #timeSpan does not matter as time filter is set in query
+        response = super().query_monitor_log(query, timeSpan=timedelta(hours=2))
+        
+        if response.status == LogsQueryStatus.PARTIAL:
+            error = response.partial_error
+            data = response.partial_data
+            self.logger.error(error)
+        elif response.status == LogsQueryStatus.SUCCESS:
+            data = response.tables
 
-            credential = DefaultAzureCredential()
-            client = LogsQueryClient(credential)
+        if not data or not data[0].rows:
+            self.logger.debug(f'no result found from log query AppServiceHealthStatus for resource Id: {resourceId}')
+            return HealthReport(location= '',
+                        availabilityState= 'Unavailable',
+                        reportedTime=datetime.now())
+        
+        # parse query result
+        table = data[0]
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        singleRow = df.head(1)
 
-            response = client.query_workspace(
-                workspace_id= self.appconfig.workspaceID,
-                query=query
-            )
+        hr = HealthReport(location= singleRow['location'].values[0],
+                        availabilityState= singleRow['availabilityState'].values[0],
+                        reportedTime= pd.to_datetime(singleRow['reportedTime'].values[0])
+        )
+        
+        return hr
 
-            if response.status == LogsQueryStatus.PARTIAL:
-                error = response.partial_error
-                data = response.partial_data
-                self.logger.debug(error)
-            elif response.status == LogsQueryStatus.SUCCESS:
-                data = response.tables
 
-            #for table in data:
-            df = pd.DataFrame(data)
-            singleRow = df.head(1)
-
-            hr = HealthReport(location= singleRow['location'],
-                            availabilityState= singleRow['availabilityState'],
-                            reportedTime=singleRow['reportedTime'])
-            
-            return hr
-
-        except Exception as e:
-            self.logger.debug(e)
 
 # for future enhancement
 # class VMHealthStatus:
@@ -159,16 +181,17 @@ class HealthStatusClient:
         rscType =  self._get_resource_type(resourceId)
         
         if rscType == AzResourceType.General:
-            grc = GeneralHealthStatus()
+            grc = GeneralHealthStatus(self.logger)
             hr = grc.get_health_status(resourceId=resourceId, subscriptionId=subscriptionId)
             return hr
         
         if rscType == AzResourceType.AppService:
-            pass
-            return
+            client = AppServiceHealthStatus(self.logger, self.appconfig)
+            hr = client.get_health_status(resourceId=resourceId)
+            return hr
         
-        if rscType == AzResourceType.VM:
-            pass
+        # if rscType == AzResourceType.VM:
+        #     pass
 
 
     def _get_resource_type(self, resourceId: str):
@@ -177,18 +200,17 @@ class HealthStatusClient:
             return
         
         rscIdSegments = resourceId.split('/')
+        namespace = '/'.join(rscIdSegments[-3:-1])
 
-        # app service
-        if rscIdSegments[-3:-1] == 'Microsoft.Web/sites':
+        if namespace == 'Microsoft.Web/sites':  # app service
             return AzResourceType.AppService
-        # elif rscIdSegments[-3:-1] == 'Microsoft.Compute/virtualMachines':
-        #     return AzResourceType.VM
         else:
             return AzResourceType.General
+        
+        # elif namespace == 'Microsoft.Compute/virtualMachines':
+        #     return AzResourceType.VM
+        
 
-
-#         /subscriptions/ee611083-4581-4ba1-8116-a502d4539206/resourceGroups/rg-azworkbench-dev/providers/Microsoft.Web/sites/portal-azworkbench-dev
-# /subscriptions/ee611083-4581-4ba1-8116-a502d4539206/resourceGroups/rggccshol/providers/Microsoft.Compute/virtualMachines/addns
 
         
 
