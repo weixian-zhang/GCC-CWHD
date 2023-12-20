@@ -1,14 +1,24 @@
 # GCC-CWHD  
 
-<p>CWHD currently monitors 2 Apps OneLogin and Documentum.  
- Level 0 dashboard is a simple dashboard showing the "overall" Azure resource availability status of each App.</p>
-<p>The "overall" available status depends on the dependent Azure resources that each App is using.  </p>
-For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 resourcecs' availability status is Available.  
+CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps OneLogin and Documentum.  
+The dashboards are organized in levels depicting the "depth" of monitoring. 
+  * Level 0 dashboard shows the "overall" Azure resource availability status of each App.  
+    The overall available status depends on the dependent Azure resources that each web app is using.  
+    For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
+    resourcecs' availability status is Available.
+    
+  * Level 1 dashboard are web app specific, it displays the health and metrics of specific Azure resources used by web app
+
+<br />
 
 ### Architecture  
 
-Resource Health Retriever Function can retrieve health status from different sources depending on different resource types.  
-Currently, function supports the following:
+<img width="486" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/11aee8f4-2c0b-42cc-8e75-547c8576a642">  
+
+
+CWHD uses a variety of Azure components including a custom Function named Resource Health Retriever, acting as health status aggregator that retrieves and aggregates health statuses from different data sources depending on different resource types.  
+
+In the health status aspect of CWHD, Resource Health Retriever function supports the following:
   * "General" resource types (all non App Service types): get their health status from [Azure Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) via [Resource Health Rest API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01).
     
   * App Service: in the case of App Service, function performs [log query](https://devblogs.microsoft.com/azure-sdk/announcing-the-new-azure-monitor-query-client-libraries/) from Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available", this is behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
@@ -16,13 +26,13 @@ Currently, function supports the following:
   * VM (future enhancement): VM health status from [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) can be further influenced by addition metrics like CPU and Memory when these metrics exceeds configured threshold.  
     (This design can possible allow other resource types' health statuses to also be influenced by metrics and even addition log queries)
 
-<img width="486" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/11aee8f4-2c0b-42cc-8e75-547c8576a642">
-
 
 
 ### Level 0 Dashboard  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/13bd3524-f694-4c39-b1df-4b43244a0cbd)
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/13bd3524-f694-4c39-b1df-4b43244a0cbd)  
+
+If there is any one Azure resource used by OneLogin or Documentum has an "Unavailable" status, the overal health status at Level 0 will be Unavailable.
 
 
 ### Level 1 - OneLogin  
