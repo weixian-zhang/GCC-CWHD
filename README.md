@@ -32,7 +32,7 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
 
 ![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/13bd3524-f694-4c39-b1df-4b43244a0cbd)  
 
-If there is any one Azure resource used by OneLogin or Documentum has an "Unavailable" status, the overal health status at Level 0 will be Unavailable.
+If there is any one of the Azure resource used by OneLogin or Documentum that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
 
 
 ### Level 1 - OneLogin  
