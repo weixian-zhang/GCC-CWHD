@@ -6,9 +6,16 @@ For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and 
 
 ### Architecture  
 
-Resource Health Retriever Function calls [Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses/get-by-resource?view=rest-resourcehealth-2022-10-01&tabs=HTTP) to retrieve resource health by resource ID as parameter
+Resource Health Retriever Function can retrieve health status from different sources depending on different resource types.  
+Currently, function supports the following:
+  * "General" resource types (all non App Service): get health status from [Azure Resource API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses/get-by-resource?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
+    
+  * App Service: log query of Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available" as this is behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
+    
+  * VM (future enhancement): VM health status signal from [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) can be further influenced by addition metrics like CPU and Memory when these metrics exceeds configured threshold.
 
-<img width="373" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/9b18b88e-9c7b-4b02-954b-f614fce6b340">
+<img width="486" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/11aee8f4-2c0b-42cc-8e75-547c8576a642">
+
 
 
 ### Level 0 Dashboard  
