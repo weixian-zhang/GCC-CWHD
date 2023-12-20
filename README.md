@@ -1,6 +1,7 @@
 # GCC-CWHD  
 
-<p>CWHD currently monitors 2 Apps OneLogin and Documentum. Level 0 dashboard is a simple dashboard showing the "overall" Azure resource availability status of each App.</p>
+<p>CWHD currently monitors 2 Apps OneLogin and Documentum.  
+ Level 0 dashboard is a simple dashboard showing the "overall" Azure resource availability status of each App.</p>
 <p>The "overall" available status depends on the dependent Azure resources that each App is using.  </p>
 For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 resourcecs' availability status is Available.  
 
