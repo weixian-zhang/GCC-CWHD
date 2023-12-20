@@ -13,7 +13,7 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 
 ### Architecture  
 
-<img width="486" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/11aee8f4-2c0b-42cc-8e75-547c8576a642">  
+<img width="550" height="650" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/11aee8f4-2c0b-42cc-8e75-547c8576a642">  
 
 
 CWHD uses a variety of Azure components including a custom Function named Resource Health Retriever, acting as health status aggregator that retrieves and aggregates health statuses from different data sources depending on different resource types.  
