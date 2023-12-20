@@ -8,9 +8,9 @@ For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and 
 
 Resource Health Retriever Function can retrieve health status from different sources depending on different resource types.  
 Currently, function supports the following:
-  * "General" resource types (all non App Service): get health status from [Azure Resource API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses/get-by-resource?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
+  * "General" resource types (all non App Service types): get their health status from [Azure Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) via [Resource Health Rest API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01).
     
-  * App Service: log query of Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available" as this is behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
+  * App Service: in the case of App Service, function performs [log query](https://devblogs.microsoft.com/azure-sdk/announcing-the-new-azure-monitor-query-client-libraries/) from Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available" as this is behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
     
   * VM (future enhancement): VM health status signal from [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) can be further influenced by addition metrics like CPU and Memory when these metrics exceeds configured threshold.
 
