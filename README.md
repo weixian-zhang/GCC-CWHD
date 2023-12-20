@@ -34,7 +34,7 @@ Currently, function supports the following:
 ![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/7f686ed0-902c-4213-a021-0174a6a08e65)
 
 
-### Level1 - Azure API Management Dashboard, 3rd-Party
+### Level 1 - Azure API Management Dashboard, 3rd-Party
 
 Dashboard courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
 
