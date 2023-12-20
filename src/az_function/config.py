@@ -3,8 +3,7 @@ import os
 from logging import Logger
 
 class AppConfig:
-    def __init__(self, logger: Logger) -> None:
-        self.logger = logger
+    def __init__(self) -> None:
         self.workspaceID = ''
         self.appServiceAppInsightStandardTestMap = {}
         self.loaded = False
@@ -16,6 +15,9 @@ class AppConfig:
         self.workspaceID = os.environ.get('WorkspaceID')
         map = os.environ.get('AppServiceAppInsightStandardTestMap')
         mapJson = json.loads(map)
+
+        if not self.workspaceID or not mapJson:
+            raise Exception('app service to app insights standard test mapping not found in env vars')
 
         for k in mapJson.keys():
             keyCleansed = k if k[0] != '/' else ''.join(k[1:])

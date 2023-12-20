@@ -15,7 +15,7 @@ sh.setLevel(logging.DEBUG)
 logger.addHandler(sh)
 
 # load environment variables
-appconfig = AppConfig(logger)
+appconfig = AppConfig()
 
 class ResourceHealthAPIResult:
 
