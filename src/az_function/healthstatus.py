@@ -100,6 +100,11 @@ class AppServiceHealthStatus(HealthStatusRetriever):
         | project ['reportedTime']=TimeGenerated, ['location']=Location, ['Name']=Name, availabilityState"""
 
         #timeSpan does not matter as time filter is set in query
+        self.logger.debug(f"""executing log query:
+        {query}
+        for resource Id {resourceId}
+        """)
+        
         response = super().query_monitor_log(query, timeSpan=timedelta(hours=2))
         
         if response.status == LogsQueryStatus.PARTIAL:
@@ -168,7 +173,7 @@ class HealthStatusClient:
     """ The HealthStatusClient
     Main entry point to get resource health status for all resource types.
     Certain resource type like VM and App Service have additional factors that affects health status.
-    Rest of resource health statusare by default based on Azure Resource Health
+    Rest of resource health status are by default based on Azure Resource Health
     https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview 
     """
 
@@ -206,9 +211,6 @@ class HealthStatusClient:
             return AzResourceType.AppService
         else:
             return AzResourceType.General
-        
-        # elif namespace == 'Microsoft.Compute/virtualMachines':
-        #     return AzResourceType.VM
         
 
 
