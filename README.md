@@ -1,30 +1,51 @@
 # GCC-CWHD  
 
-<p>CWHD currently monitors 2 Apps OneLogin and Documentum. Level 0 dashboard is a simple dashboard showing the "overall" Azure resource availability status of each App.</p>
-<p>The "overall" available status depends on the dependent Azure resources that each App is using.  </p>
-For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 resourcecs' availability status is Available.  
+CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps OneLogin and Documentum.  
+The dashboards are organized in levels depicting the "depth" of monitoring. 
+  * Level 0 dashboard shows the "overall" Azure resource availability status of each App.  
+    The overall available status depends on the dependent Azure resources that each web app is using.  
+    For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
+    resourcecs' availability status is Available.
+    
+  * Level 1 dashboard are web app specific, it displays the health and metrics of specific Azure resources used by web app
+
+<br />
 
 ### Architecture  
 
-Resource Health Retriever Function calls [Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses/get-by-resource?view=rest-resourcehealth-2022-10-01&tabs=HTTP) to retrieve resource health by resource ID as parameter
+<img width="600" height="700" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/7dbd847c-b2fd-41f1-a0a4-fb1dedfcc4dc">  
 
-<img width="373" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/9b18b88e-9c7b-4b02-954b-f614fce6b340">
+
+CWHD uses a variety of Azure components including a custom Function named Resource Health Retriever, acting as health status aggregator that retrieves and aggregates health statuses from different data sources depending on different resource types.  
+
+In the health status aspect of CWHD, Resource Health Retriever function supports the following:
+  * "General" resource types (all non App Service types): get their health status from [Azure Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) via [Resource Health Rest API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01).
+    
+  * App Service: in the case of App Service, function performs [log query](https://devblogs.microsoft.com/azure-sdk/announcing-the-new-azure-monitor-query-client-libraries/) from Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available", this is behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
+    
+  * VM (future enhancement): VM health status from [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) can be further influenced by addition metrics like CPU and Memory when these metrics exceeds configured threshold.  
+    (This design can possible allow other resource types' health statuses to also be influenced by metrics and even addition log queries)
+
 
 
 ### Level 0 Dashboard  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/79eacfc8-dce5-49ff-8eaa-27425fb9c909)  
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/13bd3524-f694-4c39-b1df-4b43244a0cbd)  
+
+If there is any one of the Azure resource used by OneLogin or Documentum that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
+
 
 ### Level 1 - OneLogin  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/b05f44f9-41a0-42ec-a10e-c0623a8120e4)
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c259cc2-72bd-4583-bf99-c7d72bee039c)
 
 
 ### Level 1 - Documentum  
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8824791f-0f29-406a-952a-7ec996b0af1b)  
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/7f686ed0-902c-4213-a021-0174a6a08e65)
 
-### Level1 - Azure API Management Dashboard, 3rd-Party
+
+### Level 1 - Azure API Management Dashboard, 3rd-Party
 
 Dashboard courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
 
