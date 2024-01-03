@@ -61,9 +61,9 @@ class RHResult:
 
         self.states: list[HealthReport] = states
 
-        self.set_overall_state()
+        self.set_overall_health_state()
 
-    def set_overall_state(self):
+    def set_overall_health_state(self):
 
         if not self.states:
             return
@@ -71,9 +71,16 @@ class RHResult:
         if all([x.availabilityState == 1 for x in self.states]):
             self.overallHealth = 1
             self.overallSummary = 'Available'
-        else:
+            return
+        
+        if any([x.availabilityState == 0 for x in self.states]):
             self.overallHealth = 0
             self.overallSummary = 'Unavailable'
+            return
+        
+        if any([x.availabilityState == 2 for x in self.states]):
+            self.overallHealth = 2
+            self.overallSummary = 'Warning'
 
 def get_resources(reqBody) -> list[ResourceParameter]:
     if not reqBody:
