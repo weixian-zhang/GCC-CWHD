@@ -30,12 +30,13 @@ InsightsMetrics
 InsightsMetrics
 | where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
 | where TimeGenerated >= ago(600d)
-| where _ResourceId == "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourcegroups/cmt-20730023-1/providers/microsoft.compute/virtualmachines/vmuatizdbdocumentumdb"
+| where _ResourceId == ""
 | extend SplitRscId = split(_ResourceId, "/")
 | extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
 | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
 | extend FreeSpacePercentage = round(Val, 0)
 | extend UsedSpacePercentage = round((100 - FreeSpacePercentage), 0)
+| order by TimeGenerated desc
 | summarize UsedSpacePercentage=round(avg(UsedSpacePercentage),0), round(FreeSpacePercentage=avg(FreeSpacePercentage),0) by Disk
 // join same table to get FreeSpace in GB
 | join kind=inner
@@ -43,9 +44,10 @@ InsightsMetrics
         InsightsMetrics
         | where Namespace == "LogicalDisk" and Name == "FreeSpaceMB"
         | where TimeGenerated >= ago(600d)
-        | where _ResourceId == "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourcegroups/cmt-20730023-1/providers/microsoft.compute/virtualmachines/vmuatizdbdocumentumdb"
+        | where _ResourceId == ""
         | extend FreeSpaceGB = round(Val /1000,0)
         | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
+        | order by TimeGenerated desc
         | summarize FreeSpaceGB=max(FreeSpaceGB) by Disk
     )
     on Disk
