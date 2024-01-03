@@ -2,6 +2,13 @@ import json
 import os
 from logging import Logger
 
+# standardTestName applies to App Service resource type only
+class ResourceParameter:
+    def __init__(self, resourceId, subscriptionId,standardTestName='' ) -> None:
+        self.resourceId = resourceId
+        self.subscriptionId = subscriptionId
+        self.standardTestName = standardTestName
+
 class AppConfig:
     def __init__(self) -> None:
         self.workspaceID = ''

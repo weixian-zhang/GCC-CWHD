@@ -5,7 +5,8 @@ from healthstatus import HealthStatusClient, HealthReport
 import logging
 from datetime import datetime
 import jsons
-from config import AppConfig
+from config import AppConfig, ResourceParameter
+import jsonpickle
 
 #override Azure's root logger to be able to log to console
 logger = logging.getLogger('akshay')
@@ -74,38 +75,49 @@ class RHResult:
             self.overallHealth = 0
             self.overallSummary = 'Unavailable'
 
-def get_resource_ids(reqBody) -> list[str]:
+def get_resources(reqBody) -> list[ResourceParameter]:
     if not reqBody:
         return []
     
-    return reqBody['resources']
+    result = []
+    rscs = reqBody['resources']
+
+    for r in rscs:
+        standardTestName = r['standardTestName'] if 'standardTestName' in r else ''
+        result.append(ResourceParameter(
+            r['resourceId'],
+             r['subscriptionId'],
+             standardTestName,
+            ))
+        
+    return result
 
 def create_rh_client(subscriptionId):
     return ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
 
-def get_resource_health_states(resources: list[str]) -> RHResult:
+def get_resource_health_states(resources: list[ResourceParameter]) -> RHResult:
 
     if not resources:
         return []
     
-    states = []
+    healthStatuses = []
     
     for rsc in resources:
 
-        subId = rsc['subscriptionId']
-        rscId = rsc['resourceId']
+        # subId = rsc['subscriptionId']
+        # rscId = rsc['resourceId']
 
-        logger.debug(f'retrieving availability status for resource {rscId}')
+        logger.debug(f'retrieving availability status for resource {rsc.resourceId}')
 
         client = HealthStatusClient(logger, appconfig)
 
-        healthReport = client.get_health(resourceId=rscId, subscriptionId=subId)
+        healthReport = client.get_health(rsc) #(resourceId=rscId, subscriptionId=subId)
 
-        logger.debug(f'availability status retrieved successfully for resource {rscId}')
+        logger.debug(f'availability status retrieved successfully for resource {rsc.resourceId}')
         
-        states.append(healthReport)
+        healthStatuses.append(healthReport)
 
-    return RHResult(states)
+    return RHResult(healthStatuses)
 
 
 
@@ -135,15 +147,13 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
         # load env vars
         appconfig.load_from_envar()
 
-        req_body = req.get_json()
+        resources = get_resources(req.get_json())
 
-        resourceIds = get_resource_ids(req_body)
-
-        if not resourceIds:
+        if not resources:
             logger.debug('no resource ID supplied')
             return func.HttpResponse('no resource ID supplied', status_code=400)
 
-        rhState = get_resource_health_states(resourceIds)
+        rhState = get_resource_health_states(resources)
         
         logger.debug('request completed, returning result')
 
