@@ -59,7 +59,7 @@ class RHResult:
         self.overallHealth = 1
         self.overallSummary = ''
 
-        self.states: list[HealthReport] = states #list[ResourceHealthAPIResult] = states
+        self.states: list[HealthReport] = states
 
         self.set_overall_state()
 
@@ -71,7 +71,7 @@ class RHResult:
         if all([x.availabilityState == 1 for x in self.states]):
             self.overallHealth = 1
             self.overallSummary = 'Available'
-        else: #any([x.availabilityState == 0 for x in self.states]):
+        else:
             self.overallHealth = 0
             self.overallSummary = 'Unavailable'
 
@@ -104,14 +104,11 @@ def get_resource_health_states(resources: list[ResourceParameter]) -> RHResult:
     
     for rsc in resources:
 
-        # subId = rsc['subscriptionId']
-        # rscId = rsc['resourceId']
-
         logger.debug(f'retrieving availability status for resource {rsc.resourceId}')
 
         client = HealthStatusClient(logger, appconfig)
 
-        healthReport = client.get_health(rsc) #(resourceId=rscId, subscriptionId=subId)
+        healthReport = client.get_health(rsc)
 
         logger.debug(f'availability status retrieved successfully for resource {rsc.resourceId}')
         

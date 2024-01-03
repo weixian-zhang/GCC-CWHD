@@ -20,15 +20,9 @@ class AppConfig:
             return
         
         self.workspaceID = os.environ.get('WorkspaceID')
-        # map = os.environ.get('AppServiceAppInsightStandardTestMap')
-        # mapJson = json.loads(map)
 
         if not self.workspaceID: # or not mapJson:
             raise Exception('necessary environment variables not found')
-
-        # for k in mapJson.keys():
-        #     keyCleansed = k if k[0] != '/' else ''.join(k[1:])
-        #     self.appServiceAppInsightStandardTestMap[keyCleansed] = mapJson[k]
 
         self.loaded = True
 
