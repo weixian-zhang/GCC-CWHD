@@ -4,7 +4,7 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus, LogsQueryResult
 from logging import Logger
-from config import AppConfig
+from config import AppConfig, ResourceParameter
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta, timezone
@@ -50,7 +50,7 @@ class HealthReport:
 # strategy design pattern
 class HealthStatusRetriever(ABC):
     @abstractclassmethod
-    def get_health_status(self, resourceId: str):
+    def get_health_status(self, resource: ResourceParameter):
         pass
 
     def query_monitor_log(self, query, timeSpan: timedelta) -> LogsQueryResult:
@@ -87,9 +87,10 @@ class AppServiceHealthStatus(HealthStatusRetriever):
         self.logger = logger
         self.appconfig = appconfig
 
-    def get_health_status(self, resourceId: str):
+    def get_health_status(self, resource):
 
-        standardTestName = self.appconfig.get_standardTestName_by_appsvc_rscId(resourceId)
+        resourceId = resource.resourceId
+        standardTestName = resource.standardTestName #self.appconfig.get_standardTestName_by_appsvc_rscId(resourceId)
 
         query = f"""AppAvailabilityResults 
         | where Name == '{standardTestName}' 
@@ -148,7 +149,11 @@ class GeneralHealthStatus:
     def __init__(self, logger: Logger) -> None:
         self.logger = logger
 
-    def get_health_status(self, resourceId: str, subscriptionId: str):
+    def get_health_status(self, resource: ResourceParameter):
+
+        resourceId = resource.resourceId
+        subscriptionId = resource.subscriptionId
+
         client = self._create_rh_client(subscriptionId)
 
         asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
@@ -181,18 +186,21 @@ class HealthStatusClient:
         self.logger = logger
         self.appconfig = appconfig
     
-    def get_health(self, resourceId: str, subscriptionId: str) -> HealthReport:
+    def get_health(self, resource) -> HealthReport: #resourceId: str, subscriptionId: str) -> HealthReport:
         
-        rscType =  self._get_resource_type(resourceId)
+        #resourceId = resource.resourceId
+        # subscriptionId = resource.subscriptionId
+
+        rscType =  self._get_resource_type(resource.resourceId)
         
         if rscType == AzResourceType.General:
             grc = GeneralHealthStatus(self.logger)
-            hr = grc.get_health_status(resourceId=resourceId, subscriptionId=subscriptionId)
+            hr = grc.get_health_status(resource) #resourceId=resourceId, subscriptionId=subscriptionId)
             return hr
         
         if rscType == AzResourceType.AppService:
             client = AppServiceHealthStatus(self.logger, self.appconfig)
-            hr = client.get_health_status(resourceId=resourceId)
+            hr = client.get_health_status(resource) #resourceId=resourceId,standardTestName=standardTestName)
             return hr
         
         # if rscType == AzResourceType.VM:
