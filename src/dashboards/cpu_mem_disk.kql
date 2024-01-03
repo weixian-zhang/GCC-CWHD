@@ -1,0 +1,37 @@
+// cpu memory percentage
+InsightsMetrics
+| where Namespace == "Processor" and Name == "UtilizationPercentage"
+| where TimeGenerated >= ago(60d)
+| where _ResourceId == "/"
+| extend CPUPercent = round(Val,1)
+| order by TimeGenerated desc
+| take 1
+| project TimeGenerated, CPUPercent
+
+// used memory percentage
+InsightsMetrics
+| where Namespace == "Memory" and Name == "AvailableMB"
+| where TimeGenerated >= ago(60d)
+| where _ResourceId == ""
+| extend SplitRscId = split(_ResourceId, "/")
+| extend ResourceGroup = SplitRscId[4]
+| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
+| extend DomainName = Computer
+| extend AvailableGB = round(Val/1000,1)
+| extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)["vm.azm.ms/memorySizeMB"])) / 1000,1)
+| extend AvailableGB = round(Val/1000,1)
+| extend UsedGB = round((TotalMemoryGB - AvailableGB),1)
+| extend UsedMemoryPercentage = round(((UsedGB / TotalMemoryGB) * 100), 1)
+| order by TimeGenerated desc 
+| take 1
+| project TimeGenerated, UsedMemoryPercentage
+
+// used disk percentage
+InsightsMetrics
+| where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
+| where TimeGenerated >= ago(600d)
+| where _ResourceId == "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourcegroups/cmt-20730023-1/providers/microsoft.compute/virtualmachines/vmuatizapcsimap"
+| extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
+| extend FreeSpacePercentage = round(Val, 0)
+| extend UsedSpacePercentage = round((100 - FreeSpacePercentage), 0)
+| summarize UsedSpacePercentage=max(UsedSpacePercentage) by Disk
