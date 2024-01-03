@@ -9,11 +9,20 @@ class ResourceParameter:
         self.subscriptionId = subscriptionId
         self.standardTestName = standardTestName
 
+class HealthStatusThreshold:
+
+    # diskUsagePercentage threshold is for all OS and data disk aggregated
+    class VM:
+        def __init__(self) -> None:
+            self.cpuUsagePercentage = 70
+            self.memoryUsagePercentage = 70
+            self.diskUsagePercentage = 70
+
 class AppConfig:
     def __init__(self) -> None:
-        self.workspaceID = ''
-        self.appServiceAppInsightStandardTestMap = {}
-        self.loaded = False
+        self.workspaceID: str = ''
+        self.health_status_threshold = {}
+        self.loaded: bool = False
 
     def load_from_envar(self):
         if self.loaded:
@@ -21,12 +30,24 @@ class AppConfig:
         
         self.workspaceID = os.environ.get('WorkspaceID')
 
+        thresholds = json.loads(os.environ.get('HealthStatusThreshold'))
+
+        self.health_status_threshold = self.get_thresholds(thresholds)
+
         if not self.workspaceID: # or not mapJson:
             raise Exception('necessary environment variables not found')
 
         self.loaded = True
 
-    def get_standardTestName_by_appsvc_rscId(self, appsvcRscId: str):
-        appsvcRscId = appsvcRscId if appsvcRscId[0] != '/' else ''.join(appsvcRscId[1:])
-        return self.appServiceAppInsightStandardTestMap[appsvcRscId]
+    def get_thresholds(self, thresholds: dict) -> HealthStatusThreshold:
+        th = thresholds['metricUsageThreshold']
+
+        ht = HealthStatusThreshold()
+        ht.VM = HealthStatusThreshold.VM()
+        
+        ht.VM.cpuUsagePercentage =  th['vm']['cpuUsagePercentage']
+        ht.VM.memoryUsagePercentage =  th['vm']['memoryUsagePercentage']
+        ht.VM.diskUsagePercentage =  th['vm']['diskUsagePercentage']
+
+        return ht
         
