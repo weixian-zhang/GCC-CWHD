@@ -18,19 +18,24 @@ class HealthReport:
     # Available = 1, Unavailable = 0 or Unknown = 2
     # converting into number is easier to style by Grafana "threshold" 
 
-    def __init__(self, 
-                 location='', 
+    def __init__(self,
+                 resourceId='',
+                 description='', 
                  availabilityState='', 
                  summary='', 
                  reportedTime=None, 
                  stateLastChangeTime=None) -> None:
-
-        self.location = location
+        
         self.availabilityState = availabilityState
-        self.summary = summary
+        self.resourceId = resourceId
+        self.description = description
         self.reportedTime = (reportedTime if not None else datetime.now())
-        self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now())
-        self.displayText = ''
+
+        #self.location = location    # obsolete, to be deleted
+        self.summary = summary      # obsolete, to be deleted
+        self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now())    # obsolete, to be deleted
+        self.displayText = '' # obsolete, to be deleted
+        
 
         # if availabilityState == 'Available':
         #     self.availabilityState = 1
@@ -42,6 +47,9 @@ class HealthReport:
         #     self.availabilityState = 2
         #     self.displayText = 'Unknown'
 
+    @staticmethod
+    def query_no_result_msg(resourceId: str):
+        return f'health status log or metric result not found for resource {resourceId}'
 
 
 
@@ -98,9 +106,11 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
             data = response.tables
 
         if not data or not data[0].rows:
-            self.logger.debug(f'no result found from log query AppServiceHealthStatusRetriever for resource Id: {resourceId}')
-            return HealthReport(location= '',
-                        availabilityState= 'Unavailable',
+            self.logger.warn(HealthReport.query_no_result_msg(resourceId))
+            return HealthReport(
+                        resourceId=resourceId,
+                        description=HealthReport.query_no_result_msg(resourceId),
+                        availabilityState= 0,
                         reportedTime=datetime.now())
         
         # parse query result
@@ -108,8 +118,12 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         singleRow = df.head(1)
 
-        hr = HealthReport(location= singleRow['location'].values[0],
-                        availabilityState= singleRow['availabilityState'].values[0],
+        availabilityState= singleRow['availabilityState'].values[0]
+        description = 'Resource is healthy' if availabilityState == 1 else 'Resource is unhealthy'
+
+        hr = HealthReport(resourceId=resourceId,
+                          description=description,
+                        availabilityState= availabilityState,
                         reportedTime= pd.to_datetime(singleRow['reportedTime'].values[0])
         )
         
@@ -118,33 +132,38 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
 
 
 class VMHealthStatusRetriever(HealthStatusRetriever):
+
     def __init__(self, logger: Logger, appconfig: AppConfig) -> None:
         self.logger = logger
         self.appconfig = appconfig
 
     def query_cpu_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> int:
+
         cpuUsagePercentageQuery = KQL.cpu_usage_percentage_query(resourceId)
 
-        #timeSpan does not matter as time filter is set in query
         self.logger.debug(f"""executing log query:
         {cpuUsagePercentageQuery}
         for resource Id {resourceId}
         """)
-        
-        cpuQueryResp = super().query_monitor_log(cpuUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
 
-        if cpuQueryResp.status == LogsQueryStatus.PARTIAL:
-            error = cpuQueryResp.partial_error
-            data = cpuQueryResp.partial_data
+        # timeSpan does not matter as time filter is set in query, but SDK requires it
+        resp = super().query_monitor_log(cpuUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
+
+        if resp.status == LogsQueryStatus.PARTIAL:
+            error = resp.partial_error
+            data = resp.partial_data
             self.logger.error(error)
-        elif cpuQueryResp.status == LogsQueryStatus.SUCCESS:
-            data = cpuQueryResp.tables
+        elif resp.status == LogsQueryStatus.SUCCESS:
+            data = resp.tables
 
+        # no result return, still consider available
         if not data or not data[0].rows:
-            self.logger.debug(f'no result found from log query AppServiceHealthStatusRetriever for resource Id: {resourceId}')
-            return HealthReport(location= '',
-                        availabilityState= 'Unavailable',
-                        reportedTime=datetime.now())
+            self.logger.warn(HealthReport.query_no_result_msg(resourceId))
+            return 0
+            # return HealthReport(resourceId=resourceId,
+            #                     description=HealthReport.query_no_result_msg(resourceId),
+            #             availabilityState= 1,
+            #             reportedTime=datetime.now())
         
         # parse query result
         table = data[0]
@@ -164,20 +183,23 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         for resource Id {resourceId}
         """)
         
-        cpuQueryResp = super().query_monitor_log(memoryUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
+        resp = super().query_monitor_log(memoryUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
 
-        if cpuQueryResp.status == LogsQueryStatus.PARTIAL:
-            error = cpuQueryResp.partial_error
-            data = cpuQueryResp.partial_data
+        if resp.status == LogsQueryStatus.PARTIAL:
+            error = resp.partial_error
+            data = resp.partial_data
             self.logger.error(error)
-        elif cpuQueryResp.status == LogsQueryStatus.SUCCESS:
-            data = cpuQueryResp.tables
+        elif resp.status == LogsQueryStatus.SUCCESS:
+            data = resp.tables
 
+        # no result return, still consider available
         if not data or not data[0].rows:
-            self.logger.debug(f'no result found from log query AppServiceHealthStatusRetriever for resource Id: {resourceId}')
-            return HealthReport(location= '',
-                        availabilityState= 'Unavailable',
-                        reportedTime=datetime.now())
+            self.logger.warn(f'no result found from log query VMHealthStatusRetriever for resource Id: {resourceId}')
+            return 0
+            # return HealthReport(resourceId=resourceId,
+            #             description=HealthReport.query_no_result_msg(resourceId),
+            #             availabilityState= 1,
+            #             reportedTime=datetime.now())
         
         # parse query result
         table = data[0]
@@ -189,7 +211,8 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
 
     def query_disk_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> dict:
 
-        diskUsagePercentageQuery = KQL.disk_usage_percentage_query(resourceId, queryTimeSpan)
+        result = {}
+        diskUsagePercentageQuery = KQL.disk_usage_percentage_query(resourceId)
 
         #timeSpan does not matter as time filter is set in query
         self.logger.debug(f"""executing log query:
@@ -197,39 +220,42 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         for resource Id {resourceId}
         """)
         
-        cpuQueryResp = super().query_monitor_log(diskUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
+        resp = super().query_monitor_log(diskUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
 
-        if cpuQueryResp.status == LogsQueryStatus.PARTIAL:
-            error = cpuQueryResp.partial_error
-            data = cpuQueryResp.partial_data
+        if resp.status == LogsQueryStatus.PARTIAL:
+            error = resp.partial_error
+            data = resp.partial_data
             self.logger.error(error)
-        elif cpuQueryResp.status == LogsQueryStatus.SUCCESS:
-            data = cpuQueryResp.tables
+        elif resp.status == LogsQueryStatus.SUCCESS:
+            data = resp.tables
 
+        # no result return, still consider available
         if not data or not data[0].rows:
-            self.logger.debug(f'no result found from log query AppServiceHealthStatusRetriever for resource Id: {resourceId}')
-            return HealthReport(location= '',
-                        availabilityState= 'Unavailable',
-                        reportedTime=datetime.now())
+            self.logger.warn(description=HealthReport.query_no_result_msg(resourceId))
+            return result
+            # return HealthReport(resourceId=resourceId,
+            #                     description=HealthReport.query_no_result_msg(resourceId),
+            #                     availabilityState= 1,
+            #                     reportedTime=datetime.now())
         
         # parse query result
         table = data[0]
         df = pd.DataFrame(data=table.rows, columns=table.columns)
 
-        result = {}
+        
 
         for _, row in df.iterrows():
             driveOrPath = row['Disk']
             usedSpacePercentage = row['UsedSpacePercentage']
             result[driveOrPath] = usedSpacePercentage
 
-
         return result
 
 
     def get_health_status(self, resource: ResourceParameter):
 
-        queryTimeSpanHour = 1
+        description = 'Resource is healthy'
+        queryTimeSpanHour = 2
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
 
@@ -243,8 +269,8 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
 
         # resource health
-        client = self._create_rh_client(subscriptionId)
-        asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
+        rhClient = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
+        asResult = rhClient.availability_statuses.get_by_resource(resource_uri=resourceId)
         availabilityStatus = asResult.properties.availability_state
 
         availabilityStateReportedTime = asResult.properties.reported_time
@@ -254,7 +280,8 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
 
         # only if resource health availabilityState is 1 then consider metrics
         if availabilityState == 0:
-            return HealthReport(location=asResult.location,
+            return HealthReport(resourceId=resourceId,
+                                description=f'Resource is unhealthy reported from Resource Health for resource {resourceId}',
                             availabilityState = 0,
                             summary=asResult.properties.summary,
                             reportedTime=availabilityStateReportedTime)
@@ -266,20 +293,24 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
             # any metric hits threshold is warning, availabilityState = 2
             if cpuPercentage >= cpuThreshold:
                 availabilityState = 2
-                self.logger.warn(f'CPU usage reaches threshold of {cpuThreshold}% for resource {resourceId}')
+                description = f'CPU usage reaches {cpuThreshold}% threshold for resource {resourceId}'
+                self.logger.warn(description)
             elif usedMemoryPercentage >= memoryThreshold:
                 availabilityState = 2
-                self.logger.warn(f'Memory usage reaches threshold of {memoryThreshold}% for resource {resourceId}')
+                description = f'Memory usage reaches {memoryThreshold}% threshold for resource {resourceId}'
+                self.logger.warn(description)
             else:
                 diskUsagePercentages = list(diskUsedPercentages.values())
                 if any(x >= diskThreshold for x in diskUsagePercentages):
                     availabilityState = 2
-                    self.logger.warn(f'Disk usage reaches threshold of {diskThreshold}% for resource {resourceId}')
+                    description = f'One or more disk usage reaches {diskThreshold}% threshold for resource {resourceId}'
+                    self.logger.warn(description)
 
-            return HealthReport(location=asResult.location,
-                            availabilityState = availabilityState,
-                            summary=asResult.properties.summary,
-                            reportedTime=availabilityStateReportedTime)
+            return HealthReport(resourceId=resourceId,
+                                description=description,
+                                availabilityState = availabilityState,
+                                summary=asResult.properties.summary,
+                                reportedTime=availabilityStateReportedTime)
         
         
 
@@ -294,26 +325,25 @@ class GeneralHealthStatusRetriever(HealthStatusRetriever):
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
 
-        client = self._create_rh_client(subscriptionId)
+        client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
 
         asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
-
+        
+        description = 'Resource is unhealthy'
         availabilityState= 0
         if asResult.properties.availability_state == 'Available':
             availabilityState = 1
+            description = 'Resource is healthy'
         elif asResult.properties.availability_state == 'Unknown':
             availabilityState = 2
+            description = 'Resource status is Unknowny'
 
-        hr = HealthReport(location=asResult.location,
+        hr = HealthReport(resourceId=resourceId,
+                            description=description,
                             availabilityState=availabilityState,
-                            summary=asResult.properties.summary,
-                            reportedTime=asResult.properties.reported_time,
-                            stateLastChangeTime=asResult.properties.occured_time)
+                            reportedTime=asResult.properties.reported_time)
         
         return hr
-
-    def _create_rh_client(self, subscriptionId):
-        return ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
 
 class AzResourceType(Enum):
     VM = 1
@@ -332,13 +362,13 @@ class HealthStatusClient:
         self.logger = logger
         self.appconfig = appconfig
     
-    def get_health(self, resource) -> HealthReport: #resourceId: str, subscriptionId: str) -> HealthReport:
+    def get_health(self, resource) -> HealthReport:
         
         rscType =  self._get_resource_type(resource.resourceId)
         
         if rscType == AzResourceType.General:
             grc = GeneralHealthStatusRetriever(self.logger)
-            hr = grc.get_health_status(resource) #resourceId=resourceId, subscriptionId=subscriptionId)
+            hr = grc.get_health_status(resource)
             return hr
         
         if rscType == AzResourceType.VM:
@@ -348,7 +378,7 @@ class HealthStatusClient:
         
         if rscType == AzResourceType.AppService:
             client = AppServiceHealthStatusRetriever(self.logger, self.appconfig)
-            hr = client.get_health_status(resource) #resourceId=resourceId,standardTestName=standardTestName)
+            hr = client.get_health_status(resource)
             return hr
         
 
@@ -360,9 +390,9 @@ class HealthStatusClient:
         rscIdSegments = resourceId.split('/')
         namespace = '/'.join(rscIdSegments[-3:-1])
 
-        if namespace == 'Microsoft.Web/sites':  # app service
+        if  namespace.lower() == 'Microsoft.Web/sites'.lower():  # app service
             return AzResourceType.AppService
-        elif namespace == 'Microsoft.Compute/virtualMachines':
+        elif namespace.lower() == 'Microsoft.Compute/virtualMachines'.lower():
             return AzResourceType.VM
         else:
             return AzResourceType.General

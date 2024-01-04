@@ -2,7 +2,7 @@
 InsightsMetrics
 | where Namespace == "Processor" and Name == "UtilizationPercentage"
 | where TimeGenerated >= ago(60d)
-| where _ResourceId == "/"
+| where _ResourceId == tolower("/")
 | extend CPUPercent = round(Val,1)
 | order by TimeGenerated desc
 | take 1
@@ -12,7 +12,7 @@ InsightsMetrics
 InsightsMetrics
 | where Namespace == "Memory" and Name == "AvailableMB"
 | where TimeGenerated >= ago(60d)
-| where _ResourceId == ""
+| where _ResourceId == tolower("")
 | extend SplitRscId = split(_ResourceId, "/")
 | extend ResourceGroup = SplitRscId[4]
 | extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
@@ -30,7 +30,7 @@ InsightsMetrics
 InsightsMetrics
 | where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
 | where TimeGenerated >= ago(600d)
-| where _ResourceId == ""
+| where _ResourceId == tolower("")
 | extend SplitRscId = split(_ResourceId, "/")
 | extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
 | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
@@ -44,7 +44,7 @@ InsightsMetrics
         InsightsMetrics
         | where Namespace == "LogicalDisk" and Name == "FreeSpaceMB"
         | where TimeGenerated >= ago(600d)
-        | where _ResourceId == ""
+        | where _ResourceId == tolower("")
         | extend FreeSpaceGB = round(Val /1000,0)
         | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
         | order by TimeGenerated desc
