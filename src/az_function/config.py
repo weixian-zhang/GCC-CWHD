@@ -29,6 +29,7 @@ class AppConfig:
             return
         
         self.appinsightsInstrumentationKey = os.environ.get('AppinsightsInstrumentationKey')
+        self.appinsightsConnString= os.environ.get('AppinsightsConnString')
         self.workspaceID = os.environ.get('WorkspaceID')
 
         thresholds = json.loads(os.environ.get('HealthStatusThreshold'))
