@@ -99,9 +99,6 @@ def get_resources(reqBody) -> list[ResourceParameter]:
         
     return result
 
-def create_rh_client(subscriptionId):
-    return ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
-
 def get_resource_health_states(resources: list[ResourceParameter]) -> RHResult:
 
     if not resources:
