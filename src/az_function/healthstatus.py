@@ -7,9 +7,10 @@ from logging import Logger
 from config import AppConfig, ResourceParameter
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from kql import KQL
 import log as Log
+
 
 class HealthReport:
     """
@@ -37,7 +38,6 @@ class HealthReport:
         self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now())    # obsolete, to be deleted
         self.displayText = '' # obsolete, to be deleted
         
-
         # if availabilityState == 'Available':
         #     self.availabilityState = 1
         #     self.displayText = 'Available'
@@ -51,7 +51,6 @@ class HealthReport:
     @staticmethod
     def query_no_result_msg():
         return f'health status log or metric result not found'
-
 
 
 # strategy design pattern
@@ -227,6 +226,21 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
 
+        # tracer = Log.get_tracer()
+        # with tracer.start_as_current_span("vm_health_status_metrics"):
+            
+        #     with tracer.start_as_current_span('retrieve_cpu_metric'):
+        #         # scalar value
+        #         cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
+
+        #     with tracer.start_as_current_span('retrieve_memory_metric'):
+        #         # scalar value
+        #         usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
+
+        #     with tracer.start_as_current_span('retrieve_disk_drives_metrics'):
+        #         # dictionary of win drive/linux file path : used space percentage
+        #         diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
+        
         # scalar value
         cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
 
@@ -287,8 +301,6 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
                                 reportedTime=availabilityStateReportedTime)
         
         
-
-
 class GeneralHealthStatusRetriever(HealthStatusRetriever):
 
     def __init__(self) -> None:
