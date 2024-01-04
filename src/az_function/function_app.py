@@ -1,22 +1,16 @@
 import azure.functions as func
-from azure.identity import DefaultAzureCredential
-from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
 from healthstatus import HealthStatusClient, HealthReport
-import logging
-from datetime import datetime
 import jsons
+from datetime import datetime
 from config import AppConfig, ResourceParameter
-import jsonpickle
-
-#override Azure's root logger to be able to log to console
-logger = logging.getLogger('akshay')
-logger.setLevel(logging.DEBUG)
-sh = logging.StreamHandler()
-sh.setLevel(logging.DEBUG)
-logger.addHandler(sh)
+import log as Log
 
 # load environment variables
 appconfig = AppConfig()
+# load env vars
+appconfig.load_from_envar()
+
+Log.init(appconfig)
 
 class ResourceHealthAPIResult:
 
@@ -47,7 +41,6 @@ class ResourceHealthAPIResult:
         else:
             self.availabilityState = 2
             self.displayText = 'Unknown'
-
 
 class RHResult:
     def __init__(self, states: list[HealthReport]) -> None: #list[ResourceHealthAPIResult]) -> None:
@@ -108,14 +101,10 @@ def get_resource_health_states(resources: list[ResourceParameter]) -> RHResult:
     
     for rsc in resources:
 
-        logger.debug(f'retrieving availability status for resource {rsc.resourceId}')
-
-        client = HealthStatusClient(logger, appconfig)
+        client = HealthStatusClient(Log, appconfig)
 
         healthReport = client.get_health(rsc)
 
-        logger.debug(f'availability status retrieved successfully for resource {rsc.resourceId}')
-        
         healthStatuses.append(healthReport)
 
     return RHResult(healthStatuses)
@@ -141,27 +130,19 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
     """
     
     try:
-        
-
-        logger.debug('request received')
-
-        # load env vars
-        appconfig.load_from_envar()
 
         resources = get_resources(req.get_json())
 
         if not resources:
-            logger.debug('no resource ID supplied')
+            Log.exception('no resource ID supplied')
             return func.HttpResponse('no resource ID supplied', status_code=400)
 
         rhState = get_resource_health_states(resources)
-        
-        logger.debug('request completed, returning result')
 
         return func.HttpResponse(
                                 jsons.dumps(rhState),
                                 status_code=200)
 
     except Exception as e:
-        logger.error(f'error occured: {str(e)}')
+        Log.exception(f'error occured: {str(e)}')
         return func.HttpResponse(str(e), status_code=500)

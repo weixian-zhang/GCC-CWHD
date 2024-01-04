@@ -1,6 +1,5 @@
 import json
 import os
-from logging import Logger
 
 # standardTestName applies to App Service resource type only
 class ResourceParameter:
@@ -20,6 +19,7 @@ class HealthStatusThreshold:
 
 class AppConfig:
     def __init__(self) -> None:
+        self.appinsightsInstrumentationKey = ''
         self.workspaceID: str = ''
         self.health_status_threshold = {}
         self.loaded: bool = False
@@ -28,6 +28,7 @@ class AppConfig:
         if self.loaded:
             return
         
+        self.appinsightsInstrumentationKey = os.environ.get('AppinsightsInstrumentationKey')
         self.workspaceID = os.environ.get('WorkspaceID')
 
         thresholds = json.loads(os.environ.get('HealthStatusThreshold'))
