@@ -17,6 +17,16 @@ class HealthStatusThreshold:
             self.memoryUsagePercentage = 70
             self.diskUsagePercentage = 70
 
+# example of threshold json 
+# {
+#     "metricUsageThreshold": {
+#         "vm": {
+#             "cpuUsagePercentage": 80,
+#             "memoryUsagePercentage": 80,
+#             "diskUsagePercentage": 80
+#         }
+#     }
+# }
 class AppConfig:
     def __init__(self) -> None:
         self.appinsightsInstrumentationKey = ''
