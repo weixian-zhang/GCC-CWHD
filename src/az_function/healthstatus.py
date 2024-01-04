@@ -48,8 +48,8 @@ class HealthReport:
         #     self.displayText = 'Unknown'
 
     @staticmethod
-    def query_no_result_msg(resourceId: str):
-        return f'health status log or metric result not found for resource {resourceId}'
+    def query_no_result_msg():
+        return f'health status log or metric result not found'
 
 
 
@@ -106,10 +106,10 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
             data = response.tables
 
         if not data or not data[0].rows:
-            self.logger.warn(HealthReport.query_no_result_msg(resourceId))
+            self.logger.warn(HealthReport.query_no_result_msg())
             return HealthReport(
                         resourceId=resourceId,
-                        description=HealthReport.query_no_result_msg(resourceId),
+                        description=HealthReport.query_no_result_msg(),
                         availabilityState= 0,
                         reportedTime=datetime.now())
         
@@ -158,12 +158,8 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
 
         # no result return, still consider available
         if not data or not data[0].rows:
-            self.logger.warn(HealthReport.query_no_result_msg(resourceId))
+            self.logger.warn(HealthReport.query_no_result_msg())
             return 0
-            # return HealthReport(resourceId=resourceId,
-            #                     description=HealthReport.query_no_result_msg(resourceId),
-            #             availabilityState= 1,
-            #             reportedTime=datetime.now())
         
         # parse query result
         table = data[0]
@@ -194,12 +190,8 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
 
         # no result return, still consider available
         if not data or not data[0].rows:
-            self.logger.warn(f'no result found from log query VMHealthStatusRetriever for resource Id: {resourceId}')
+            self.logger.warn(HealthReport.query_no_result_msg())
             return 0
-            # return HealthReport(resourceId=resourceId,
-            #             description=HealthReport.query_no_result_msg(resourceId),
-            #             availabilityState= 1,
-            #             reportedTime=datetime.now())
         
         # parse query result
         table = data[0]
@@ -231,13 +223,9 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
 
         # no result return, still consider available
         if not data or not data[0].rows:
-            self.logger.warn(description=HealthReport.query_no_result_msg(resourceId))
+            self.logger.warn(description=HealthReport.query_no_result_msg())
             return result
-            # return HealthReport(resourceId=resourceId,
-            #                     description=HealthReport.query_no_result_msg(resourceId),
-            #                     availabilityState= 1,
-            #                     reportedTime=datetime.now())
-        
+
         # parse query result
         table = data[0]
         df = pd.DataFrame(data=table.rows, columns=table.columns)
@@ -254,7 +242,7 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
 
     def get_health_status(self, resource: ResourceParameter):
 
-        description = 'Resource is healthy'
+        description = []
         queryTimeSpanHour = 2
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
@@ -281,7 +269,7 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         # only if resource health availabilityState is 1 then consider metrics
         if availabilityState == 0:
             return HealthReport(resourceId=resourceId,
-                                description=f'Resource is unhealthy reported from Resource Health for resource {resourceId}',
+                                description=f'Resource is unhealthy reported by Azure Resource Health',
                             availabilityState = 0,
                             summary=asResult.properties.summary,
                             reportedTime=availabilityStateReportedTime)
@@ -293,18 +281,24 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
             # any metric hits threshold is warning, availabilityState = 2
             if cpuPercentage >= cpuThreshold:
                 availabilityState = 2
-                description = f'CPU usage reaches {cpuThreshold}% threshold for resource {resourceId}'
-                self.logger.warn(description)
-            elif usedMemoryPercentage >= memoryThreshold:
+                description.append(f'CPU usage reaches {cpuThreshold}% threshold')
+                
+
+            if usedMemoryPercentage >= memoryThreshold:
                 availabilityState = 2
-                description = f'Memory usage reaches {memoryThreshold}% threshold for resource {resourceId}'
+                description.append(f'Memory usage reaches {memoryThreshold}% threshold')
+
+            diskUsagePercentages = list(diskUsedPercentages.values())
+            if any(x >= diskThreshold for x in diskUsagePercentages):
+                availabilityState = 2
+                description.append(f'One or more disk usage reaches {diskThreshold}% threshold')
+                self.logger.warn(description)
+
+            if len(description) >= 1:
+                description = ', '.join(description)
                 self.logger.warn(description)
             else:
-                diskUsagePercentages = list(diskUsedPercentages.values())
-                if any(x >= diskThreshold for x in diskUsagePercentages):
-                    availabilityState = 2
-                    description = f'One or more disk usage reaches {diskThreshold}% threshold for resource {resourceId}'
-                    self.logger.warn(description)
+                description = 'Resource is healthy'
 
             return HealthReport(resourceId=resourceId,
                                 description=description,
