@@ -8,7 +8,7 @@ class KQL:
         | extend availabilityState = iif(Success == true, 1, 0) 
         | order by TimeGenerated desc 
         | take 1 
-        | project ['reportedTime']=TimeGenerated, ['location']=Location, ['Name']=Name, availabilityState"""
+        | project ['reportedTime']=TimeGenerated,  ['availabilityState']=availabilityState"""
     
     @staticmethod
     def cpu_usage_percentage_query(resourceId):

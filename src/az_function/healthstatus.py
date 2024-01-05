@@ -109,16 +109,15 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
         # parse query result
         table = data[0]
         df = pd.DataFrame(data=table.rows, columns=table.columns)
-        singleRow = df.head(1)
 
-        availabilityState= singleRow['availabilityState'].values[0]
+        availabilityState= int(df['availabilityState'].iat[0])
+        reportedTime = df['reportedTime'].iat[0].strftime("%Y-%m-%dT%H:%M:%S")
         description = 'Resource is healthy' if availabilityState == 1 else 'Resource is unhealthy'
 
         hr = HealthReport(resourceId=resourceId,
                           description=description,
                         availabilityState= availabilityState,
-                        reportedTime= pd.to_datetime(singleRow['reportedTime'].values[0])
-        )
+                        reportedTime= reportedTime)
         
         return hr
 
@@ -156,9 +155,10 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         # parse query result
         table = data[0]
         df = pd.DataFrame(data=table.rows, columns=table.columns)
-        singleRow = df.head(1)
 
-        return int(singleRow['CPUPercent'])
+        usedCpuPercentage = int(df['CPUPercent'].iloc[0])
+
+        return usedCpuPercentage
     
 
     def query_memory_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> int:
@@ -183,8 +183,9 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         table = data[0]
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         singleRow = df.head(1)
+        usedMemoryPercentage = int(df['UsedMemoryPercentage'].iloc[0])
 
-        return int(singleRow['UsedMemoryPercentage'])
+        return usedMemoryPercentage
     
 
     def query_disk_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> dict:
@@ -210,7 +211,6 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         table = data[0]
         df = pd.DataFrame(data=table.rows, columns=table.columns)
 
-        
         for _, row in df.iterrows():
             driveOrPath = row['Disk']
             usedSpacePercentage = row['UsedSpacePercentage']
