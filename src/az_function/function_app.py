@@ -7,10 +7,6 @@ import log as Log
 
 # load environment variables
 appconfig = AppConfig()
-# load env vars
-appconfig.load_from_envar()
-
-Log.init(appconfig)
 
 class ResourceHealthAPIResult:
 
@@ -130,6 +126,11 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
     """
     
     try:
+        # load env vars
+        appconfig.load_from_envar()
+
+        Log.init(appconfig)
+
 
         resources = get_resources(req.get_json())
 

@@ -18,11 +18,18 @@ sh.setLevel(logging.DEBUG)
 logger.propagate = False
 logger.addHandler(sh)
 
+loaded = False
 
 def init(appconfig: AppConfig) -> None:
-
+        global loaded
+        
         if not appconfig:
             raise('Error initializing logger as appconfig is None')
+        
+        if not loaded:
+             loaded = True
+        else:
+             return
         
         appinsightsExceptionHandler = AzureLogHandler(connection_string=f'InstrumentationKey={appconfig.appinsightsInstrumentationKey}')
         appinsightsExceptionHandler.setLevel(logging.ERROR)
