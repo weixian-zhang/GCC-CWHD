@@ -1,11 +1,11 @@
-<mxfile host="Electron" modified="2024-01-08T06:06:20.781Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="7WkZ4wnKdNcTnX45Q-t-" version="22.1.2" type="device">
+<mxfile host="Electron" modified="2023-12-20T06:40:17.228Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="IXTzed4-c6iBrVg-3Y6T" version="22.1.2" type="device">
   <diagram name="Page-1" id="6zI-wv7lg0STu66uEUuO">
-    <mxGraphModel dx="1018" dy="1859" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="0" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1004" dy="1845" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="0" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="-m4xShKr6746js8uL_8x-10" value="Azure&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Resource Health&lt;/span&gt;&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;API&lt;/span&gt;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.health_monitoring;" parent="1" vertex="1">
-          <mxGeometry x="605" y="-484.66" width="36" height="29.5" as="geometry" />
+          <mxGeometry x="598" y="-461.33" width="36" height="29.5" as="geometry" />
         </mxCell>
         <mxCell id="-m4xShKr6746js8uL_8x-14" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.183;entryY=0.99;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-m4xShKr6746js8uL_8x-1" target="-m4xShKr6746js8uL_8x-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -16,10 +16,11 @@
         <mxCell id="-m4xShKr6746js8uL_8x-17" value="Azure&lt;br&gt;Managed Grafana" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/other/Grafana.svg;" parent="1" vertex="1">
           <mxGeometry x="180" y="-190" width="51.52" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="-m4xShKr6746js8uL_8x-18" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="-m4xShKr6746js8uL_8x-17" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="202" y="-365" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="-m4xShKr6746js8uL_8x-18" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.547;entryY=1.138;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-m4xShKr6746js8uL_8x-17" target="-m4xShKr6746js8uL_8x-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-m4xShKr6746js8uL_8x-20" value="for &quot;General&quot; resource type&lt;br&gt;(Resource Health API&lt;br&gt;HTTP GET)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="341" y="-406.28" width="207" height="30" as="geometry" />
         </mxCell>
         <mxCell id="-m4xShKr6746js8uL_8x-22" value="function key&lt;br&gt;authn" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="210" y="-230" width="80" height="30" as="geometry" />
@@ -34,7 +35,7 @@
           <mxGeometry x="321" y="-167" width="162" height="30" as="geometry" />
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--2" value="Log Analytics" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Log_Analytics_Workspaces.svg;" parent="1" vertex="1">
-          <mxGeometry x="599" y="-648" width="38" height="38" as="geometry" />
+          <mxGeometry x="601" y="-615" width="38" height="38" as="geometry" />
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--3" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="-m4xShKr6746js8uL_8x-1" target="y73Nl6JPqo7uBuhNpjI--2" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -49,13 +50,13 @@
           <mxGeometry x="180" y="-437.275" width="47.71505376344086" height="43.897849462365585" as="geometry" />
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--4" value="for AppService resource health&lt;br&gt;(query Standard Test logs with Azure Monitor Rest API&lt;br&gt;HTTP GET)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="323" y="-581.83" width="171" height="30" as="geometry" />
+          <mxGeometry x="341" y="-572" width="171" height="30" as="geometry" />
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--7" value="managed&lt;br style=&quot;font-size: 9px;&quot;&gt;identity" style="image;sketch=0;aspect=fixed;html=1;points=[];align=right;fontSize=9;image=img/lib/mscae/Managed_Identities.svg;verticalAlign=middle;labelPosition=left;verticalLabelPosition=middle;" parent="1" vertex="1">
           <mxGeometry x="494" y="-610" width="21.41" height="28.17" as="geometry" />
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--8" value="managed&lt;br style=&quot;font-size: 9px;&quot;&gt;identity" style="image;sketch=0;aspect=fixed;html=1;points=[];align=right;fontSize=9;image=img/lib/mscae/Managed_Identities.svg;verticalAlign=middle;labelPosition=left;verticalLabelPosition=middle;" parent="1" vertex="1">
-          <mxGeometry x="487" y="-346" width="21.41" height="28.17" as="geometry" />
+          <mxGeometry x="495.59" y="-437.28" width="21.41" height="28.17" as="geometry" />
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--12" value="managed&lt;br style=&quot;font-size: 9px;&quot;&gt;identity" style="image;sketch=0;aspect=fixed;html=1;points=[];align=right;fontSize=9;image=img/lib/mscae/Managed_Identities.svg;verticalAlign=middle;labelPosition=left;verticalLabelPosition=middle;" parent="1" vertex="1">
           <mxGeometry x="458" y="-136" width="21.41" height="28.17" as="geometry" />
@@ -86,24 +87,6 @@
         </mxCell>
         <mxCell id="y73Nl6JPqo7uBuhNpjI--26" value="availability result log to LAW" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="621" y="-691" width="99" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="4vIgEFIJamPUqWEpKntq-1" value="Azure&lt;br&gt;Monitor" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Monitor.svg;" vertex="1" parent="1">
-          <mxGeometry x="599" y="-379" width="38" height="38" as="geometry" />
-        </mxCell>
-        <mxCell id="4vIgEFIJamPUqWEpKntq-3" value="for &quot;General&quot; resource type&lt;br&gt;(Resource Health API&lt;br&gt;HTTP GET)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="379" y="-483" width="207" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="4vIgEFIJamPUqWEpKntq-4" value="" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-m4xShKr6746js8uL_8x-1" target="4vIgEFIJamPUqWEpKntq-1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="228" y="-411" as="sourcePoint" />
-            <mxPoint x="600" y="-347" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="-m4xShKr6746js8uL_8x-20" value="get VM CPU, Memory &amp;amp; Disk usage %&lt;br&gt;(Azure Monitor Rest API)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="318" y="-370" width="207" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="4vIgEFIJamPUqWEpKntq-5" value="managed&lt;br style=&quot;font-size: 9px;&quot;&gt;identity" style="image;sketch=0;aspect=fixed;html=1;points=[];align=right;fontSize=9;image=img/lib/mscae/Managed_Identities.svg;verticalAlign=middle;labelPosition=left;verticalLabelPosition=middle;" vertex="1" parent="1">
-          <mxGeometry x="534.9999999999999" y="-513" width="21.41" height="28.17" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
