@@ -6,6 +6,10 @@
         "isEnabled": true,
         "excludedTypes": "Request"
       }
+    },
+    "logLevel": {
+      "default": "Warning",
+      "RHRetriever": "Error"
     }
   },
   "extensionBundle": {

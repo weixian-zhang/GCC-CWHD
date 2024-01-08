@@ -17,9 +17,9 @@ tracer = trace.get_tracer(__name__,
 
 #override Azure's root logger to be able to log to console
 logger = logging.getLogger('akshay')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 sh = logging.StreamHandler()
-sh.setLevel(logging.DEBUG)
+sh.setLevel(logging.ERROR)
 logger.propagate = False
 logger.addHandler(sh)
 
