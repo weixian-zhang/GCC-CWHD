@@ -84,42 +84,44 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
 
     def get_health_status(self, resource):
 
-        resourceId = resource.resourceId
-        standardTestName = resource.standardTestName
-
-        query = KQL.app_availability_result_query(standardTestName)
-
-        response = super().query_monitor_log(query, timeSpan=timedelta(hours=2))
+        with Log.get_tracer().start_as_current_span("log_query_app_insights_standard_test_result"):
         
-        if response.status == LogsQueryStatus.PARTIAL:
-            error = response.partial_error
-            data = response.partial_data
-            Log.error(error)
-        elif response.status == LogsQueryStatus.SUCCESS:
-            data = response.tables
+            resourceId = resource.resourceId
+            standardTestName = resource.standardTestName
 
-        if not data or not data[0].rows:
-            Log.warn(HealthReport.query_no_result_msg(), resourceId=resourceId)
-            return HealthReport(
-                        resourceId=resourceId,
-                        description=HealthReport.query_no_result_msg(),
-                        availabilityState= 0,
-                        reportedTime=datetime.now())
-        
-        # parse query result
-        table = data[0]
-        df = pd.DataFrame(data=table.rows, columns=table.columns)
+            query = KQL.app_availability_result_query(standardTestName)
 
-        availabilityState= int(df['availabilityState'].iat[0])
-        reportedTime = df['reportedTime'].iat[0].strftime("%Y-%m-%dT%H:%M:%S")
-        description = 'Resource is healthy' if availabilityState == 1 else 'Resource is unhealthy'
+            response = super().query_monitor_log(query, timeSpan=timedelta(hours=2))
+            
+            if response.status == LogsQueryStatus.PARTIAL:
+                error = response.partial_error
+                data = response.partial_data
+                Log.error(error)
+            elif response.status == LogsQueryStatus.SUCCESS:
+                data = response.tables
 
-        hr = HealthReport(resourceId=resourceId,
-                          description=description,
-                        availabilityState= availabilityState,
-                        reportedTime= reportedTime)
-        
-        return hr
+            if not data or not data[0].rows:
+                Log.warn(HealthReport.query_no_result_msg(), resourceId=resourceId)
+                return HealthReport(
+                            resourceId=resourceId,
+                            description=HealthReport.query_no_result_msg(),
+                            availabilityState= 0,
+                            reportedTime=datetime.now())
+            
+            # parse query result
+            table = data[0]
+            df = pd.DataFrame(data=table.rows, columns=table.columns)
+
+            availabilityState= int(df['availabilityState'].iat[0])
+            reportedTime = df['reportedTime'].iat[0].strftime("%Y-%m-%dT%H:%M:%S")
+            description = 'Resource is healthy' if availabilityState == 1 else 'Resource is unhealthy'
+
+            hr = HealthReport(resourceId=resourceId,
+                            description=description,
+                            availabilityState= availabilityState,
+                            reportedTime= reportedTime)
+            
+            return hr
 
 
 
@@ -226,29 +228,29 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
 
-        # tracer = Log.get_tracer()
-        # with tracer.start_as_current_span("vm_health_status_metrics"):
+        tracer = Log.get_tracer()
+        with tracer.start_as_current_span("vm_health_status"):
             
-        #     with tracer.start_as_current_span('retrieve_cpu_metric'):
-        #         # scalar value
-        #         cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
+            with tracer.start_as_current_span('retrieve_cpu_metric'):
+                # scalar value
+                cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
 
-        #     with tracer.start_as_current_span('retrieve_memory_metric'):
-        #         # scalar value
-        #         usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
+            with tracer.start_as_current_span('retrieve_memory_metric'):
+                # scalar value
+                usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
 
-        #     with tracer.start_as_current_span('retrieve_disk_drives_metrics'):
-        #         # dictionary of win drive/linux file path : used space percentage
-        #         diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
+            with tracer.start_as_current_span('retrieve_disk_drives_metrics'):
+                # dictionary of win drive/linux file path : used space percentage
+                diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
         
-        # scalar value
-        cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
+        # # scalar value
+        # cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
 
-        # scalar value
-        usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
+        # # scalar value
+        # usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
 
-        # dictionary of win drive/linux file path : used space percentage
-        diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
+        # # dictionary of win drive/linux file path : used space percentage
+        # diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
 
         # resource health
         rhClient = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
@@ -303,34 +305,32 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         
 class GeneralHealthStatusRetriever(HealthStatusRetriever):
 
-    def __init__(self) -> None:
-        pass
-        #self.logger = logger
-
     def get_health_status(self, resource: ResourceParameter):
 
-        resourceId = resource.resourceId
-        subscriptionId = resource.subscriptionId
+        with Log.get_tracer().start_as_current_span("get_resource_health_availability_status"):
 
-        client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
+            resourceId = resource.resourceId
+            subscriptionId = resource.subscriptionId
 
-        asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
-        
-        description = 'Resource is unhealthy'
-        availabilityState= 0
-        if asResult.properties.availability_state == 'Available':
-            availabilityState = 1
-            description = 'Resource is healthy'
-        elif asResult.properties.availability_state == 'Unknown':
-            availabilityState = 2
-            description = 'Resource status is Unknowny'
+            client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
 
-        hr = HealthReport(resourceId=resourceId,
-                            description=description,
-                            availabilityState=availabilityState,
-                            reportedTime=asResult.properties.reported_time)
-        
-        return hr
+            asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
+            
+            description = 'Resource is unhealthy'
+            availabilityState= 0
+            if asResult.properties.availability_state == 'Available':
+                availabilityState = 1
+                description = 'Resource is healthy'
+            elif asResult.properties.availability_state == 'Unknown':
+                availabilityState = 2
+                description = 'Resource status is Unknowny'
+
+            hr = HealthReport(resourceId=resourceId,
+                                description=description,
+                                availabilityState=availabilityState,
+                                reportedTime=asResult.properties.reported_time)
+            
+            return hr
 
 class AzResourceType(Enum):
     VM = 1

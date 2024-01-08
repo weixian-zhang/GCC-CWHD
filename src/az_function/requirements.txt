@@ -2,6 +2,9 @@
 # The Python Worker is managed by the Azure Functions platform
 # Manually managing azure-functions-worker may cause unexpected issues
 
+opentelemetry-api
+opentelemetry-sdk
+azure-monitor-opentelemetry
 opencensus-ext-azure
 pandas
 azure-functions

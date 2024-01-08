@@ -29,7 +29,6 @@ class HealthStatusThreshold:
 # }
 class AppConfig:
     def __init__(self) -> None:
-        self.appinsightsInstrumentationKey = ''
         self.workspaceID: str = ''
         self.health_status_threshold = {}
         self.loaded: bool = False
@@ -38,8 +37,7 @@ class AppConfig:
         if self.loaded:
             return
         
-        self.appinsightsInstrumentationKey = os.environ.get('AppinsightsInstrumentationKey')
-        self.appinsightsConnString= os.environ.get('AppinsightsConnString')
+        self.appinsightsConnString= os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING')
         self.workspaceID = os.environ.get('WorkspaceID')
 
         thresholds = json.loads(os.environ.get('HealthStatusThreshold'))
