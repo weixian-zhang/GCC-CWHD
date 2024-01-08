@@ -25,7 +25,7 @@
     {
       "datasource": {
         "type": "marcusolsson-json-datasource",
-        "uid": "a29a83be-00ba-4b41-92a4-c106c2650248"
+        "uid": "e1aea5bd-f7fc-47fb-816e-6bee6b5fb922"
       },
       "description": "",
       "fieldConfig": {
@@ -61,43 +61,40 @@
         "x": 0,
         "y": 0
       },
-      "id": 1,
+      "id": 28,
       "options": {
         "colorMode": "background_solid",
-        "graphMode": "none",
-        "justifyMode": "auto",
+        "graphMode": "area",
+        "justifyMode": "center",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "limit": 2,
+          "fields": "/.*/",
           "values": true
         },
         "text": {
-          "titleSize": 30,
+          "titleSize": 25,
           "valueSize": 18
         },
-        "textMode": "name"
+        "textMode": "name",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
-          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Web/sites/oneloginuat\"\r\n        }\r\n    ]\r\n}",
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"az-Grafana-StandardTest-oneloginuat\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.Web/sites/oneloginuat\"\r\n        }\r\n    ]\r\n}",
           "cacheDurationSeconds": 300,
           "datasource": {
             "type": "marcusolsson-json-datasource",
-            "uid": "a29a83be-00ba-4b41-92a4-c106c2650248"
+            "uid": "e1aea5bd-f7fc-47fb-816e-6bee6b5fb922"
           },
           "fields": [
             {
-              "jsonPath": "$.states[0].availabilityState"
-            },
-            {
-              "jsonPath": "$.states[0].displayText",
-              "language": "jsonpath",
-              "name": ""
+              "jsonPath": "$.states[0].availabilityState",
+              "name": "availabilityState",
+              "type": "number"
             }
           ],
           "method": "POST",
@@ -165,9 +162,10 @@
           "titleSize": 30,
           "valueSize": 18
         },
-        "textMode": "name"
+        "textMode": "name",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.KeyVault/vaults/kv-izcs-uatiz-kscmgmt\"\r\n        }\r\n    ]\r\n}",
@@ -183,10 +181,9 @@
               "type": "number"
             },
             {
-              "jsonPath": "$.states[0].displayText",
+              "jsonPath": "$.states[0].description",
               "language": "jsonpath",
-              "name": "reportedTime",
-              "type": "string"
+              "name": ""
             }
           ],
           "method": "POST",
@@ -261,9 +258,10 @@
           "titleSize": 30,
           "valueSize": 18
         },
-        "textMode": "name"
+        "textMode": "name",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"resourceId\": \"subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/rg-intranetcs-uatiz-appcommon/providers/Microsoft.ApiManagement/service/apim-intranetcs-uatiz-appcommon\"\r\n        }\r\n    ]\r\n}",
@@ -315,7 +313,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -841,7 +839,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -1051,9 +1049,10 @@
         "text": {
           "titleSize": 15
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -1393,7 +1392,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -1458,7 +1457,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -2078,7 +2077,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -2137,7 +2136,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -2657,6 +2656,6 @@
   "timezone": "",
   "title": "Level 1 - OneLogin",
   "uid": "a7f3ea2c-0a06-498e-a4e5-7d609a19a4e2",
-  "version": 53,
+  "version": 61,
   "weekStart": ""
 }
