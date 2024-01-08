@@ -27,7 +27,7 @@ class KQL:
         # memory usage percentage
         return f"""InsightsMetrics
         | where Namespace == "Memory" and Name == "AvailableMB"
-        | where TimeGenerated >= ago(60d)
+        | where TimeGenerated >= ago(2h)
         | where _ResourceId == tolower("{resourceId}")
         | extend AvailableGB = round(Val/1000,1)
         | extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)["vm.azm.ms/memorySizeMB"])) / 1000,1)
@@ -43,7 +43,7 @@ class KQL:
         
         return f"""InsightsMetrics
         | where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
-        | where TimeGenerated >= ago(600d)
+        | where TimeGenerated >= ago(2h)
         | where _ResourceId == tolower("{resourceId}")
         | extend SplitRscId = split(_ResourceId, "/")
         | extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
@@ -57,7 +57,7 @@ class KQL:
             (
                 InsightsMetrics
                 | where Namespace == "LogicalDisk" and Name == "FreeSpaceMB"
-                | where TimeGenerated >= ago(600d)
+                | where TimeGenerated >= ago(2h)
                 | where _ResourceId == tolower("{resourceId}")
                 | extend FreeSpaceGB = round(Val /1000,0)
                 | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
