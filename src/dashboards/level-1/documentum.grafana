@@ -449,7 +449,7 @@
       "pluginVersion": "10.2.1",
       "targets": [
         {
-          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"az-Grafana-StandardTest-app-docservice\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-app-docservices\"\r\n        }\r\n    ]\r\n}",
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"DocTest1\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-app-docservices\"\r\n        }\r\n    ]\r\n}",
           "cacheDurationSeconds": 300,
           "datasource": {
             "type": "marcusolsson-json-datasource",
@@ -539,7 +539,7 @@
       "pluginVersion": "10.2.1",
       "targets": [
         {
-          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"az-Garfana-StanddardTest-dctm-docservice\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-dctm-docservice\"\r\n        }\r\n    ]\r\n}",
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"DocTest2\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-dctm-docservice\"\r\n        }\r\n    ]\r\n}",
           "cacheDurationSeconds": 300,
           "datasource": {
             "type": "marcusolsson-json-datasource",
@@ -629,7 +629,7 @@
       "pluginVersion": "10.2.1",
       "targets": [
         {
-          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"az-Grafana-StandardTest-fileupload-docservice\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-fileupload-docservice\"\r\n        }\r\n    ]\r\n}",
+          "body": "{\r\n    \"resources\": [\r\n        {\r\n            \"subscriptionId\": \"404cdea1-452e-4dd3-b9e7-cba774caa58a\",\r\n            \"standardTestName\": \"DocTest3\",\r\n            \"resourceId\": \"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/cmt-20730023/providers/Microsoft.Web/sites/uat-fileupload-docservice\"\r\n        }\r\n    ]\r\n}",
           "cacheDurationSeconds": 300,
           "datasource": {
             "type": "marcusolsson-json-datasource",
@@ -13550,6 +13550,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 60,
+  "version": 61,
   "weekStart": ""
 }
