@@ -29,19 +29,19 @@
 				"cwd": "${workspaceFolder}/src\\az_function"
 			}
 		},
-		{
-			"label": "func publish zip",
-			"type": "shell",
-			"command": "az functionapp deployment source config-zip -g ${config:resourceGroup} -n ${config:funcNameToDeploy} --build-remote --src 'func-app.zip'",
-			"options": {
-				"cwd": "${workspaceFolder}/deploy"
-			},
-			"dependsOn": ["zip func app"]
-		},
+		// {
+		// 	"label": "func publish zip",
+		// 	"type": "shell",
+		// 	"command": "az functionapp deployment source config-zip -g ${config:resourceGroup} -n ${config:funcNameToDeploy} --build-remote --src 'func-app.zip'",
+		// 	"options": {
+		// 		"cwd": "${workspaceFolder}/deploy"
+		// 	},
+		// 	"dependsOn": ["zip func app"]
+		// },
 		{
 			"label": "zip and deploy func app",
 			"type": "shell",
-			"command": "python deploy.py",
+			"command": "python zip_and_deploy_func_app.py",
 			"options": {
 				"cwd": "${workspaceFolder}/src/tools"
 			}

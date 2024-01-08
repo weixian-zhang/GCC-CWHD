@@ -1,18 +1,23 @@
 import logging
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from config import AppConfig
-# from azure.monitor.opentelemetry import configure_azure_monitor
-# Import the tracing api from the `opentelemetry` package.
-# from opentelemetry import trace
-
-
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
+from opentelemetry.trace import (
+    SpanKind,
+    get_tracer_provider,
+    set_tracer_provider,
+)
+from opentelemetry.propagate import extract
+import os
 
 # Get a tracer for the current module.
-# tracer = trace.get_tracer(__name__)
+tracer = trace.get_tracer(__name__,
+                          tracer_provider=get_tracer_provider())
 
 #override Azure's root logger to be able to log to console
 logger = logging.getLogger('akshay')
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 sh = logging.StreamHandler()
 sh.setLevel(logging.DEBUG)
 logger.propagate = False
@@ -31,17 +36,22 @@ def init(appconfig: AppConfig) -> None:
         else:
              return
         
-        appinsightsExceptionHandler = AzureLogHandler(connection_string=f'InstrumentationKey={appconfig.appinsightsInstrumentationKey}')
+        appinsightsExceptionHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
         appinsightsExceptionHandler.setLevel(logging.ERROR)
         logger.addHandler(appinsightsExceptionHandler)
 
-        appinsightsWarnHandler = AzureLogHandler(connection_string=f'InstrumentationKey={appconfig.appinsightsInstrumentationKey}')
+        appinsightsWarnHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
         appinsightsWarnHandler.setLevel(logging.WARN)
         logger.addHandler(appinsightsWarnHandler)
 
-        # configure_azure_monitor(
-        #     connection_string=appconfig.appinsightsConnString
-        # )
+        configure_azure_monitor(
+            instrumentation_options = {"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": False}},
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS="azure_app_service",
+            disable_offline_storage=True,
+            disable_logging = True,
+            disable_metrics=True,
+            connection_string=appconfig.appinsightsConnString
+        )
 
 
 def debug(msg):
@@ -67,6 +77,6 @@ def warn(msg, **kwargs):
 
     logger.warn(msg, extra=appinsightsCusomtProps)
 
-# def get_tracer():
-#      return tracer
+def get_tracer():
+     return tracer
 

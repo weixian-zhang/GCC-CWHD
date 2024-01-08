@@ -4,9 +4,15 @@ import jsons
 from datetime import datetime
 from config import AppConfig, ResourceParameter
 import log as Log
+from opentelemetry.trace import (
+    SpanKind
+)
+from opentelemetry.propagate import extract
 
 # load environment variables
 appconfig = AppConfig()
+# load env vars
+appconfig.load_from_envar()
 
 class ResourceHealthAPIResult:
 
@@ -126,23 +132,23 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
     """
     
     try:
-        # load env vars
-        appconfig.load_from_envar()
-
         Log.init(appconfig)
+        
+        tracer = Log.get_tracer()
 
+        with tracer.start_as_current_span("main_request_RHRetriever",context=extract(req.headers), kind=SpanKind.SERVER):
+            
+            resources = get_resources(req.get_json())
 
-        resources = get_resources(req.get_json())
+            if not resources:
+                Log.exception('no resource ID supplied')
+                return func.HttpResponse('no resource ID supplied', status_code=400)
 
-        if not resources:
-            Log.exception('no resource ID supplied')
-            return func.HttpResponse('no resource ID supplied', status_code=400)
+            rhState = get_resource_health_states(resources)
 
-        rhState = get_resource_health_states(resources)
-
-        return func.HttpResponse(
-                                jsons.dumps(rhState),
-                                status_code=200)
+            return func.HttpResponse(
+                                    jsons.dumps(rhState),
+                                    status_code=200)
 
     except Exception as e:
         Log.exception(f'error occured: {str(e)}')
