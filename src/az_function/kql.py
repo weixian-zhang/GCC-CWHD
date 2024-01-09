@@ -44,7 +44,7 @@ class KQL:
         return f"""InsightsMetrics
         | where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
         | where TimeGenerated >= ago(2h)
-        | where _ResourceId == tolower("")
+        | where _ResourceId == tolower("{resourceId}")
         | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
         | extend FreeSpacePercentage = Val
         | extend UsedSpacePercentage = (100 - FreeSpacePercentage)
@@ -56,7 +56,7 @@ class KQL:
                 InsightsMetrics
                 | where Namespace == "LogicalDisk" and Name == "FreeSpaceMB"
                 | where TimeGenerated >= ago(2h)
-                | where _ResourceId == tolower("")
+                | where _ResourceId == tolower("{resourceId}")
                 | extend FreeSpaceGB = Val /1000
                 | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
                 | order by TimeGenerated desc
@@ -68,6 +68,6 @@ class KQL:
         | summarize 
         FreeSpacePercentage=round(max(FreeSpacePercentage), 2),
         FreeSpaceGB=round(max(FreeSpaceGB), 2), 
-        UsedSpacePercentage=round(max(UsedSpacePercentage), 2),
+        UsedSpacePercentage=round(max(UsedSpacePercentage),0),
         UsedSpaceGB=round(max(UsedSpaceGB), 2),
         TotalDiskSizeGB = round(max(TotalDiskSizeGB), 2) by Disk"""
