@@ -44,32 +44,30 @@ class KQL:
         return f"""InsightsMetrics
         | where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
         | where TimeGenerated >= ago(2h)
-        | where _ResourceId == tolower("{resourceId}")
-        | extend SplitRscId = split(_ResourceId, "/")
-        | extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])
+        | where _ResourceId == tolower("")
         | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
-        | extend FreeSpacePercentage = round(Val, 0)
-        | extend UsedSpacePercentage = round((100 - FreeSpacePercentage), 0)
+        | extend FreeSpacePercentage = Val
+        | extend UsedSpacePercentage = (100 - FreeSpacePercentage)
         | order by TimeGenerated desc
-        | summarize UsedSpacePercentage=round(avg(UsedSpacePercentage),0), round(FreeSpacePercentage=avg(FreeSpacePercentage),0) by Disk
+        | summarize UsedSpacePercentage=avg(UsedSpacePercentage), FreeSpacePercentage=avg(FreeSpacePercentage) by Disk
         // join same table to get FreeSpace in GB
         | join kind=inner
             (
                 InsightsMetrics
                 | where Namespace == "LogicalDisk" and Name == "FreeSpaceMB"
                 | where TimeGenerated >= ago(2h)
-                | where _ResourceId == tolower("{resourceId}")
-                | extend FreeSpaceGB = round(Val /1000,0)
+                | where _ResourceId == tolower("")
+                | extend FreeSpaceGB = Val /1000
                 | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
                 | order by TimeGenerated desc
                 | summarize FreeSpaceGB=max(FreeSpaceGB) by Disk
             )
             on Disk
-        | extend TotalDiskSizeGB = ceiling(FreeSpaceGB / (FreeSpacePercentage / 100))
-        | extend UsedSpaceGB = round(TotalDiskSizeGB - FreeSpaceGB, 0)
+        | extend TotalDiskSizeGB = FreeSpaceGB / (FreeSpacePercentage / 100)
+        | extend UsedSpaceGB = TotalDiskSizeGB - FreeSpaceGB
         | summarize 
-        FreeSpacePercentage=max(FreeSpacePercentage),
-        FreeSpaceGB=max(FreeSpaceGB), 
-        UsedSpacePercentage=max(UsedSpacePercentage),
-        UsedSpaceGB=max(UsedSpaceGB),
-        TotalDiskSizeGB = max(TotalDiskSizeGB) by Disk"""
+        FreeSpacePercentage=round(max(FreeSpacePercentage), 2),
+        FreeSpaceGB=round(max(FreeSpaceGB), 2), 
+        UsedSpacePercentage=round(max(UsedSpacePercentage), 2),
+        UsedSpaceGB=round(max(UsedSpaceGB), 2),
+        TotalDiskSizeGB = round(max(TotalDiskSizeGB), 2) by Disk"""
