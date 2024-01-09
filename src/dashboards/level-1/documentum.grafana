@@ -1282,7 +1282,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 3,
         "x": 7,
         "y": 8
       },
@@ -1402,8 +1402,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 11,
+        "w": 3,
+        "x": 10,
         "y": 8
       },
       "id": 91,
@@ -1474,41 +1474,30 @@
           "custom": {
             "align": "auto",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "inspect": false
           },
           "mappings": [
             {
               "options": {
-                "from": 2,
+                "from": 70,
                 "result": {
                   "color": "orange",
                   "index": 0
                 },
-                "to": 5
+                "to": 80
               },
               "type": "range"
             },
             {
               "options": {
-                "from": 0,
+                "from": 81,
                 "result": {
                   "color": "red",
                   "index": 1
                 },
-                "to": 2
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 6,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 10000000000000
+                "to": 100
               },
               "type": "range"
             }
@@ -1571,21 +1560,211 @@
                 "value": 154
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 179
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used Space %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 114
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 79
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 15,
+        "w": 9,
+        "x": 13,
         "y": 8
       },
-      "id": 92,
+      "id": 135,
       "options": {
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "fields": "",
+          "fields": [
+            "Used %"
+          ],
           "reducer": [
             "sum"
           ],
@@ -1599,7 +1778,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumcs01\") // change VM name\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
+            "query": "InsightsMetrics\r\n        | where Origin == \"vm.azm.ms\" and Namespace == \"LogicalDisk\" and Name == \"FreeSpacePercentage\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs01\")\r\n        | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n        | extend FreeSpacePercentage = Val\r\n        | extend UsedSpacePercentage = (100 - FreeSpacePercentage)\r\n        | order by TimeGenerated desc\r\n        | summarize UsedSpacePercentage=avg(UsedSpacePercentage), FreeSpacePercentage=avg(FreeSpacePercentage) by Disk\r\n        // join same table to get FreeSpace in GB\r\n        | join kind=inner\r\n            (\r\n                InsightsMetrics\r\n                | where Namespace == \"LogicalDisk\" and Name == \"FreeSpaceMB\"\r\n                | where TimeGenerated >= ago(2h)\r\n                | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs01\")\r\n                | extend FreeSpaceGB = Val /1000\r\n                | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n                | order by TimeGenerated desc\r\n                | summarize FreeSpaceGB=max(FreeSpaceGB) by Disk\r\n            )\r\n            on Disk\r\n        | extend TotalDiskSizeGB = FreeSpaceGB / (FreeSpacePercentage / 100)\r\n        | extend UsedSpaceGB = TotalDiskSizeGB - FreeSpaceGB\r\n        | summarize\r\n        [\"Used %\"]= round(max(UsedSpacePercentage),0),\r\n        [\"Used GB\"]=round(max(UsedSpaceGB), 2),\r\n        [\"Free %\"]=round(max(FreeSpacePercentage), 0),\r\n        [\"Free GB\"]=round(max(FreeSpaceGB), 2), \r\n        [\"Total GB\"] = round(max(TotalDiskSizeGB), 2) by Disk\r\n        | order by [\"Used %\"], [\"Used GB\"] desc",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -1613,7 +1792,7 @@
           "refId": "A"
         }
       ],
-      "title": "Free Space",
+      "title": "Disk Usage",
       "transformations": [
         {
           "id": "organize",
@@ -2108,192 +2287,6 @@
         "type": "grafana-azure-monitor-datasource",
         "uid": "azure-monitor-oob"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": false,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "swap/used"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "orange",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "swap/free"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 5,
-        "x": 16,
-        "y": 15
-      },
-      "id": 96,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "customNamespace": "Azure.VM.Linux.GuestMetrics",
-            "dimensionFilters": [],
-            "metricName": "swap/used",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizapcsdocumentumcs01",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        },
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "customNamespace": "Azure.VM.Linux.GuestMetrics",
-            "dimensionFilters": [],
-            "metricName": "swap/free",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizapcsdocumentumcs01",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "hide": false,
-          "queryType": "Azure Monitor",
-          "refId": "B",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        }
-      ],
-      "title": "Linux Swap Space",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-azure-monitor-datasource",
-        "uid": "azure-monitor-oob"
-      },
       "gridPos": {
         "h": 2,
         "w": 21,
@@ -2376,7 +2369,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2532,7 +2526,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2545,7 +2540,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 3,
         "x": 7,
         "y": 24
       },
@@ -2651,7 +2646,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2664,8 +2660,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 11,
+        "w": 3,
+        "x": 10,
         "y": 24
       },
       "id": 101,
@@ -2736,41 +2732,30 @@
           "custom": {
             "align": "auto",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "inspect": false
           },
           "mappings": [
             {
               "options": {
-                "from": 2,
+                "from": 70,
                 "result": {
                   "color": "orange",
                   "index": 0
                 },
-                "to": 5
+                "to": 80
               },
               "type": "range"
             },
             {
               "options": {
-                "from": 0,
+                "from": 81,
                 "result": {
                   "color": "red",
                   "index": 1
                 },
-                "to": 2
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 6,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 10000000000000
+                "to": 100
               },
               "type": "range"
             }
@@ -2779,7 +2764,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -2832,21 +2818,211 @@
                 "value": 154
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used Space %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 114
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 79
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 15,
+        "w": 9,
+        "x": 13,
         "y": 24
       },
-      "id": 102,
+      "id": 134,
       "options": {
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "fields": "",
+          "fields": [
+            "Used %"
+          ],
           "reducer": [
             "sum"
           ],
@@ -2860,7 +3036,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumcs02\")\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
+            "query": "InsightsMetrics\r\n        | where Origin == \"vm.azm.ms\" and Namespace == \"LogicalDisk\" and Name == \"FreeSpacePercentage\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs02\")\r\n        | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n        | extend FreeSpacePercentage = Val\r\n        | extend UsedSpacePercentage = (100 - FreeSpacePercentage)\r\n        | order by TimeGenerated desc\r\n        | summarize UsedSpacePercentage=avg(UsedSpacePercentage), FreeSpacePercentage=avg(FreeSpacePercentage) by Disk\r\n        // join same table to get FreeSpace in GB\r\n        | join kind=inner\r\n            (\r\n                InsightsMetrics\r\n                | where Namespace == \"LogicalDisk\" and Name == \"FreeSpaceMB\"\r\n                | where TimeGenerated >= ago(2h)\r\n                | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs02\")\r\n                | extend FreeSpaceGB = Val /1000\r\n                | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n                | order by TimeGenerated desc\r\n                | summarize FreeSpaceGB=max(FreeSpaceGB) by Disk\r\n            )\r\n            on Disk\r\n        | extend TotalDiskSizeGB = FreeSpaceGB / (FreeSpacePercentage / 100)\r\n        | extend UsedSpaceGB = TotalDiskSizeGB - FreeSpaceGB\r\n        | summarize\r\n        [\"Used %\"]= round(max(UsedSpacePercentage),0),\r\n        [\"Used GB\"]=round(max(UsedSpaceGB), 2),\r\n        [\"Free %\"]=round(max(FreeSpacePercentage), 0),\r\n        [\"Free GB\"]=round(max(FreeSpaceGB), 2), \r\n        [\"Total GB\"] = round(max(TotalDiskSizeGB), 2) by Disk\r\n        | order by [\"Used %\"], [\"Used GB\"] desc",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -2874,7 +3050,7 @@
           "refId": "A"
         }
       ],
-      "title": "Free Space",
+      "title": "Disk Usage",
       "transformations": [
         {
           "id": "organize",
@@ -2939,7 +3115,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3058,7 +3235,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3177,7 +3355,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -3292,7 +3471,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -3408,7 +3588,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -3632,7 +3813,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3788,7 +3970,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3801,7 +3984,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 3,
         "x": 7,
         "y": 40
       },
@@ -3907,7 +4090,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3920,8 +4104,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 11,
+        "w": 3,
+        "x": 10,
         "y": 40
       },
       "id": 110,
@@ -3992,41 +4176,30 @@
           "custom": {
             "align": "auto",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "inspect": false
           },
           "mappings": [
             {
               "options": {
-                "from": 2,
+                "from": 70,
                 "result": {
                   "color": "orange",
                   "index": 0
                 },
-                "to": 5
+                "to": 80
               },
               "type": "range"
             },
             {
               "options": {
-                "from": 0,
+                "from": 81,
                 "result": {
                   "color": "red",
                   "index": 1
                 },
-                "to": 2
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 6,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 10000000000000
+                "to": 100
               },
               "type": "range"
             }
@@ -4035,7 +4208,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4088,21 +4262,211 @@
                 "value": 154
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 59
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used Space %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 114
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 79
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 15,
+        "w": 8,
+        "x": 13,
         "y": 40
       },
-      "id": 111,
+      "id": 133,
       "options": {
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "fields": "",
+          "fields": [
+            "Used %"
+          ],
           "reducer": [
             "sum"
           ],
@@ -4116,7 +4480,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumis01\")\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
+            "query": "InsightsMetrics\r\n        | where Origin == \"vm.azm.ms\" and Namespace == \"LogicalDisk\" and Name == \"FreeSpacePercentage\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumis01\")\r\n        | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n        | extend FreeSpacePercentage = Val\r\n        | extend UsedSpacePercentage = (100 - FreeSpacePercentage)\r\n        | order by TimeGenerated desc\r\n        | summarize UsedSpacePercentage=avg(UsedSpacePercentage), FreeSpacePercentage=avg(FreeSpacePercentage) by Disk\r\n        // join same table to get FreeSpace in GB\r\n        | join kind=inner\r\n            (\r\n                InsightsMetrics\r\n                | where Namespace == \"LogicalDisk\" and Name == \"FreeSpaceMB\"\r\n                | where TimeGenerated >= ago(2h)\r\n                | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumis01\")\r\n                | extend FreeSpaceGB = Val /1000\r\n                | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n                | order by TimeGenerated desc\r\n                | summarize FreeSpaceGB=max(FreeSpaceGB) by Disk\r\n            )\r\n            on Disk\r\n        | extend TotalDiskSizeGB = FreeSpaceGB / (FreeSpacePercentage / 100)\r\n        | extend UsedSpaceGB = TotalDiskSizeGB - FreeSpaceGB\r\n        | summarize\r\n        [\"Used %\"]= round(max(UsedSpacePercentage),0),\r\n        [\"Used GB\"]=round(max(UsedSpaceGB), 2),\r\n        [\"Free %\"]=round(max(FreeSpacePercentage), 0),\r\n        [\"Free GB\"]=round(max(FreeSpaceGB), 2), \r\n        [\"Total GB\"] = round(max(TotalDiskSizeGB), 2) by Disk\r\n        | order by [\"Used %\"], [\"Used GB\"] desc",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -4130,7 +4494,7 @@
           "refId": "A"
         }
       ],
-      "title": "Free Space",
+      "title": "Disk Usage",
       "transformations": [
         {
           "id": "organize",
@@ -4195,7 +4559,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4314,7 +4679,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4433,7 +4799,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -4548,7 +4915,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -4665,7 +5033,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -4889,7 +5258,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5045,7 +5415,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5058,7 +5429,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 3,
         "x": 7,
         "y": 56
       },
@@ -5164,7 +5535,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5177,8 +5549,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 11,
+        "w": 3,
+        "x": 10,
         "y": 56
       },
       "id": 80,
@@ -5249,41 +5621,30 @@
           "custom": {
             "align": "auto",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "inspect": false
           },
           "mappings": [
             {
               "options": {
-                "from": 2,
+                "from": 70,
                 "result": {
                   "color": "orange",
                   "index": 0
                 },
-                "to": 5
+                "to": 80
               },
               "type": "range"
             },
             {
               "options": {
-                "from": 0,
+                "from": 81,
                 "result": {
                   "color": "red",
                   "index": 1
                 },
-                "to": 2
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 6,
-                "result": {
-                  "color": "green",
-                  "index": 2
-                },
-                "to": 10000000000000
+                "to": 100
               },
               "type": "range"
             }
@@ -5292,7 +5653,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -5345,21 +5707,211 @@
                 "value": 154
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 129
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used Space %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 114
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 79
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free %"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Free GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total GB"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 15,
+        "w": 9,
+        "x": 13,
         "y": 56
       },
-      "id": 86,
+      "id": 132,
       "options": {
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "fields": "",
+          "fields": [
+            "Used %"
+          ],
           "reducer": [
             "sum"
           ],
@@ -5373,7 +5925,7 @@
         {
           "azureLogAnalytics": {
             "dashboardTime": false,
-            "query": "InsightsMetrics\r\n| where Name == \"FreeSpaceMB\"\r\n| extend SplitRscId = split(_ResourceId, \"/\")\r\n| extend VMName = tostring(SplitRscId[(array_length(SplitRscId) - 1)])\r\n| extend gbVal = round(Val / 1000, 1)\r\n| parse Tags with * \"{\\\"vm.azm.ms/mountId\\\":\\\"\" tagOnly \"\\\",\" rest\r\n| where VMName in (\"vmuatizapcsdocumentumcs01\")\r\n| where $__timeFilter(TimeGenerated)\r\n| summarize arg_max(TimeGenerated, gbVal) by tagOnly",
+            "query": "InsightsMetrics\r\n        | where Origin == \"vm.azm.ms\" and Namespace == \"LogicalDisk\" and Name == \"FreeSpacePercentage\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizdbdocumentumdb\")\r\n        | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n        | extend FreeSpacePercentage = Val\r\n        | extend UsedSpacePercentage = (100 - FreeSpacePercentage)\r\n        | order by TimeGenerated desc\r\n        | summarize UsedSpacePercentage=avg(UsedSpacePercentage), FreeSpacePercentage=avg(FreeSpacePercentage) by Disk\r\n        // join same table to get FreeSpace in GB\r\n        | join kind=inner\r\n            (\r\n                InsightsMetrics\r\n                | where Namespace == \"LogicalDisk\" and Name == \"FreeSpaceMB\"\r\n                | where TimeGenerated >= ago(2h)\r\n                | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizdbdocumentumdb\")\r\n                | extend FreeSpaceGB = Val /1000\r\n                | extend Disk=tostring(todynamic(Tags)[\"vm.azm.ms/mountId\"])\r\n                | order by TimeGenerated desc\r\n                | summarize FreeSpaceGB=max(FreeSpaceGB) by Disk\r\n            )\r\n            on Disk\r\n        | extend TotalDiskSizeGB = FreeSpaceGB / (FreeSpacePercentage / 100)\r\n        | extend UsedSpaceGB = TotalDiskSizeGB - FreeSpaceGB\r\n        | summarize\r\n        [\"Used %\"]= round(max(UsedSpacePercentage),0),\r\n        [\"Used GB\"]=round(max(UsedSpaceGB), 2),\r\n        [\"Free %\"]=round(max(FreeSpacePercentage), 0),\r\n        [\"Free GB\"]=round(max(FreeSpaceGB), 2), \r\n        [\"Total GB\"] = round(max(TotalDiskSizeGB), 2) by Disk\r\n        | order by [\"Used %\"], [\"Used GB\"] desc",
             "resources": [
               "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/lta0001-azr-183-LogAnalyticsWorkspace/providers/Microsoft.OperationalInsights/workspaces/lta0001-azr-183-intranetcsu-default"
             ],
@@ -5387,7 +5939,7 @@
           "refId": "A"
         }
       ],
-      "title": "Free Space",
+      "title": "Disk Usage",
       "transformations": [
         {
           "id": "organize",
@@ -5452,7 +6004,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5571,7 +6124,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5690,7 +6244,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -5805,7 +6360,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange"
+                "color": "orange",
+                "value": null
               }
             ]
           }
@@ -5921,7 +6477,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -6145,7 +6702,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -6264,7 +6822,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -6417,7 +6976,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -12188,6 +12748,120 @@
         "type": "grafana-azure-monitor-datasource",
         "uid": "azure-monitor-oob"
       },
+      "description": "Overall latency \nStatistics of overall latency (in miliseconds) between the time API Mangement starts receiving a request and the time API Management finishes sending the response back to the client. ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 12,
+        "y": 147
+      },
+      "id": 120,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "azureMonitor": {
+            "aggregation": "Average",
+            "allowedTimeGrainsMs": [
+              3600000
+            ],
+            "dimensionFilters": [],
+            "metricName": "QueueCapacity",
+            "metricNamespace": "microsoft.storage/storageaccounts/queueservices",
+            "region": "southeastasia",
+            "resources": [
+              {
+                "metricNamespace": "Microsoft.Storage/storageAccounts",
+                "region": "southeastasia",
+                "resourceGroup": "cmt-20730023",
+                "resourceName": "sstsv2ltauatizdocstg2",
+                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+              }
+            ],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A",
+          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+        }
+      ],
+      "title": "Queue Used Capacity",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
       "gridPos": {
         "h": 2,
         "w": 21,
@@ -13084,120 +13758,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 12,
-        "y": 161
-      },
-      "id": 120,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              3600000
-            ],
-            "dimensionFilters": [],
-            "metricName": "QueueCapacity",
-            "metricNamespace": "microsoft.storage/storageaccounts/queueservices",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Storage/storageAccounts",
-                "region": "southeastasia",
-                "resourceGroup": "cmt-20730023",
-                "resourceName": "sstsv2ltauatizdocstg2",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        }
-      ],
-      "title": "Queue Used Capacity",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-azure-monitor-datasource",
-        "uid": "azure-monitor-oob"
-      },
-      "description": "Overall latency \nStatistics of overall latency (in miliseconds) between the time API Mangement starts receiving a request and the time API Management finishes sending the response back to the client. ",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": false,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
             "drawStyle": "bars",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -13550,6 +14110,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 61,
+  "version": 76,
   "weekStart": ""
 }
