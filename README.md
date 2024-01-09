@@ -32,19 +32,22 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
 
 ### Level 0 Dashboard  
 
-{updating to latest screenshot}
+<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
+
 
 If there is any one of the Azure resource used by OneLogin or Documentum that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
 
 
 ### Level 1 - OneLogin  
 
-{updating to latest screenshot}
+<img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/986ec27c-f2fc-41a0-9b4d-72bdf23d42ba">
 
 
 ### Level 1 - Documentum  
 
-{updating to latest screenshot}
+<img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
+
+<img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
 
 
 ### Level 1 - Azure API Management Dashboard, 3rd-Party
