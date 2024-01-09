@@ -23,9 +23,10 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
     
   * App Service: function performs [log query](https://devblogs.microsoft.com/azure-sdk/announcing-the-new-azure-monitor-query-client-libraries/) from Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available", this behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
     
-  * VM: A VM's health status is determine by 2 factors
+  * VM: health status is determine by 2 factors
     * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
-    * 3 metrics CPU, Memory and Disk usage percentage if crosses a configurable threshold, Grafana panel of VM resource will show Amber status. Amber status is shown only if Resource Health availability status is Green/Available. If Unavailable/Red, Red will be shown even if any metrics reaches threshold.
+    * If resource health status is Available/Green, additional 3 metrics CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
+      In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
 
 
 
