@@ -1,10 +1,10 @@
 # GCC-CWHD  
 
-CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps CloudCrafty and PocketGeek.  
+CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps Cloud Crafty and Pocket Geek.  
 The dashboards are organized in levels depicting the "depth" of monitoring. 
   * Level 0 dashboard shows the "overall" Azure resource availability status of each App.  
     The overall available status depends on the dependent Azure resources that each web app is using.  
-    For example CloudCrafty is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
+    For example Cloud Crafty is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
     resourcecs' availability status is Available.
     
   * Level 1 dashboard are web app specific, it displays the health and metrics of specific Azure resources used by web app
