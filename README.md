@@ -1,10 +1,10 @@
 # GCC-CWHD  
 
-CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps OneLogin and Documentum.  
+CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps CloudCrafty and PocketGeek.  
 The dashboards are organized in levels depicting the "depth" of monitoring. 
   * Level 0 dashboard shows the "overall" Azure resource availability status of each App.  
     The overall available status depends on the dependent Azure resources that each web app is using.  
-    For example OneLogin is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
+    For example CloudCrafty is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
     resourcecs' availability status is Available.
     
   * Level 1 dashboard are web app specific, it displays the health and metrics of specific Azure resources used by web app
@@ -38,12 +38,12 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
 If there is any one of the Azure resource used by OneLogin or Documentum that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
 
 
-### Level 1 - OneLogin  
+### Level 1 - Cloud Crafty  
 
 <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/986ec27c-f2fc-41a0-9b4d-72bdf23d42ba">
 
 
-### Level 1 - Documentum  
+### Level 1 - Pocket Geek  
 
 <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
 
