@@ -16,10 +16,13 @@ tracer = trace.get_tracer(__name__,
                           tracer_provider=get_tracer_provider())
 
 #override Azure's root logger to be able to log to console
-logger = logging.getLogger('akshay')
-logger.setLevel(logging.ERROR)
+# logger = logging.getLogger('akshay')
+# logger.setLevel(logging.ERROR)
+
+logging.basicConfig(level = logging.WARNING)
+logger = logging.getLogger('azure')
 sh = logging.StreamHandler()
-sh.setLevel(logging.ERROR)
+sh.setLevel(logging.WARNING)
 logger.propagate = False
 logger.addHandler(sh)
 
@@ -41,7 +44,7 @@ def init(appconfig: AppConfig) -> None:
         logger.addHandler(appinsightsExceptionHandler)
 
         appinsightsWarnHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        appinsightsWarnHandler.setLevel(logging.WARN)
+        appinsightsWarnHandler.setLevel(logging.WARNING)
         logger.addHandler(appinsightsWarnHandler)
 
         configure_azure_monitor(
@@ -59,7 +62,7 @@ def debug(msg):
 
 
 def exception(msg):
-    logger.exception(msg, exc_info=True)
+    logger.exception(msg,stack_info=True, exc_info=True)
 
 def exception(msg, **kwargs):
 
@@ -67,15 +70,19 @@ def exception(msg, **kwargs):
     for k, v in kwargs.items():
         appinsightsCusomtProps['custom_dimensions'][k] = v
 
-    logger.exception(msg, exc_info=True, extra=appinsightsCusomtProps)
+    logger.exception(msg,stack_info=True, exc_info=True, extra=appinsightsCusomtProps)
 
 def warn(msg, **kwargs):
+
+    if not kwargs:
+         logger.warning(msg, exc_info=True, stack_info=True)
+         return
 
     appinsightsCusomtProps = {'custom_dimensions': {}}
     for k, v in kwargs.items():
         appinsightsCusomtProps['custom_dimensions'][k] = v
 
-    logger.warn(msg, extra=appinsightsCusomtProps)
+    logger.warning(msg, extra=appinsightsCusomtProps, exc_info=True, stack_info=True)
 
 def get_tracer():
      return tracer
