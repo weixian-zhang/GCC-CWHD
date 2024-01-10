@@ -136,9 +136,6 @@ def RHRetriever(req: func.HttpRequest) -> func.HttpResponse:
         
         tracer = Log.get_tracer()
 
-        Log.warn('a warning')
-        Log.exception('an error')
-
         with tracer.start_as_current_span("main_request_RHRetriever",context=extract(req.headers), kind=SpanKind.SERVER):
             
             resources = get_resources(req.get_json())
