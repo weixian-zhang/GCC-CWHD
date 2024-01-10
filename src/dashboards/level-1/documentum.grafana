@@ -1072,41 +1072,32 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
             }
-          },
-          "mappings": [],
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1115,111 +1106,211 @@
                 "value": null
               },
               {
+                "color": "orange",
+                "value": 70
+              },
+              {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 7,
+        "h": 6,
+        "w": 3,
         "x": 0,
         "y": 8
       },
-      "id": 89,
+      "id": 139,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^CPUPercent$/",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "10.2.1",
       "targets": [
         {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "customNamespace": "microsoft.compute/virtualmachines",
-            "dimensionFilters": [],
-            "metricName": "Percentage CPU",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n            | where Namespace == \"Processor\" and Name == \"UtilizationPercentage\"\r\n            | where TimeGenerated >= ago(2h)\r\n            | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs01\")\r\n            | extend CPUPercent = round(Val,1)\r\n            | order by TimeGenerated desc\r\n            | take 1\r\n            | project CPUPercent",
             "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizapcsdocumentumcs01",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
             ],
-            "timeGrain": "auto"
+            "resultFormat": "table"
           },
           "datasource": {
             "type": "grafana-azure-monitor-datasource",
             "uid": "azure-monitor-oob"
           },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        },
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "dimensionFilters": [],
-            "metricName": "Available Memory Bytes",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizapcsdocumentumcs01",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "hide": false,
-          "queryType": "Azure Monitor",
-          "refId": "B",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
         }
       ],
-      "title": "CPU% / Available Memory",
-      "type": "timeseries"
+      "title": "CPU Usage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gbVal"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 8
+      },
+      "id": 140,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.1",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n        | where Namespace == \"Memory\" and Name == \"AvailableMB\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs01\")\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)[\"vm.azm.ms/memorySizeMB\"])) / 1000,1)\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend UsedGB = round((TotalMemoryGB - AvailableGB),1)\r\n        | extend UsedMemoryPercentage = round(((UsedGB / TotalMemoryGB) * 100), 0)\r\n        | order by TimeGenerated desc\r\n        | take 1\r\n        | project UsedMemoryPercentage",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
+            ],
+            "resultFormat": "table"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Usage",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "TimeGenerated": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "gbVal": "Free Space (GB)",
+              "tagOnly": "Drive"
+            }
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
       "datasource": {
@@ -1281,9 +1372,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 7,
+        "x": 6,
         "y": 8
       },
       "id": 90,
@@ -1401,9 +1492,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 10,
+        "x": 9,
         "y": 8
       },
       "id": 91,
@@ -1754,7 +1845,7 @@
       "gridPos": {
         "h": 7,
         "w": 9,
-        "x": 13,
+        "x": 12,
         "y": 8
       },
       "id": 135,
@@ -1873,7 +1964,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 15
+        "y": 14
       },
       "id": 93,
       "options": {
@@ -1993,7 +2084,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 15
+        "y": 14
       },
       "id": 94,
       "options": {
@@ -2109,7 +2200,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 15
+        "y": 14
       },
       "id": 98,
       "options": {
@@ -2330,41 +2421,32 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
             }
-          },
-          "mappings": [],
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2373,111 +2455,211 @@
                 "value": null
               },
               {
+                "color": "orange",
+                "value": 70
+              },
+              {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 7,
+        "h": 6,
+        "w": 3,
         "x": 0,
         "y": 24
       },
-      "id": 99,
+      "id": 108,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^CPUPercent$/",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "10.2.1",
       "targets": [
         {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "customNamespace": "microsoft.compute/virtualmachines",
-            "dimensionFilters": [],
-            "metricName": "Percentage CPU",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n            | where Namespace == \"Processor\" and Name == \"UtilizationPercentage\"\r\n            | where TimeGenerated >= ago(2h)\r\n            | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs02\")\r\n            | extend CPUPercent = round(Val,1)\r\n            | order by TimeGenerated desc\r\n            | take 1\r\n            | project CPUPercent",
             "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizapcsdocumentumcs02",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
             ],
-            "timeGrain": "auto"
+            "resultFormat": "table"
           },
           "datasource": {
             "type": "grafana-azure-monitor-datasource",
             "uid": "azure-monitor-oob"
           },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        },
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "dimensionFilters": [],
-            "metricName": "Available Memory Bytes",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizapcsdocumentumcs02",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "hide": false,
-          "queryType": "Azure Monitor",
-          "refId": "B",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
         }
       ],
-      "title": "CPU% / Available Memory",
-      "type": "timeseries"
+      "title": "CPU Usage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gbVal"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 24
+      },
+      "id": 138,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.1",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n        | where Namespace == \"Memory\" and Name == \"AvailableMB\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumcs02\")\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)[\"vm.azm.ms/memorySizeMB\"])) / 1000,1)\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend UsedGB = round((TotalMemoryGB - AvailableGB),1)\r\n        | extend UsedMemoryPercentage = round(((UsedGB / TotalMemoryGB) * 100), 0)\r\n        | order by TimeGenerated desc\r\n        | take 1\r\n        | project UsedMemoryPercentage",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
+            ],
+            "resultFormat": "table"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Usage",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "TimeGenerated": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "gbVal": "Free Space (GB)",
+              "tagOnly": "Drive"
+            }
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
       "datasource": {
@@ -2539,9 +2721,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 7,
+        "x": 6,
         "y": 24
       },
       "id": 100,
@@ -2659,9 +2841,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 10,
+        "x": 9,
         "y": 24
       },
       "id": 101,
@@ -3012,7 +3194,7 @@
       "gridPos": {
         "h": 7,
         "w": 9,
-        "x": 13,
+        "x": 12,
         "y": 24
       },
       "id": 134,
@@ -3131,7 +3313,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 31
+        "y": 30
       },
       "id": 103,
       "options": {
@@ -3251,7 +3433,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 31
+        "y": 30
       },
       "id": 104,
       "options": {
@@ -3367,7 +3549,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 31
+        "y": 30
       },
       "id": 105,
       "options": {
@@ -3774,41 +3956,32 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
             }
-          },
-          "mappings": [],
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3817,111 +3990,211 @@
                 "value": null
               },
               {
+                "color": "orange",
+                "value": 70
+              },
+              {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 7,
+        "h": 6,
+        "w": 3,
         "x": 0,
         "y": 40
       },
-      "id": 108,
+      "id": 137,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^CPUPercent$/",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "10.2.1",
       "targets": [
         {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "customNamespace": "microsoft.compute/virtualmachines",
-            "dimensionFilters": [],
-            "metricName": "Percentage CPU",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n            | where Namespace == \"Processor\" and Name == \"UtilizationPercentage\"\r\n            | where TimeGenerated >= ago(2h)\r\n            | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumis01\")\r\n            | extend CPUPercent = round(Val,1)\r\n            | order by TimeGenerated desc\r\n            | take 1\r\n            | project CPUPercent",
             "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023",
-                "resourceName": "vmuatizapcsdocumentumis01",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
             ],
-            "timeGrain": "auto"
+            "resultFormat": "table"
           },
           "datasource": {
             "type": "grafana-azure-monitor-datasource",
             "uid": "azure-monitor-oob"
           },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        },
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "dimensionFilters": [],
-            "metricName": "Available Memory Bytes",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023",
-                "resourceName": "vmuatizapcsdocumentumis01",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "hide": false,
-          "queryType": "Azure Monitor",
-          "refId": "B",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
         }
       ],
-      "title": "CPU% / Available Memory",
-      "type": "timeseries"
+      "title": "CPU Usage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gbVal"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 40
+      },
+      "id": 136,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.1",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n        | where Namespace == \"Memory\" and Name == \"AvailableMB\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023/providers/Microsoft.Compute/virtualMachines/vmuatizapcsdocumentumis01\")\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)[\"vm.azm.ms/memorySizeMB\"])) / 1000,1)\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend UsedGB = round((TotalMemoryGB - AvailableGB),1)\r\n        | extend UsedMemoryPercentage = round(((UsedGB / TotalMemoryGB) * 100), 0)\r\n        | order by TimeGenerated desc\r\n        | take 1\r\n        | project UsedMemoryPercentage",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
+            ],
+            "resultFormat": "table"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Usage",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "TimeGenerated": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "gbVal": "Free Space (GB)",
+              "tagOnly": "Drive"
+            }
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
       "datasource": {
@@ -3983,9 +4256,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 7,
+        "x": 6,
         "y": 40
       },
       "id": 109,
@@ -4103,9 +4376,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 10,
+        "x": 9,
         "y": 40
       },
       "id": 110,
@@ -4455,8 +4728,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 13,
+        "w": 9,
+        "x": 12,
         "y": 40
       },
       "id": 133,
@@ -4575,7 +4848,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 47
+        "y": 46
       },
       "id": 112,
       "options": {
@@ -4695,7 +4968,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 47
+        "y": 46
       },
       "id": 113,
       "options": {
@@ -4811,7 +5084,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 47
+        "y": 46
       },
       "id": 114,
       "options": {
@@ -5219,154 +5492,242 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
             }
-          },
-          "mappings": [],
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 70
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 7,
+        "h": 6,
+        "w": 3,
         "x": 0,
         "y": 56
       },
-      "id": 77,
+      "id": 142,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^CPUPercent$/",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "10.2.1",
       "targets": [
         {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "customNamespace": "microsoft.compute/virtualmachines",
-            "dimensionFilters": [],
-            "metricName": "Percentage CPU",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n            | where Namespace == \"Processor\" and Name == \"UtilizationPercentage\"\r\n            | where TimeGenerated >= ago(2h)\r\n            | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizdbdocumentumdb\")\r\n            | extend CPUPercent = round(Val,1)\r\n            | order by TimeGenerated desc\r\n            | take 1\r\n            | project CPUPercent",
             "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizdbdocumentumdb",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
             ],
-            "timeGrain": "auto"
+            "resultFormat": "table"
           },
           "datasource": {
             "type": "grafana-azure-monitor-datasource",
             "uid": "azure-monitor-oob"
           },
-          "queryType": "Azure Monitor",
-          "refId": "A",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-        },
-        {
-          "azureMonitor": {
-            "aggregation": "Average",
-            "allowedTimeGrainsMs": [
-              60000,
-              300000,
-              900000,
-              1800000,
-              3600000,
-              21600000,
-              43200000,
-              86400000
-            ],
-            "dimensionFilters": [],
-            "metricName": "Available Memory Bytes",
-            "metricNamespace": "microsoft.compute/virtualmachines",
-            "region": "southeastasia",
-            "resources": [
-              {
-                "metricNamespace": "Microsoft.Compute/virtualMachines",
-                "region": "southeastasia",
-                "resourceGroup": "CMT-20730023-1",
-                "resourceName": "vmuatizdbdocumentumdb",
-                "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
-              }
-            ],
-            "timeGrain": "auto"
-          },
-          "datasource": {
-            "type": "grafana-azure-monitor-datasource",
-            "uid": "azure-monitor-oob"
-          },
-          "hide": false,
-          "queryType": "Azure Monitor",
-          "refId": "B",
-          "subscription": "404cdea1-452e-4dd3-b9e7-cba774caa58a"
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
         }
       ],
-      "title": "CPU% / Available Memory",
-      "type": "timeseries"
+      "title": "CPU Usage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 70,
+                "result": {
+                  "color": "orange",
+                  "index": 0
+                },
+                "to": 80
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 81,
+                "result": {
+                  "color": "red",
+                  "index": 1
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gbVal"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 56
+      },
+      "id": 143,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.2.1",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "InsightsMetrics\r\n        | where Namespace == \"Memory\" and Name == \"AvailableMB\"\r\n        | where TimeGenerated >= ago(2h)\r\n        | where _ResourceId == tolower(\"/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a/resourceGroups/CMT-20730023-1/providers/Microsoft.Compute/virtualMachines/vmuatizdbdocumentumdb\")\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)[\"vm.azm.ms/memorySizeMB\"])) / 1000,1)\r\n        | extend AvailableGB = round(Val/1000,1)\r\n        | extend UsedGB = round((TotalMemoryGB - AvailableGB),1)\r\n        | extend UsedMemoryPercentage = round(((UsedGB / TotalMemoryGB) * 100), 0)\r\n        | order by TimeGenerated desc\r\n        | take 1\r\n        | project UsedMemoryPercentage",
+            "resources": [
+              "/subscriptions/404cdea1-452e-4dd3-b9e7-cba774caa58a"
+            ],
+            "resultFormat": "table"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Usage",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "TimeGenerated": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "gbVal": "Free Space (GB)",
+              "tagOnly": "Drive"
+            }
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
       "datasource": {
@@ -5415,8 +5776,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5428,9 +5788,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 7,
+        "x": 6,
         "y": 56
       },
       "id": 79,
@@ -5535,8 +5895,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5548,9 +5907,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 3,
-        "x": 10,
+        "x": 9,
         "y": 56
       },
       "id": 80,
@@ -5653,8 +6012,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -5810,8 +6168,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "#EAB839",
@@ -5901,7 +6258,7 @@
       "gridPos": {
         "h": 7,
         "w": 9,
-        "x": 13,
+        "x": 12,
         "y": 56
       },
       "id": 132,
@@ -6004,8 +6361,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6020,7 +6376,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 63
+        "y": 62
       },
       "id": 81,
       "options": {
@@ -6124,8 +6480,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6140,7 +6495,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 63
+        "y": 62
       },
       "id": 82,
       "options": {
@@ -6244,8 +6599,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange",
-                "value": null
+                "color": "orange"
               }
             ]
           }
@@ -6256,7 +6610,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 63
+        "y": 62
       },
       "id": 97,
       "options": {
@@ -6360,8 +6714,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange",
-                "value": null
+                "color": "orange"
               }
             ]
           }
@@ -6477,8 +6830,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -6702,8 +7054,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6822,8 +7173,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -6976,8 +7326,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -7706,7 +8055,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -7764,7 +8113,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -8286,7 +8635,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -8485,9 +8834,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -8822,7 +9172,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -8880,7 +9230,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -9400,7 +9750,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -9599,9 +9949,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -9936,7 +10287,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -9994,7 +10345,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -10515,7 +10866,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -10714,9 +11065,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -11051,7 +11403,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureLogAnalytics": {
@@ -11109,7 +11461,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -12085,7 +12437,7 @@
         "content": "\n<hr style =\"height: 1px; background-color: #FFFFFF\" >",
         "mode": "html"
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.1",
       "targets": [
         {
           "azureMonitor": {
@@ -14110,6 +14462,6 @@
   "timezone": "",
   "title": "Level 1 - Documentum",
   "uid": "bf2db279-fcd8-41d1-9dee-1a11171fcd37",
-  "version": 76,
+  "version": 87,
   "weekStart": ""
 }
