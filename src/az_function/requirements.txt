@@ -4,7 +4,7 @@
 
 opentelemetry-api
 opentelemetry-sdk
-azure-monitor-opentelemetry=1.1.1
+azure-monitor-opentelemetry
 opencensus-ext-azure
 pandas
 azure-functions
