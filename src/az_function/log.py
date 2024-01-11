@@ -62,7 +62,7 @@ def debug(msg):
 
 
 def exception(msg):
-    logger.exception(msg,stack_info=True, exc_info=True)
+    logger.exception(msg)
 
 def exception(msg, **kwargs):
 
@@ -82,7 +82,7 @@ def warn(msg, **kwargs):
     for k, v in kwargs.items():
         appinsightsCusomtProps['custom_dimensions'][k] = v
 
-    logger.warning(msg, extra=appinsightsCusomtProps, exc_info=True, stack_info=True)
+    logger.warning(msg, extra=appinsightsCusomtProps)
 
 def get_tracer():
      return tracer

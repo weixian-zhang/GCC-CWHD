@@ -6,6 +6,9 @@
   },
   "logging": {
     "applicationInsights": {
+      "logLevel": {
+        "Default": "Warning"
+      },
       "samplingSettings": {
         "isEnabled": true,
         "enableDependencyTracking":false,
