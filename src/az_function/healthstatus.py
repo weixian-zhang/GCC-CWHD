@@ -3,69 +3,35 @@ from abc import ABC, abstractclassmethod
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus, LogsQueryResult
-from logging import Logger
 from config import AppConfig, ResourceParameter
 import pandas as pd
-import numpy as np
 from datetime import datetime, timedelta
 from kql import KQL
 import log as Log
+from model import HealthReport, ResourceParameter
 
 
-class HealthReport:
-    """
-    A general data model used a a consistent return type for all health status result
-    """
-    # availabilityState
-    # Available = 1, Unavailable = 0 or Unknown = 2
-    # converting into number is easier to style by Grafana "threshold" 
-
-    def __init__(self,
-                 resourceId='',
-                 description='', 
-                 availabilityState='', 
-                 summary='', 
-                 reportedTime=None, 
-                 stateLastChangeTime=None) -> None:
-        
-        self.availabilityState = availabilityState
-        self.resourceId = resourceId
-        self.description = description
-        self.reportedTime = (reportedTime if not None else datetime.now())
-
-        #self.location = location    # obsolete, to be deleted
-        self.summary = summary      # obsolete, to be deleted
-        self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now())    # obsolete, to be deleted
-        self.displayText = '' # obsolete, to be deleted
-        
-        # if availabilityState == 'Available':
-        #     self.availabilityState = 1
-        #     self.displayText = 'Available'
-        # elif availabilityState == 'Unavailable':
-        #     self.availabilityState = 0
-        #     self.displayText = 'Unavailable'
-        # else:
-        #     self.availabilityState = 2
-        #     self.displayText = 'Unknown'
+class Message:
 
     @staticmethod
-    def query_no_result_msg():
-        return f'health status log or metric result not found'
-
+    def params_not_exist():
+        return 'Either resourceId, workspaceId or name of App Insights Standard Test is not found'
+    
 
 # strategy design pattern
 class HealthStatusRetriever(ABC):
+
     @abstractclassmethod
     def get_health_status(self, resource: ResourceParameter):
         pass
 
-    def query_monitor_log(self, query, timeSpan: timedelta) -> LogsQueryResult:
+    def query_monitor_log(self, workspaceId: str, query: str, timeSpan: timedelta) -> LogsQueryResult:
 
         credential = DefaultAzureCredential()
         client = LogsQueryClient(credential)
 
         response = client.query_workspace(
-            workspace_id= self.appconfig.workspaceID,
+            workspace_id= workspaceId,
             query=query,
             timespan=timeSpan
         )
@@ -79,19 +45,26 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
     https://github.com/Azure/azure-sdk-for-python/tree/azure-monitor-query_1.2.0/sdk/monitor/azure-monitor-query/samples
     """
 
-    def __init__(self, appconfig: AppConfig) -> None:
-        self.appconfig = appconfig
 
     def get_health_status(self, resource):
 
         with Log.get_tracer().start_as_current_span("log_query_app_insights_standard_test_result"):
-        
+            
+            workspaceId = resource.workspaceId
             resourceId = resource.resourceId
             standardTestName = resource.standardTestName
 
+            if not resourceId or not standardTestName or not workspaceId:
+                Log.warn(Message.params_not_exist())
+                return HealthReport(
+                            resourceId=resourceId,
+                            description=Message.params_not_exist(),
+                            availabilityState= 0,
+                            reportedTime=datetime.now())
+
             query = KQL.app_availability_result_query(standardTestName)
 
-            response = super().query_monitor_log(query, timeSpan=timedelta(hours=2))
+            response = super().query_monitor_log(workspaceId=workspaceId, query=query, timeSpan=timedelta(hours=2))
             
             if response.status == LogsQueryStatus.PARTIAL:
                 error = response.partial_error
@@ -130,17 +103,20 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
     def __init__(self, appconfig: AppConfig) -> None:
         self.appconfig = appconfig
 
-    def query_cpu_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> int:
 
-        cpuUsagePercentageQuery = KQL.cpu_usage_percentage_query(resourceId)
+    def query_cpu_usage_percenage(self, resource: ResourceParameter, queryTimeSpan: timedelta) -> int:
+
+        resourceId = resource.resourceId
+
+        query = KQL.cpu_usage_percentage_query(resourceId)
 
         Log.debug(f"""executing log query:
-        {cpuUsagePercentageQuery}
+        {query}
         for resource Id {resourceId}
         """)
 
         # timeSpan does not matter as time filter is set in query, but SDK requires it
-        resp = super().query_monitor_log(cpuUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
+        resp = super().query_monitor_log(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
         if resp.status == LogsQueryStatus.PARTIAL:
             error = resp.partial_error
@@ -163,11 +139,13 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         return usedCpuPercentage
     
 
-    def query_memory_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> int:
+    def query_memory_usage_percenage(self, resource: ResourceParameter, queryTimeSpan: timedelta) -> int:
 
-        memoryUsagePercentageQuery = KQL.memory_usage_percentage_query(resourceId)
+        resourceId = resource.resourceId
+
+        query = KQL.memory_usage_percentage_query(resourceId)
         
-        resp = super().query_monitor_log(memoryUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
+        resp = super().query_monitor_log(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
         if resp.status == LogsQueryStatus.PARTIAL:
             error = resp.partial_error
@@ -190,12 +168,13 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         return usedMemoryPercentage
     
 
-    def query_disk_usage_percenage(self, resourceId: str, queryTimeSpan: timedelta) -> dict:
+    def query_disk_usage_percenage(self,  resource: ResourceParameter, queryTimeSpan: timedelta) -> dict:
 
+        resourceId = resource.resourceId
         result = {}
-        diskUsagePercentageQuery = KQL.disk_usage_percentage_query(resourceId)
+        query = KQL.disk_usage_percentage_query(resourceId)
         
-        resp = super().query_monitor_log(diskUsagePercentageQuery, timeSpan=timedelta(hours=queryTimeSpan))
+        resp = super().query_monitor_log(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
         if resp.status == LogsQueryStatus.PARTIAL:
             error = resp.partial_error
@@ -228,29 +207,30 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
 
+        if not resourceId or not subscriptionId or not resource.workspaceId:
+            
+            Log.warn(f'Either resourceId, workspaceId or name of App Insights Standard Test is not found')
+            return HealthReport(
+                    resourceId=resourceId,
+                    description='Either resourceId, workspaceId or name of App Insights Standard Test is not found',
+                    availabilityState= 0,
+                    reportedTime=datetime.now())
+
         tracer = Log.get_tracer()
         with tracer.start_as_current_span("vm_health_status"):
             
             with tracer.start_as_current_span('retrieve_cpu_metric'):
                 # scalar value
-                cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
+                cpuPercentage = self.query_cpu_usage_percenage(resource, queryTimeSpanHour)
 
             with tracer.start_as_current_span('retrieve_memory_metric'):
                 # scalar value
-                usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
+                usedMemoryPercentage = self.query_memory_usage_percenage(resource, queryTimeSpanHour)
 
             with tracer.start_as_current_span('retrieve_disk_drives_metrics'):
-                # dictionary of win drive/linux file path : used space percentage
-                diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
+                # result contains dictionary of win drive/linux file path : used space percentage
+                diskUsedPercentages = self.query_disk_usage_percenage(resource, queryTimeSpanHour)
         
-        # # scalar value
-        # cpuPercentage = self.query_cpu_usage_percenage(resourceId, queryTimeSpanHour)
-
-        # # scalar value
-        # usedMemoryPercentage = self.query_memory_usage_percenage(resourceId, queryTimeSpanHour)
-
-        # # dictionary of win drive/linux file path : used space percentage
-        # diskUsedPercentages = self.query_disk_usage_percenage(resourceId, queryTimeSpanHour)
 
         # resource health
         rhClient = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
@@ -345,27 +325,26 @@ class HealthStatusClient:
     https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview 
     """
 
-    def __init__(self, logger: Logger, appconfig: AppConfig) -> None:
-        #self.logger = logger
+    def __init__(self, appconfig) -> None:
         self.appconfig = appconfig
     
-    def get_health(self, resource) -> HealthReport:
+    def get_health(self, resource: ResourceParameter) -> HealthReport:
         
         try:
             rscType =  self._get_resource_type(resource.resourceId)
             
             if rscType == AzResourceType.General:
-                grc = GeneralHealthStatusRetriever() #(self.logger)
+                grc = GeneralHealthStatusRetriever()
                 hr = grc.get_health_status(resource)
                 return hr
             
             if rscType == AzResourceType.VM:
-                client = VMHealthStatusRetriever(self.appconfig)#(self.logger, self.appconfig)
+                client = VMHealthStatusRetriever(self.appconfig)
                 hr = client.get_health_status(resource)
                 return hr
             
             if rscType == AzResourceType.AppService:
-                client = AppServiceHealthStatusRetriever(self.appconfig)#(self.logger, self.appconfig)
+                client = AppServiceHealthStatusRetriever()
                 hr = client.get_health_status(resource)
                 return hr
         
