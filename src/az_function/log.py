@@ -47,14 +47,14 @@ def init(appconfig: AppConfig) -> None:
         appinsightsWarnHandler.setLevel(logging.WARNING)
         logger.addHandler(appinsightsWarnHandler)
 
-        configure_azure_monitor(
-            instrumentation_options = {"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": False}},
-            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS="azure_app_service",
-            disable_offline_storage=True,
-            disable_logging = True,
-            disable_metrics=True,
-            connection_string=appconfig.appinsightsConnString
-        )
+        # configure_azure_monitor(
+        #     instrumentation_options = {"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": False}},
+        #     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS="azure_app_service",
+        #     disable_offline_storage=True,
+        #     disable_logging = True,
+        #     disable_metrics=True,
+        #     connection_string=appconfig.appinsightsConnString
+        # )
 
 
 def debug(msg):

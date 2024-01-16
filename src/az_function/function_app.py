@@ -2,7 +2,8 @@ import azure.functions as func
 from healthstatus import HealthStatusClient, HealthReport
 import jsons
 from datetime import datetime
-from config import AppConfig, ResourceParameter
+from config import AppConfig
+from model import ResourceParameter
 import log as Log
 from opentelemetry.trace import (
     SpanKind
@@ -86,10 +87,12 @@ def get_resources(reqBody) -> list[ResourceParameter]:
 
     for r in rscs:
         standardTestName = r['standardTestName'] if 'standardTestName' in r else ''
+        workspaceId = r['workspaceId'] if 'workspaceId' in r else ''
         result.append(ResourceParameter(
             r['resourceId'],
              r['subscriptionId'],
              standardTestName,
+             workspaceId
             ))
         
     return result
@@ -103,7 +106,7 @@ def get_resource_health_states(resources: list[ResourceParameter]) -> RHResult:
     
     for rsc in resources:
 
-        client = HealthStatusClient(Log, appconfig)
+        client = HealthStatusClient(appconfig)
 
         healthReport = client.get_health(rsc)
 
