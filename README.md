@@ -11,6 +11,13 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 
 <br />
 
+* [Architecture](#architecture)
+* [Level 0 dashboard](#level-0-dashboard)
+* [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
+* [Level 2 dashboard](#level-2-dashboard)
+
+<br />
+  
 ### Architecture  
 
 <img width="600" height="700" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/47b01407-8a38-4b44-a63a-befd38198928">
@@ -38,12 +45,12 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
 If there is any one of the Azure resource used by OneLogin or Documentum that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
 
 
-### Level 1 - Cloud Crafty  
+### Level 1 - Cloud Crafty Dashboard
 
 <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/986ec27c-f2fc-41a0-9b4d-72bdf23d42ba">
 
 
-### Level 1 - Pocket Geek  
+### Level 1 - Pocket Geek Dashboard 
 
 <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
 
@@ -54,6 +61,11 @@ If there is any one of the Azure resource used by OneLogin or Documentum that ha
 
 Dashboard courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/35b24813-7335-42ea-b43d-9ff68a718be4)
+![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/35b24813-7335-42ea-b43d-9ff68a718be4)  
+
+### Level 2 Dashboard
+
+Proposed Distributed Tracing with OpenTelemetry Collector to collect OpenTelemetry traces from apps, collector sends traces to Jaeger backed by Azure Managed Cassandra.
+Grafana gets traces from Jaeger as datasource to display traces within Grafana centrally, in addition to viewing traces in Jaeger UI.
 
 
