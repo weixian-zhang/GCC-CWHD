@@ -57,12 +57,6 @@ If there is any one of the Azure resource used by OneLogin or Documentum that ha
 <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
 
 
-### Level 1 - Azure API Management Dashboard, 3rd-Party
-
-Dashboard courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
-
-![image](https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/35b24813-7335-42ea-b43d-9ff68a718be4)  
-
 ### Level 2 Dashboard
 
 Proposed Distributed Tracing with OpenTelemetry Collector to collect OpenTelemetry traces from apps, collector sends traces to Jaeger backed by Azure Managed Cassandra.
