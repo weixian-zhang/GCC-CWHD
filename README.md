@@ -47,7 +47,8 @@ If there is any one of the Azure resource used by OneLogin or Documentum that ha
 
 ### Level 1 - Cloud Crafty Dashboard
 
-<img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/986ec27c-f2fc-41a0-9b4d-72bdf23d42ba">
+<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
+
 
 
 ### Level 1 - Pocket Geek Dashboard 
