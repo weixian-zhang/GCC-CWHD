@@ -42,7 +42,7 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
 
 
-If there is any one of the Azure resource used by OneLogin or Documentum that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
+If there is any one of the Azure resource used by Cloud Crafty or Pocket Geeks apps that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
 
 
 ### Level 1 - Cloud Crafty Dashboard
