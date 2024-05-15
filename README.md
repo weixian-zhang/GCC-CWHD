@@ -16,7 +16,14 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 * [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
 * [Level 2 dashboard](#level-2-dashboard)
 
-<br />
+<br />  
+
+### Prerequisite
+
+*  A Service Principal with Reader role assigned to all subscriptions "under monitoring" 
+*  Required Telemetry
+   * for App Service health signal - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
+   * for Virtual Machines - VM metrics from [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
   
 ### Architecture  
 
