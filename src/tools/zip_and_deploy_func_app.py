@@ -6,8 +6,8 @@ from zipfile import ZipFile
 import subprocess
 
 func_zip_name = 'func-app.zip'
-az_resource_group = 'rg-lta-cwhd'
-az_func_name = 'func-lta-cwhd'
+az_resource_group = 'rg-aname-cwhd'
+az_func_name = 'func-aname-cwhd'
 
 current_working_directory = os.path.join(Path(os.getcwd()).parent.parent.absolute())
 azfunc_directory = os.path.join(current_working_directory,'src', 'az_function')
