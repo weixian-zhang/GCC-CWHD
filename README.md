@@ -20,10 +20,21 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 
 ### Prerequisite
 
-*  A Service Principal with Reader role assigned to all subscriptions "under monitoring" 
-*  Required Telemetry
-   * for App Service health signal - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
-   * for Virtual Machines - VM metrics from [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
+*  A <b>Service Principal</b> with Reader role assigned to all subscriptions "under monitoring" 
+*  <b>Required Telemetry</b>
+   * for App Service health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
+   * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
+* <b>Azure services</b>
+     * Azure Managed Grafana
+     * Azure Function - App Service Plan S1
+       *  enable Managed Identity
+       *  add Azure role assignment (RBAC) for Function's Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+          *  Subscriptions containing resources under monitoring
+          *  Log Analytics Workspace
+     * Azure Log Analytics Workspace
+     * 1 Application Insights for each app. All App Insights linked to same (one) Log Analytics Workspace 
+*  <b>Assumption</b>
+   * has an existing Log Analytics Workspace where "all" Application Insights are linked to
   
 ### Architecture  
 
