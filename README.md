@@ -1,4 +1,4 @@
-# GCC Azure - Central Workload Health Dashboard (CWHD)
+# GCC Azure - Central Workload Health Dashboard (AZCWHD)
 
 CWHD is an application-specific custom monitoring solution leveraging Grafana to visualize Azure resource health statuses and other telemetry.  
 The Grafana dashboards in CWHD, has a concept of grouping up Azure services used by Application.  
