@@ -1,13 +1,16 @@
-# GCC-CWHD  
+# GCC Azure - Central Workload Health Dashboard (CWHD)
 
-CWHD currently provides Grafana dashboards to visualize Azure resource health statuses and metrics for 2 web apps Cloud Crafty and Pocket Geek.  
+CWHD is an application-specific custom monitoring solution leveraging Grafana to visualize Azure resource health statuses and other telemetry.  
+The Grafana dashboards in CWHD, has a concept of grouping up Azure services used by Application.  
+It uses Green, Amber and Red color code to determine the overall availability of an application.  
+
 The dashboards are organized in levels depicting the "depth" of monitoring. 
-  * Level 0 dashboard shows the "overall" Azure resource availability status of each App.  
-    The overall available status depends on the dependent Azure resources that each web app is using.  
-    For example Cloud Crafty is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be available when all 3 
+  * Level 0 dashboard shows availability status if all Apps.  
+    The overall available status depends on the dependent Azure resources that each app here is using.  
+    For example Cloud Crafty is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be Green/available when all 3 
     resourcecs' availability status is Available.
     
-  * Level 1 dashboard are web app specific, it displays the health and metrics of specific Azure resources used by web app
+  * Level 1 dashboard drills down into the app and displays metrics of Azure resources used by the app
 
 <br />
 
@@ -17,6 +20,14 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 * [Level 2 dashboard](#level-2-dashboard)
 
 <br />  
+
+# What Health Signals CWHD is Monitoring?
+  * Monitors Azure Resource Health signals for all resource types
+  * Montors App Insights Standard Test/HTTP ping's result to determine web app availability
+  * Monitors CPU, Memory and Disk usage against a configurable threshold and displays Amber color when threshold is met.
+    (only works for VM)
+  * Roadmap:
+    * monitors Windows Server IIS App Pool Started/Stopped signal 
 
 ### Prerequisite
 
