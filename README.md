@@ -37,11 +37,15 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
    * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
 * <b>Azure services</b>
      * Azure Managed Grafana
+       *  enable Managed Identity
+       *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+          *  Subscriptions containing resources under monitoring
+          *  Log Analytics Workspace (if workspace in different subscription from above) 
      * Azure Function - App Service Plan S1
        *  enable Managed Identity
-       *  add Azure role assignment (RBAC) for Function's Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+       *  add Azure role assignment (RBAC) for Function Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
           *  Subscriptions containing resources under monitoring
-          *  Log Analytics Workspace
+          *  Log Analytics Workspace (if workspace in different subscription from above)
      * Azure Log Analytics Workspace
      * 1 Application Insights for each app. All App Insights linked to same (one) Log Analytics Workspace 
 *  <b>Assumption</b>
