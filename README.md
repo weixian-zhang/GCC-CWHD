@@ -31,7 +31,6 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 
 ### Prerequisite
 
-*  A <b>Service Principal</b> with Reader role assigned to all subscriptions "under monitoring" 
 *  <b>Required Telemetry</b>
    * for App Service health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
    * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
