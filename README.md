@@ -32,7 +32,7 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 ### Prerequisite
 
 *  <b>Required Telemetry</b>
-   * for App Service health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
+   * for App Service and Web App health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
    * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
 * <b>Azure services</b>
      * Azure Managed Grafana
