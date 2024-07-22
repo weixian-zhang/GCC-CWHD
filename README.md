@@ -31,10 +31,12 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 
 ### Prerequisite
 
-*  <b>Required Telemetry</b>
+*  <b>Required Telemetry / Logs</b>
    * for App Service and Web App health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
    * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
-* <b>Azure services</b>
+   * All PaaS resources under monitoring, to have Diagnostic Setting configured to send Logs to 1 central Log Analytics Workspace. For e.g: [API Management send resource logs to workspace](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor#resource-logs)
+* <b>Azure Resources Required</b>
+     * 1 "central" Log Analytics Workspace 
      * Azure Managed Grafana
        *  enable Managed Identity
        *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
@@ -46,7 +48,7 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
           *  Subscriptions containing resources under monitoring
           *  Log Analytics Workspace (if workspace in different subscription from above)
      * Azure Log Analytics Workspace
-     * 1 Application Insights for each app. All App Insights linked to same (one) Log Analytics Workspace 
+     * 1 Application Insights for each app should be linked to same (one) Log Analytics Workspace 
 *  <b>Assumption</b>
    * has an existing Log Analytics Workspace where "all" Application Insights are linked to
   
