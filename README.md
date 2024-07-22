@@ -15,7 +15,7 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 <br />
 
-* [Prerequisite](#prerequisite)
+* [Prerequisite](#prerequisites)
 * [Architecture](#architecture)
 * [Level 0 dashboard](#level-0-dashboard)
 * [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
@@ -24,7 +24,7 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 <br />  
 
 
-### Prerequisite
+### Prerequisites
 
 *  <b>Required Telemetry / Logs</b>
    * for App Service and Web App health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
