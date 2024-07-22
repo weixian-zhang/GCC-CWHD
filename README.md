@@ -1,19 +1,21 @@
 # GCC Azure - Central Workload Health Dashboard (AZCWHD)
 
-CWHD is an application-specific custom monitoring solution leveraging Grafana to visualize Azure resource health statuses and other telemetry.  
-The Grafana dashboards in CWHD, has a concept of grouping up Azure services used by Application.  
-It uses Green, Amber and Red color code to determine the overall availability of an application.  
+CWHD is an application-specific custom monitoring solution leveraging Grafana to visualize Azure Monitor metrics, logs and resource health.  
 
-The dashboards are organized in levels depicting the "depth" of monitoring. 
-  * Level 0 dashboard shows availability status if all Apps.  
-    The overall available status depends on the dependent Azure resources that each app here is using.  
-    For example Cloud Crafty is backed by 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be Green/available when all 3 
-    resourcecs' availability status is Available.
-    
-  * Level 1 dashboard drills down into the app and displays metrics of Azure resources used by the app
+  * Monitors Azure Resource Health signals for all resource types
+  * Montors App Insights Standard Test (HTTP ping) result to determine web app availability
+  * Monitors CPU, Memory and Disk usage against a configurable threshold and displays Amber color when threshold is met.
+    (only works for VM)
+  * Grafana dashboards in CWHD has a concept of grouping up Azure resources used by each App.
+  * dashboard visualization tiles uses Green, Amber and Red color code to determine the overall availability of an application aggregated by one or more Azure resource's Resource Health
+
+The dashboards are organized in Level 0 and Level 1 depicting the "depth" of monitoring. 
+  * Level 0 - shows availability status if all Apps.  
+  * Level 1 - drills into Resource Health of each Azure resource used by the app
 
 <br />
 
+* [Prerequisite](#prerequisite)
 * [Architecture](#architecture)
 * [Level 0 dashboard](#level-0-dashboard)
 * [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
@@ -21,13 +23,6 @@ The dashboards are organized in levels depicting the "depth" of monitoring.
 
 <br />  
 
-# What Health Signals CWHD is Monitoring?
-  * Monitors Azure Resource Health signals for all resource types
-  * Montors App Insights Standard Test/HTTP ping's result to determine web app availability
-  * Monitors CPU, Memory and Disk usage against a configurable threshold and displays Amber color when threshold is met.
-    (only works for VM)
-  * Roadmap:
-    * monitors Windows Server IIS App Pool Started/Stopped signal 
 
 ### Prerequisite
 
@@ -79,8 +74,11 @@ In the health status aspect of CWHD, Resource Health Retriever function supports
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
 
 
-If there is any one of the Azure resource used by Cloud Crafty or Pocket Geeks apps that has an "Unavailable" status, the overall health status at Level 0 will be Unavailable.
 
+ The overall available status (green) depends on the dependent Azure resources that each app here is using.
+ If there is any one of the Azure resource used by Cloud Crafty or Pocket Geeks apps that has Resource Health status as "Unavailable", the overall health status at Level 0 will be Unavailable.
+ For example Cloud Crafty uses 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be Green when all 3 
+ resourcecs' Resource Health + App Insight Standard Test availability status is available.
 
 ### Level 1 - Cloud Crafty Dashboard
 
