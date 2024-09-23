@@ -1,12 +1,12 @@
 # GCC Azure - Central Workload Health Dashboard (AZCWHD)
+ 
+CWHD is a custom Azure monitoring solution leveraging Grafana to monitor the following aspects:  
 
-CWHD is an application-specific custom monitoring solution leveraging Grafana to visualize Azure Monitor metrics, logs and resource health.  
-
-  * Monitors Azure Resource Health signals for all resource types
-  * Montors App Insights Standard Test (HTTP ping) result to determine web app availability
-  * Monitors CPU, Memory and Disk usage against a configurable threshold and displays Amber color when threshold is met.
+  Color code signals in Grafana dashboards showing Green, Amber and Red tiles depending on:
+   * overall resource heath from Azure Resource Health signals
+   * all App health using App Insights Standard Test (HTTP ping) web app availability signals
+    * for VM only - configurable threshold of CPU, Memory and Disk usage to display Amber color when threshold is met.
     (only works for VM)
-  * Grafana dashboards in CWHD has a concept of grouping up Azure resources used by each App.
   * dashboard visualization tiles uses Green, Amber and Red color code to determine the overall availability of an application aggregated by one or more Azure resource's Resource Health
 
 The dashboards are organized in Level 0 and Level 1 depicting the "depth" of monitoring. 
