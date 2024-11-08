@@ -9,7 +9,7 @@ parent_path = Path(__file__).parent.parent.resolve()._str
 sys.path.insert(0, parent_path)
 
 
-import function_app as func
+import telemetry_forager.main as func
 
 @pytest.fixture
 def func_api_params():
