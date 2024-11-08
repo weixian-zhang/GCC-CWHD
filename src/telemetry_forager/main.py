@@ -107,10 +107,17 @@ def get_resource_params(rbp: RequestBodyParam) -> list[ResourceParameter]:
     
     resource_params = rbp.resources
 
+    exist = set()
     result = []
 
     for r in resource_params:
-        resourceId = r.resourceId if r.resourceId else ''
+        resourceId = r.resourceId.lower() if r.resourceId else ''
+
+        if resourceId in exist:
+            continue
+        
+        exist.add(resourceId)
+
         subscriptionId = _get_subscription_id(resourceId)
         standardTestName = r.standardTestName if r.standardTestName else ''
         workspaceId = r.workspaceId if r.workspaceId else ''
@@ -144,6 +151,10 @@ def get_resource_health_states(resources: List[ResourceParameter]) -> RHResult:
 
 
 app = FastAPI()
+
+@app.get("/", status_code=200)
+def root():
+    return "alive"
 
 @app.post("/RHRetriever", status_code=200)
 def RHRetriever(req_body_param: RequestBodyParam, response: Response):

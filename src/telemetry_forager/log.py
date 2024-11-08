@@ -39,22 +39,25 @@ def init(appconfig: AppConfig) -> None:
         else:
              return
         
-        appinsightsExceptionHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        appinsightsExceptionHandler.setLevel(logging.ERROR)
-        logger.addHandler(appinsightsExceptionHandler)
+        # appinsightsExceptionHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
+        # appinsightsExceptionHandler.setLevel(logging.ERROR)
+        # logger.addHandler(appinsightsExceptionHandler)
 
-        appinsightsWarnHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        appinsightsWarnHandler.setLevel(logging.WARNING)
-        logger.addHandler(appinsightsWarnHandler)
+        # appinsightsWarnHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
+        # appinsightsWarnHandler.setLevel(logging.WARNING)
+        # logger.addHandler(appinsightsWarnHandler)
 
-        # configure_azure_monitor(
-        #     instrumentation_options = {"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": False}},
-        #     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS="azure_app_service",
-        #     disable_offline_storage=True,
-        #     disable_logging = True,
-        #     disable_metrics=True,
-        #     connection_string=appconfig.appinsightsConnString
-        # )
+        configure_azure_monitor(
+            instrumentation_options = {"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": False}},
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS="azure_app_service",
+            disable_offline_storage=True,
+            disable_logging = True,
+            disable_metrics=True,
+            connection_string=appconfig.appinsightsConnString
+        )
+
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.WARNING)
 
 
 def debug(msg):
