@@ -26,7 +26,7 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 ### Prerequisites
 
-*  <b>Required Telemetry / Logs</b>
+*  <b>Telemtry Required</b>
    * for App Service and Web App health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
    * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
    * All PaaS resources under monitoring, to have Diagnostic Setting configured to send Logs to 1 central Log Analytics Workspace. For e.g: [API Management send resource logs to workspace](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor#resource-logs)
@@ -55,19 +55,46 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 <br />
 <br />
-CWHD uses a variety of Azure resources including a core Azure Function named Resource Health Retriever, acting as health status aggregator to retrieve and aggregate metrics and health statuses from different data sources depending on the resource types under monitoring.  
 
-In the health status aspect of CWHD, Resource Health Retriever function supports the following:
-  * "General" resource types (all non App Service types): get their health status from [Azure Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) via [Resource Health Rest API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01).
+CWHD has a REST backend call Telemetry Forager that retrieves and curates telemetry from different telemetry sources including:
+
+ * Azure Monitor REST API for
+   * App Service health status - executes kusto query to get App Insights availability result from Log Analytics AppAvailabilityResults table
+   * VM: health status is determine by 2 factors
+     * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
+     * If resource health status is Available/Green, additional 3 metrics CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
+       In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
+ * [Azure Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01) - get resource health for all resource types except App Service, which gets health status from App Insight Standard Test
+
+### Telemetry Forager API Spec  
+
+<table>
+  <tr>
+    <th>Path</th>
+    <th>Method</th>
+    <th>Param</th>
+  </tr>
+  <tr>
+    <td>/RHRetriever</td>
+    <td>POST</td>
+    <td>
+     { <br />
+      "resources": [ <br />
+          { [ <br />
+              "resourceId":"{resource id}", [ <br />
+              "standardTestName": "{ App Insights standard test name }", [ <br />
+  			         "workspaceId": "{Log Analytics Workspace Id}" [ <br />
+          &nbsp&nbsp}  <br />
+         &nbsp] <br />
+      } <br />
+    </td>
+  </tr>
+</table>
+
     
-  * App Service: function performs [log query](https://devblogs.microsoft.com/azure-sdk/announcing-the-new-azure-monitor-query-client-libraries/) from Log Analytics AppAvailabilityResults table to get the latest Standard Test result. Reason for not getting health status from Resource Health API is that when an App Service is stopped, Resource Health still shows "Available", this behaviour is by design. Requirement is to show "Unavailable" when an App Service is stopped.
-    
-  * VM: health status is determine by 2 factors
-    * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
-    * If resource health status is Available/Green, additional 3 metrics CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
-      In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
+<br />
 
-
+## Samples  
 
 ### Level 0 Dashboard  
 
