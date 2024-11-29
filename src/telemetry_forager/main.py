@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import FastAPI, Response
+import uvicorn
 from pydantic import BaseModel
 from healthstatus import HealthStatusClient, HealthReport
 import jsons
@@ -193,3 +194,7 @@ def RHRetriever(req_body_param: RequestBodyParam, response: Response):
         Log.exception(f'error occured: {str(e)}')
         response.status_code = 500
         return str(e)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
