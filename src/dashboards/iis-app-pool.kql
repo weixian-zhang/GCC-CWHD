@@ -1,0 +1,25 @@
+
+Event  // events from DCR custom xpath
+| where EventID == 29 
+| where TimeGenerated <= ago(7d) //$__timeFilter(TimeGenerated) 
+| extend d = parse_xml(EventData) 
+| mv-apply EventDataOld = parse_xml(EventData).DataItem.EventData.Data on  
+(     where EventDataOld['@Name'] ==  'OldValue' and EventDataOld['#text'] in ('false', 'true')     
+    | project OldValue = EventDataOld['#text'] ) 
+| mv-apply EventDataNew = parse_xml(EventData).DataItem.EventData.Data on  
+(     where EventDataNew['@Name'] ==  'NewValue' and EventDataNew['#text'] in ('false', 'true')     
+    |  project NewValue = EventDataNew['#text'] 
+) 
+| mv-apply EventDataPoolName = parse_xml(EventData).DataItem.EventData.Data on  
+(     where EventDataPoolName['@Name'] ==  'Configuration'      
+    | extend apppoolConfig = EventDataPoolName['#text']     
+    | parse  apppoolConfig with * '/system.applicationHost/applicationPools/add[@name=\"' appPoolName  '\"]/@autoStart'     
+    | project appPoolName 
+) 
+| extend AppPoolState = iff(NewValue == 'false', 0, 1) 
+| extend ComAppPool = strcat(Computer, ' / ',appPoolName) 
+| summarize arg_max(TimeGenerated, AppPoolState) by ComAppPool 
+| project ComAppPool, TimeGenerated, AppPoolState   
+
+//TimeGenerate is the \"last/latest\" event received  
+// using latest event Timestamp to now(), create a time series/array of AppPoolState values, \"forward-filled\" using last-event-value | make-series AppPoolStateSeries=any(AppPoolState) default=int(null)  on TimeGenerated to now() step 30m by ComAppPool  | extend forward_filled_app_pool_series = series_fill_forward(AppPoolStateSeries) | extend AppPoolStates = series_fill_backward(forward_filled_app_pool_series) | project ComAppPool, AppPoolStates, TimeGenerated  | mv-expand AppPoolStates, TimeGenerated  | project ComAppPool, AppPoolStates, Timestamps = format_datetime(todatetime(TimeGenerated), 'yyyy-MM-dd HH:mm:ss')  | evaluate pivot(ComAppPool, any(AppPoolStates))
