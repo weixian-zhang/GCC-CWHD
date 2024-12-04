@@ -10,6 +10,15 @@ class KQL:
         | take 1 
         | project ['reportedTime']=TimeGenerated,  ['availabilityState']=availabilityState"""
     
+    def web_app_intranet_connection_monitor_http_test_query(test_group_name):
+        return f"""
+        NWConnectionMonitorTestResult 
+        | where TestGroupName == "{test_group_name}"
+        | order by TimeGenerated desc
+        | project TimeGenerated, TestResult
+        | take 1
+        """
+    
     @staticmethod
     def cpu_usage_percentage_query(resourceId):
         # cpu suage percentage
