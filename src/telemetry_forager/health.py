@@ -19,7 +19,7 @@ class Message:
     
 
 # strategy design pattern
-class HealthStatusRetriever(ABC):
+class HealthRetriever(ABC):
 
     @abstractclassmethod
     def get_health_status(self, resource: ResourceParameter):
@@ -39,7 +39,7 @@ class HealthStatusRetriever(ABC):
         return response
 
 
-class AppServiceHealthStatusRetriever(HealthStatusRetriever):
+class AppServiceHealthRetriever(HealthRetriever):
     """
     sample usage of LogQueryClient can be  found in the link
     https://github.com/Azure/azure-sdk-for-python/tree/azure-monitor-query_1.2.0/sdk/monitor/azure-monitor-query/samples
@@ -98,7 +98,7 @@ class AppServiceHealthStatusRetriever(HealthStatusRetriever):
 
 
 
-class VMHealthStatusRetriever(HealthStatusRetriever):
+class VMHealthRetriever(HealthRetriever):
 
     def __init__(self, appconfig: AppConfig) -> None:
         self.appconfig = appconfig
@@ -283,7 +283,7 @@ class VMHealthStatusRetriever(HealthStatusRetriever):
                                 reportedTime=availabilityStateReportedTime)
         
         
-class GeneralHealthStatusRetriever(HealthStatusRetriever):
+class GeneralHealthRetriever(HealthRetriever):
 
     def get_health_status(self, resource: ResourceParameter):
 
@@ -317,8 +317,8 @@ class AzResourceType(Enum):
     AppService = 2
     General = 3
 
-class HealthStatusClient:
-    """ The HealthStatusClient
+class HealthClient:
+    """ The HealthClient
     Main entry point to get resource health status for all resource types.
     Certain resource type like VM and App Service have additional factors that affects health status.
     Rest of resource health status are by default based on Azure Resource Health
@@ -334,30 +334,30 @@ class HealthStatusClient:
             rscType =  self._get_resource_type(resource.resourceId)
             
             if rscType == AzResourceType.General:
-                grc = GeneralHealthStatusRetriever()
+                grc = GeneralHealthRetriever()
                 hr = grc.get_health_status(resource)
                 return hr
             
             if rscType == AzResourceType.VM:
-                client = VMHealthStatusRetriever(self.appconfig)
+                client = VMHealthRetriever(self.appconfig)
                 hr = client.get_health_status(resource)
                 return hr
             
             if rscType == AzResourceType.AppService:
-                client = AppServiceHealthStatusRetriever()
+                client = AppServiceHealthRetriever()
                 hr = client.get_health_status(resource)
                 return hr
         
         except Exception as e:
             Log.exception(str(e), resouceId=resource.resourceId)
             return HealthReport(resourceId=resource.resourceId,
-                                description='error occured at HealthStatusClient.get_health. Error is captured',
+                                description='error occured at HealthClient.get_health. Error is captured',
                                 availabilityState=0)
         
 
     def _get_resource_type(self, resourceId: str):
         if not resourceId:
-            self.logger.debug('at HealthStatusClient.get_resource_type: resourceId cannot be empty')
+            self.logger.debug('at HealthClient.get_resource_type: resourceId cannot be empty')
             return
         
         rscIdSegments = resourceId.split('/')
