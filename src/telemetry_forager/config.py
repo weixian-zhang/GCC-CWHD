@@ -22,6 +22,7 @@ class AppConfig:
         if self.loaded:
             return
         
+        self.queryTimeSpanHour = os.environ.get('QueryTimeSpanHour') if os.environ.get('QueryTimeSpanHour') else 2
         self.appinsightsConnString= os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING')
 
         thresholds = json.loads(os.environ.get('HealthStatusThreshold'))

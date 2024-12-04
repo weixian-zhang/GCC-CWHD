@@ -2,11 +2,12 @@
 
 # standardTestName applies to App Service resource type only
 class ResourceParameter:
-    def __init__(self, resourceId, subscriptionId,standardTestName='', workspaceId='') -> None:
+    def __init__(self, resourceId, subscriptionId, workspaceId='', standardTestName='', network_watcher_conn_mon_test_group_name='') -> None:
         self.resourceId = resourceId
         self.subscriptionId = subscriptionId
-        self.standardTestName = standardTestName
         self.workspaceId = workspaceId
+        self.standardTestName = standardTestName
+        self.network_watcher_conn_mon_test_group_name = network_watcher_conn_mon_test_group_name
 
 class HealthStatusThreshold:
 
