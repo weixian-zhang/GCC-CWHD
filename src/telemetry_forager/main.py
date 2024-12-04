@@ -40,7 +40,7 @@ def _get_subscription_id(resourceId: str) -> str:
     return resourceId.split('/')[1]
 
     
-def get_resource_params(rbp: RequestBodyParam) -> list[ResourceParameter]:
+def get_resource_params(rbp: RequestBodyParam) -> list[bool, list[ResourceParameter]]:
     if not rbp or not rbp.resources:
         return []
     
@@ -51,6 +51,9 @@ def get_resource_params(rbp: RequestBodyParam) -> list[ResourceParameter]:
 
     for r in resource_params:
         resourceId = r.resourceId.lower() if r.resourceId else ''
+
+        if resourceId == '':
+            return [False, []]
 
         if resourceId in exist:
             continue
@@ -70,7 +73,7 @@ def get_resource_params(rbp: RequestBodyParam) -> list[ResourceParameter]:
             network_watcher_conn_mon_test_group_name=network_watcher_conn_mon_test_group_name
         ))
         
-    return result
+    return [True, result]
 
 def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHealthResult:
 
@@ -119,14 +122,14 @@ def RHRetriever(req_body_param: RequestBodyParam, response: Response):
 
         with tracer.start_as_current_span("main_request_RHRetriever", kind=SpanKind.SERVER):
 
-            resource_params = get_resource_params(req_body_param)
+            ok, resources = get_resource_params(req_body_param)
 
-            if not RHRetriever:
+            if not ok:
                 Log.exception('no resource ID supplied')
                 response.status_code = 400
                 return 'no resource ID supplied'
 
-            rhState = get_resource_health_states(resource_params)
+            rhState = get_resource_health_states(resources)
 
             return jsons.dumps(rhState)
 

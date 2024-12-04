@@ -30,7 +30,7 @@ class HealthReport:
     def __init__(self,
                  resourceId='',
                  description='', 
-                 availabilityState='', 
+                 availabilityState=0, 
                  summary='', 
                  reportedTime=None, 
                  stateLastChangeTime=None) -> None:
