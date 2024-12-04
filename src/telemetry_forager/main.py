@@ -24,8 +24,9 @@ Log.init(appconfig)
 
 class RequestResourceListParam(BaseModel):
     resourceId: str
-    standardTestName: str | None = None
     workspaceId: str | None = None
+    standardTestName: str | None = None
+    network_watcher_conn_mon_test_group_name: str | None = None
 
 class RequestBodyParam(BaseModel):
     resources: List[RequestResourceListParam]
@@ -58,14 +59,16 @@ def get_resource_params(rbp: RequestBodyParam) -> list[ResourceParameter]:
 
         subscriptionId = _get_subscription_id(resourceId)
         standardTestName = r.standardTestName if r.standardTestName else ''
+        network_watcher_conn_mon_test_group_name = r.network_watcher_conn_mon_test_group_name if r.network_watcher_conn_mon_test_group_name else ''
         workspaceId = r.workspaceId if r.workspaceId else ''
 
         result.append(ResourceParameter(
-            resourceId,
-            subscriptionId,
-             standardTestName,
-             workspaceId
-            ))
+            resourceId=resourceId,
+            subscriptionId=subscriptionId,
+            standardTestName=standardTestName,
+            workspaceId=workspaceId,
+            network_watcher_conn_mon_test_group_name=network_watcher_conn_mon_test_group_name
+        ))
         
     return result
 

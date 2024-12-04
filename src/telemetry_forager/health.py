@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from kql import KQL
 import log as Log
 from model import HealthReport, ResourceParameter
-
+import json
 
 class Message:
 
@@ -25,7 +25,7 @@ class HealthRetriever(ABC):
     def get_health_status(self, resource: ResourceParameter):
         pass
 
-    def query_monitor_log(self, workspaceId: str, query: str, timeSpan: timedelta) -> LogsQueryResult:
+    def kusto_query(self, workspaceId: str, query: str, timeSpan: timedelta) -> list[bool, pd.DataFrame]: # LogsQueryResult:
 
         credential = DefaultAzureCredential()
         client = LogsQueryClient(credential)
@@ -36,7 +36,16 @@ class HealthRetriever(ABC):
             timespan=timeSpan
         )
 
-        return response
+        if response.status != LogsQueryStatus.SUCCESS:
+            Log.error(response.partial_error)
+            return [False, pd.DataFrame()]
+        
+        if response.status == LogsQueryStatus.SUCCESS and response.tables and len(response.tables[0].rows) > 0:
+            table = response.tables[0]
+            df = pd.DataFrame(data=table.rows, columns=table.columns)
+            return [True, df]
+
+        return [False, pd.DataFrame()]
 
 
 class AppServiceHealthRetriever(HealthRetriever):
@@ -47,12 +56,21 @@ class AppServiceHealthRetriever(HealthRetriever):
 
 
     def get_health_status(self, resource):
+        '''
+        AppServiceHealthRetriever gets health status from either one these ordered sources, if any one is successful, it uses that source.
+            1. Azure Application Insights Availability Test
+            2. Connection Monitor test result
+            3. Resource Health
+        '''
 
         with Log.get_tracer().start_as_current_span("log_query_app_insights_standard_test_result"):
             
+            queryTimeSpanHour = self.appconfig.queryTimeSpanHour
             workspaceId = resource.workspaceId
             resourceId = resource.resourceId
             standardTestName = resource.standardTestName
+            network_watcher_conn_mon_test_group_name = resource.network_watcher_conn_mon_test_group_name
+
 
             if not resourceId or not standardTestName or not workspaceId:
                 Log.warn(Message.params_not_exist())
@@ -64,13 +82,13 @@ class AppServiceHealthRetriever(HealthRetriever):
 
             query = KQL.app_availability_result_query(standardTestName)
 
-            response = super().query_monitor_log(workspaceId=workspaceId, query=query, timeSpan=timedelta(hours=2))
+            response = super().kusto_query(workspaceId=workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpanHour))
             
-            if response.status == LogsQueryStatus.PARTIAL:
+            if response.status != LogsQueryStatus.SUCCESS:
                 error = response.partial_error
                 data = response.partial_data
                 Log.error(error)
-            elif response.status == LogsQueryStatus.SUCCESS:
+            else: #elif response.status == LogsQueryStatus.SUCCESS:
                 data = response.tables
 
             if not data or not data[0].rows:
@@ -97,7 +115,6 @@ class AppServiceHealthRetriever(HealthRetriever):
             return hr
 
 
-
 class VMHealthRetriever(HealthRetriever):
 
     def __init__(self, appconfig: AppConfig) -> None:
@@ -107,7 +124,7 @@ class VMHealthRetriever(HealthRetriever):
     def query_cpu_usage_percenage(self, resource: ResourceParameter, queryTimeSpan: timedelta) -> int:
 
         resourceId = resource.resourceId
-
+        usedCpuPercentage = 0
         query = KQL.cpu_usage_percentage_query(resourceId)
 
         Log.debug(f"""executing log query:
@@ -116,25 +133,27 @@ class VMHealthRetriever(HealthRetriever):
         """)
 
         # timeSpan does not matter as time filter is set in query, but SDK requires it
-        resp = super().query_monitor_log(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
+        ok, df = super().kusto_query(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
-        if resp.status == LogsQueryStatus.PARTIAL:
-            error = resp.partial_error
-            data = resp.partial_data
-            Log.exception(error, resourceId=resourceId)
-        elif resp.status == LogsQueryStatus.SUCCESS:
-            data = resp.tables
+        # resp = super().kusto_query(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
-        # no result return, still consider available
-        if not data or not data[0].rows:
-            Log.warn(HealthReport.query_no_result_msg())
-            return 0
+        # if resp.status == LogsQueryStatus.PARTIAL:
+        #     error = resp.partial_error
+        #     data = resp.partial_data
+        #     Log.exception(error, resourceId=resourceId)
+        # elif resp.status == LogsQueryStatus.SUCCESS:
+        #     data = resp.tables
+
+        # # no result return, still consider available
+        # if not data or not data[0].rows:
+        #     Log.warn(HealthReport.query_no_result_msg())
+        #     return 0
         
-        # parse query result
-        table = data[0]
-        df = pd.DataFrame(data=table.rows, columns=table.columns)
-
-        usedCpuPercentage = int(df['CPUPercent'].iloc[0])
+        # # parse query result
+        # table = data[0]
+        # df = pd.DataFrame(data=table.rows, columns=table.columns)
+        if ok:
+            usedCpuPercentage = float(df['CPUPercent'].iloc[0])
 
         return usedCpuPercentage
     
@@ -142,28 +161,36 @@ class VMHealthRetriever(HealthRetriever):
     def query_memory_usage_percenage(self, resource: ResourceParameter, queryTimeSpan: timedelta) -> int:
 
         resourceId = resource.resourceId
-
+        usedMemoryPercentage = 0
         query = KQL.memory_usage_percentage_query(resourceId)
-        
-        resp = super().query_monitor_log(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
-        if resp.status == LogsQueryStatus.PARTIAL:
-            error = resp.partial_error
-            data = resp.partial_data
-            Log.exception(error, resourceId=resourceId)
-        elif resp.status == LogsQueryStatus.SUCCESS:
-            data = resp.tables
+        Log.debug(f"""executing log query:
+        {query}
+        for resource Id {resourceId}
+        """)
 
-        # no result return, still consider available
-        if not data or not data[0].rows:
-            Log.warn(HealthReport.query_no_result_msg(), resourceId=resourceId)
-            return 0
+        ok, df = super().kusto_query(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
+
+        # resp = super().kusto_query(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
+
+        # if resp.status == LogsQueryStatus.PARTIAL:
+        #     error = resp.partial_error
+        #     data = resp.partial_data
+        #     Log.exception(error, resourceId=resourceId)
+        # elif resp.status == LogsQueryStatus.SUCCESS:
+        #     data = resp.tables
+
+        # # no result return, still consider available
+        # if not data or not data[0].rows:
+        #     Log.warn(HealthReport.query_no_result_msg(), resourceId=resourceId)
+        #     return 0
         
-        # parse query result
-        table = data[0]
-        df = pd.DataFrame(data=table.rows, columns=table.columns)
-        singleRow = df.head(1)
-        usedMemoryPercentage = int(df['UsedMemoryPercentage'].iloc[0])
+        # # parse query result
+        # table = data[0]
+        # df = pd.DataFrame(data=table.rows, columns=table.columns)
+
+        if ok:
+            usedMemoryPercentage = int(df['UsedMemoryPercentage'].iloc[0])
 
         return usedMemoryPercentage
     
@@ -173,29 +200,37 @@ class VMHealthRetriever(HealthRetriever):
         resourceId = resource.resourceId
         result = {}
         query = KQL.disk_usage_percentage_query(resourceId)
+
+        Log.debug(f"""executing log query:
+        {query}
+        for resource Id {resourceId}
+        """)
         
-        resp = super().query_monitor_log(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
+        ok, df = super().kusto_query(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
-        if resp.status == LogsQueryStatus.PARTIAL:
-            error = resp.partial_error
-            data = resp.partial_data
-            Log.exception(error, resourceId=resourceId)
-        elif resp.status == LogsQueryStatus.SUCCESS:
-            data = resp.tables
+        # resp = super().kusto_query(workspaceId=resource.workspaceId, query=query, timeSpan=timedelta(hours=queryTimeSpan))
 
-        # no result return, still consider available
-        if not data or not data[0].rows:
-            Log.warn(HealthReport.query_no_result_msg(), resourceId=resourceId)
-            return result
+        # if resp.status == LogsQueryStatus.PARTIAL:
+        #     error = resp.partial_error
+        #     data = resp.partial_data
+        #     Log.exception(error, resourceId=resourceId)
+        # elif resp.status == LogsQueryStatus.SUCCESS:
+        #     data = resp.tables
 
-        # parse query result
-        table = data[0]
-        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        # # no result return, still consider available
+        # if not data or not data[0].rows:
+        #     Log.warn(HealthReport.query_no_result_msg(), resourceId=resourceId)
+        #     return result
 
-        for _, row in df.iterrows():
-            driveOrPath = row['Disk']
-            usedSpacePercentage = row['UsedSpacePercentage']
-            result[driveOrPath] = usedSpacePercentage
+        # # parse query result
+        # table = data[0]
+        # df = pd.DataFrame(data=table.rows, columns=table.columns)
+
+        if ok:
+            for _, row in df.iterrows():
+                driveOrPath = row['Disk']
+                usedSpacePercentage = row['UsedSpacePercentage']
+                result[driveOrPath] = usedSpacePercentage
 
         return result
 
@@ -203,7 +238,7 @@ class VMHealthRetriever(HealthRetriever):
     def get_health_status(self, resource: ResourceParameter):
 
         description = []
-        queryTimeSpanHour = 2
+        queryTimeSpanHour = self.appconfig.queryTimeSpanHour
         resourceId = resource.resourceId
         subscriptionId = resource.subscriptionId
 
@@ -212,7 +247,7 @@ class VMHealthRetriever(HealthRetriever):
             Log.warn(f'Either resourceId, workspaceId or name of App Insights Standard Test is not found')
             return HealthReport(
                     resourceId=resourceId,
-                    description='Either resourceId, workspaceId or name of App Insights Standard Test is not found',
+                    description='Either resourceId or workspaceId is not found',
                     availabilityState= 0,
                     reportedTime=datetime.now())
 
@@ -257,9 +292,8 @@ class VMHealthRetriever(HealthRetriever):
             # any metric hits threshold is warning, availabilityState = 2
             if cpuPercentage >= cpuThreshold:
                 availabilityState = 2
-                description.append(f'CPU usage reaches {cpuThreshold}% threshold')
+                description.append(f'CPU % reaches {cpuThreshold}% threshold')
                 
-
             if usedMemoryPercentage >= memoryThreshold:
                 availabilityState = 2
                 description.append(f'Memory usage reaches {memoryThreshold}% threshold')
@@ -274,7 +308,11 @@ class VMHealthRetriever(HealthRetriever):
                 description = ', '.join(description)
                 Log.warn(description)
             else:
-                description = 'Resource is healthy'
+                description = f'''Resource is healthy
+                 - CPU: {cpuPercentage}%
+                 - Memory: {usedMemoryPercentage}%
+                 - Disk: {json.dumps(diskUsedPercentages)}
+                '''
 
             return HealthReport(resourceId=resourceId,
                                 description=description,
@@ -320,13 +358,16 @@ class AzResourceType(Enum):
 class HealthClient:
     """ The HealthClient
     Main entry point to get resource health status for all resource types.
-    Certain resource type like VM and App Service have additional factors that affects health status.
+    Certain resource type like VM and App Service have additional factors that affects ":"color coded" health status.
     Rest of resource health status are by default based on Azure Resource Health
     https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview 
     """
 
     def __init__(self, appconfig) -> None:
         self.appconfig = appconfig
+        self.ghc = GeneralHealthRetriever()
+        self.vmhr = VMHealthRetriever(self.appconfig)
+        self.appsvchr = AppServiceHealthRetriever()
     
     def get_health(self, resource: ResourceParameter) -> HealthReport:
         
@@ -334,18 +375,18 @@ class HealthClient:
             rscType =  self._get_resource_type(resource.resourceId)
             
             if rscType == AzResourceType.General:
-                grc = GeneralHealthRetriever()
-                hr = grc.get_health_status(resource)
+                #grc = GeneralHealthRetriever()
+                hr = self.ghc.get_health_status(resource)
                 return hr
             
             if rscType == AzResourceType.VM:
-                client = VMHealthRetriever(self.appconfig)
-                hr = client.get_health_status(resource)
+                #client = VMHealthRetriever(self.appconfig)
+                hr = self.vmhr.get_health_status(resource) # client.get_health_status(resource)
                 return hr
             
             if rscType == AzResourceType.AppService:
-                client = AppServiceHealthRetriever()
-                hr = client.get_health_status(resource)
+                #client = AppServiceHealthRetriever()
+                hr = self.appsvchr.get_health_status(resource) #client.get_health_status(resource)
                 return hr
         
         except Exception as e:
