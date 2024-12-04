@@ -2,7 +2,7 @@ from typing import List
 from fastapi import FastAPI, Response
 import uvicorn
 from pydantic import BaseModel
-from health import HealthStatusClient
+from health import HealthClient
 import jsons
 from datetime import datetime
 from config import AppConfig
@@ -78,7 +78,7 @@ def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHe
     
     for rsc in resources:
 
-        client = HealthStatusClient(appconfig)
+        client = HealthClient(appconfig)
 
         healthReport = client.get_health(rsc)
 
