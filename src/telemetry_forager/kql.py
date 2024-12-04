@@ -1,5 +1,5 @@
 class KQL:
-
+    # * Standard Test Names have to be "Unique" across all App Insight instances
     @staticmethod
     def app_availability_result_query(standardTestName):
         return f"""
@@ -12,12 +12,13 @@ class KQL:
         | project ['reportedTime']=TimeGenerated,  ['availabilityState']=availabilityState
         """
     
-    def web_app_intranet_connection_monitor_http_test_query(test_group_name):
+    def network_watcher_intranet_connection_monitor_http_test_query(test_group_name):
         return f"""
         NWConnectionMonitorTestResult 
         | where TestGroupName == "{test_group_name}"
+        | extend availabilityState = iif(TestResult == 'Pass', 1, 0) 
         | order by TimeGenerated desc
-        | project TimeGenerated, TestResult
+        | project ['reportedTime']=TimeGenerated, availabilityState
         | take 1
         """
     
