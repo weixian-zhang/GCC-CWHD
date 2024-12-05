@@ -15,7 +15,7 @@
     FROM python:3.11-slim
 
     ENV HealthStatusThreshold='{     "metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }'
-    ENV APPLICATIONINSIGHTS_CONNECTION_STRING='InstrumentationKey=afbee56f-64be-4972-aff4-eeda6947851a;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=669e72e2-38ff-4883-aebf-e0f0b2faab79'
+    ENV APPLICATIONINSIGHTS_CONNECTION_STRING=''
 
     # Set working directory
     WORKDIR /app

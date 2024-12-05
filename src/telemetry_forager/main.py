@@ -97,7 +97,8 @@ def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHe
 app = FastAPI()
 
 @app.get("/", status_code=200)
-def root():
+def root(response: Response):
+    response.headers["cwhd-version"] = appconfig.version
     return "alive"
 
 @app.post("/RHRetriever", status_code=200)
@@ -117,6 +118,7 @@ def RHRetriever(req_body_param: RequestBodyParam, response: Response):
     """
     
     try:
+        response.headers["cwhd-version"] = appconfig.version
         
         tracer = Log.get_tracer()
 
