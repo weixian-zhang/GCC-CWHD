@@ -51,7 +51,7 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
   
 ### Architecture  
 
-<img width="800" height="700" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/17e2f3d1-e0ab-40d1-adae-5691627133cf">  
+<img width="550" height="700" alt="image" src="https://github.com/user-attachments/assets/2a07ed63-49a3-4aaa-927c-90d674628850">  
 
 <br />
 <br />
