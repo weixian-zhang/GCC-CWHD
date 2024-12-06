@@ -48,10 +48,20 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 *  <b>Assumption</b>
    * has an existing Log Analytics Workspace where "all" Application Insights are linked to
-  
+ 
+<br />
+
+### Tech Stack  
+* Python 3.11
+* Azure Managed Grafana Standard - Grafana 10.4.11
+* [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
+* [Python modules](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/requirements.txt)
+
+<br />
+
 ### Architecture  
 
-<img width="550" height="700" alt="image" src="https://github.com/user-attachments/assets/2a07ed63-49a3-4aaa-927c-90d674628850">  
+<img width="550" height="700" alt="image" src="https://github.com/user-attachments/assets/06104765-6dff-482a-b48c-fe6b321939f0">  
 
 <br />
 <br />
