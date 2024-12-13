@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import FastAPI, Response
+import fastapi #import FastAPI, Response
 import uvicorn
 from pydantic import BaseModel
 from health import HealthClient
@@ -11,9 +11,8 @@ import log as Log
 from opentelemetry.trace import (
     SpanKind
 )
-from opentelemetry.propagate import extract
 
-app = FastAPI()
+from opentelemetry.propagate import extract
 
 # load environment variables
 appconfig = AppConfig()
@@ -21,6 +20,8 @@ appconfig = AppConfig()
 appconfig.load_from_envar()
 
 Log.init(appconfig)
+
+app = fastapi.FastAPI()
 
 class RequestResourceListParam(BaseModel):
     resourceId: str
@@ -94,15 +95,13 @@ def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHe
 
 
 
-app = FastAPI()
-
 @app.get("/", status_code=200)
-def root(response: Response):
+def root(response: fastapi.Response):
     response.headers["cwhd-version"] = appconfig.version
     return "alive"
 
 @app.post("/RHRetriever", status_code=200)
-def RHRetriever(req_body_param: RequestBodyParam, response: Response):
+def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 
     """
     azure.identity.DefaultAzureCredential in Azure uses managed identity.
@@ -121,9 +120,10 @@ def RHRetriever(req_body_param: RequestBodyParam, response: Response):
         response.headers["cwhd-version"] = appconfig.version
         
         tracer = Log.get_tracer()
-
+        
         with tracer.start_as_current_span("main_request_RHRetriever", kind=SpanKind.SERVER):
-
+            Log.debug('start main_request_RHRetriever')
+            
             ok, resources = get_resource_params(req_body_param)
 
             if not ok:
@@ -134,6 +134,7 @@ def RHRetriever(req_body_param: RequestBodyParam, response: Response):
             rhState = get_resource_health_states(resources)
 
             return jsons.dumps(rhState)
+        
 
     except Exception as e:
         Log.exception(f'error occured: {str(e)}')

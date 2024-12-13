@@ -1,35 +1,33 @@
 import logging
-from opencensus.ext.azure.log_exporter import AzureLogHandler
 from config import AppConfig
-from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry import trace
 from opentelemetry.trace import (
     SpanKind,
     get_tracer_provider,
     set_tracer_provider,
 )
+from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.propagate import extract
-import os
+from azure.core.settings import settings
+from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+settings.tracing_implementation = OpenTelemetrySpan
 
-# Get a tracer for the current module.
-tracer = trace.get_tracer(__name__,
-                          tracer_provider=get_tracer_provider())
 
-#override Azure's root logger to be able to log to console
-# logger = logging.getLogger('akshay')
-# logger.setLevel(logging.ERROR)
+tracer = None
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+stream = logging.StreamHandler()
+logger.addHandler(stream)
 
-logging.basicConfig(level = logging.WARNING)
-logger = logging.getLogger('azure')
-sh = logging.StreamHandler()
-sh.setLevel(logging.WARNING)
-logger.propagate = False
-logger.addHandler(sh)
 
 loaded = False
 
 def init(appconfig: AppConfig) -> None:
-        global loaded
+        global loaded, tracer, logger
         
         if not appconfig:
             raise('Error initializing logger as appconfig is None')
@@ -39,25 +37,32 @@ def init(appconfig: AppConfig) -> None:
         else:
              return
         
-        # appinsightsExceptionHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        # appinsightsExceptionHandler.setLevel(logging.ERROR)
-        # logger.addHandler(appinsightsExceptionHandler)
 
-        # appinsightsWarnHandler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        # appinsightsWarnHandler.setLevel(logging.WARNING)
-        # logger.addHandler(appinsightsWarnHandler)
+        azmon_exporter = AzureMonitorTraceExporter.from_connection_string(appconfig.appinsightsConnString)
+
+        # Set up OpenTelemetry tracer
+        exporter = ConsoleSpanExporter()
+        trace.set_tracer_provider(TracerProvider())
+        trace.get_tracer_provider().add_span_processor(
+            SimpleSpanProcessor(exporter)
+        )
+        trace.get_tracer_provider().add_span_processor(
+            SimpleSpanProcessor(azmon_exporter)
+        )
 
         configure_azure_monitor(
-            instrumentation_options = {"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": False}},
-            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS="azure_app_service",
-            disable_offline_storage=True,
-            disable_logging = True,
-            disable_metrics=True,
+
             connection_string=appconfig.appinsightsConnString
         )
 
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.WARNING)
+        tracer = trace.get_tracer(__name__)
+
+        
+
+        
+
+        
+
 
 
 def debug(msg):
@@ -68,24 +73,10 @@ def exception(msg):
     logger.exception(msg)
 
 def exception(msg, **kwargs):
-
-    appinsightsCusomtProps = {'custom_dimensions': {}}
-    for k, v in kwargs.items():
-        appinsightsCusomtProps['custom_dimensions'][k] = v
-
-    logger.exception(msg,stack_info=True, exc_info=True, extra=appinsightsCusomtProps)
+    logger.exception(msg,stack_info=True, exc_info=True)
 
 def warn(msg, **kwargs):
-
-    if not kwargs:
-         logger.warning(msg, exc_info=True, stack_info=True)
-         return
-
-    appinsightsCusomtProps = {'custom_dimensions': {}}
-    for k, v in kwargs.items():
-        appinsightsCusomtProps['custom_dimensions'][k] = v
-
-    logger.warning(msg, extra=appinsightsCusomtProps)
+    logger.warning(msg)
 
 def get_tracer():
      return tracer
