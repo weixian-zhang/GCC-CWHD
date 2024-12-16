@@ -135,11 +135,18 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 
             return jsons.dumps(rhState)
         
-
     except Exception as e:
         Log.exception(f'error occured: {str(e)}')
         response.status_code = 500
         return str(e)
+    
+
+# powershell test
+@app.post("/wara/runonce", status_code=202)
+def run_pwsh():
+    from wara import pwsh
+    pwsh.run_wara_pwsh()
+    return 'accepted'
 
 
 if __name__ == "__main__":

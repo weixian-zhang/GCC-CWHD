@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from model import HealthStatusThreshold, ResourceParameter
 
 
@@ -18,6 +19,10 @@ class AppConfig:
         self.health_status_threshold = {}
         self.loaded: bool = False
 
+    def debugger_is_active(self) -> bool:
+        """Return if the debugger is currently active"""
+        return hasattr(sys, 'gettrace') and sys.gettrace() is not None
+
     def load_from_envar(self):
         if self.loaded:
             return
@@ -30,7 +35,7 @@ class AppConfig:
 
         self.health_status_threshold = self.get_thresholds(thresholds)
 
-        if not self.health_status_threshold or not self.appinsightsConnString:
+        if not self.debugger_is_active() and (not self.health_status_threshold or not self.appinsightsConnString):
             raise Exception('necessary environment variables not found')
 
         self.loaded = True

@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 FROM python:3.11-slim
 
 ENV HealthStatusThreshold='{     "metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }'
-ENV APPLICATIONINSIGHTS_CONNECTION_STRING=''
+ENV APPLICATIONINSIGHTS_CONNECTION_STRING='InstrumentationKey=afbee56f-64be-4972-aff4-eeda6947851a;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=669e72e2-38ff-4883-aebf-e0f0b2faab79'
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 
@@ -47,7 +47,7 @@ RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.24/powe
 # Install the PowerShell package
 RUN dpkg -i powershell_7.2.24-1.deb_amd64.deb || true
 
-RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
+# RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
 
