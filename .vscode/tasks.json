@@ -8,6 +8,14 @@
 			"options": {
 				"cwd": "${workspaceFolder}/src/tools"
 			}
+		},
+		{
+			"label": "pip freeze",
+			"type": "shell",
+			"command": "pip freeze > requirements.txt",
+			"options": {
+				"cwd": "${workspaceFolder}/src/telemetry_forager"
+			}
 		}
 	]
 }
