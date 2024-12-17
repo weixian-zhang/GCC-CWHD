@@ -4,10 +4,10 @@ import uvicorn
 from pydantic import BaseModel
 from health import HealthClient
 import jsons
-from datetime import datetime
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
+from wara.action_plan import WARAActionPlanner
 from opentelemetry.trace import (
     SpanKind
 )
@@ -144,8 +144,8 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 # powershell test
 @app.post("/wara/runonce", status_code=202)
 def run_pwsh():
-    from wara import pwsh
-    pwsh.run_wara_pwsh()
+    ap = WARAActionPlanner()
+    ap.run_wara()
     return 'accepted'
 
 

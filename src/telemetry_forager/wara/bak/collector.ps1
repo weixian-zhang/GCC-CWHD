@@ -106,8 +106,8 @@ Param(
   [switch]$AVD,
   [switch]$AVS,
   [switch]$HPC,
-  [ValidatePattern('^(\/subscriptions\/)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')]
-  [String[]]$SubscriptionIds,
+  #[ValidatePattern('^(\/subscriptions\/)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')]
+  [String[]]$SubscriptionIds = @(),
   [ValidatePattern('^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9._-]+$')]
   [String[]]$ResourceGroups,
   [GUID]$TenantID,
@@ -373,10 +373,11 @@ $Script:Runtime = Measure-Command -Expression {
           $IsValid = $false
         }
 
-        if (!($SubscriptionIds) -and !($ResourceGroups)) {
-          Write-Host 'Subscription ID(s) (-SubscriptionIds) or resource group(s) (-ResourceGroups) are required.' -ForegroundColor Red
-          $IsValid = $false
-        }
+        #cwhd: will get subscriptions dynamically
+        # if (!($SubscriptionIds) -and !($ResourceGroups)) {
+        #   Write-Host 'Subscription ID(s) (-SubscriptionIds) or resource group(s) (-ResourceGroups) are required.' -ForegroundColor Red
+        #   $IsValid = $false
+        # }
       }
     }
 
@@ -524,6 +525,10 @@ $Script:Runtime = Measure-Command -Expression {
 
     process {
       try {
+
+        # cwhd: Added -Identity authn with managedidentity
+        #Connect-AzAccount -Identity
+
         # Attempt to get the current Azure context
         $AzContext = Get-AzContext -ErrorAction SilentlyContinue
 
@@ -547,8 +552,12 @@ $Script:Runtime = Measure-Command -Expression {
 
           Write-Verbose 'Process: Connecting to Azure.'
           Write-Verbose 'No existing context found or context does not match TenantID. Connecting to Azure...'
+
+          #cwhd: Added -Identity authn with managedidentity
           Connect-AzAccount -Tenant $TenantID -Environment $AzureEnvironment -ErrorAction Stop -WarningAction Ignore -InformationAction Ignore
+          
           $AzContext = Get-AzContext -ErrorAction Stop
+          
           Write-Verbose "Successfully connected to Azure Tenant: $TenantID"
         } else {
           Write-Host "`nAlready connected to Azure Tenant: $($AzContext.Tenant.Id)`n" -ForegroundColor Green
@@ -1546,28 +1555,13 @@ $Script:Runtime = Measure-Command -Expression {
 
       $Script:JsonFile = ($PSScriptRoot + '\WARA-File-' + (Get-Date -Format 'yyyy-MM-dd-HH-mm') + '.json')
 
-      $ExporterArray | ConvertTo-Json -Depth 15 | Out-File $Script:JsonFile
+      #cwhd: return hashmap, ignore exportign to json file.
+      #$ExporterArray | ConvertTo-Json -Depth 15 | Out-File $Script:JsonFile
+      return $ExporterArray
     }
   }
-  function Get-WAFObjectByList {
-    param (
-      [Parameter(Mandatory = $true)]
-      [array]$ObjectList,
 
-      [Parameter(Mandatory = $true)]
-      [array]$FilterList
-    )
-
-
-
-    $matchingObjects = foreach ($obj in $ObjectList) {
-      if ($obj -in $FilterList) {
-        $obj
-      }
-    }
-
-    return $matchingObjects
-  }
+  
   function Get-OtherRecommendations() {
 
     $token = 'Bearer ' + (Get-AzAccessToken).Token
@@ -1631,9 +1625,6 @@ $Script:Runtime = Measure-Command -Expression {
         $Script:AllResourceTypesOrdered += $tmp
       }
 
-
-
-
       $Script:Advisories += $return
   }
 
@@ -1651,70 +1642,432 @@ $Script:Runtime = Measure-Command -Expression {
   }
 
 
+  #cwhd : make this section into function and move after connect-azure which make more sense for dynamic subscription retrieval purpose
+  # if ($ConfigFile) {
+  #   $Scopes=@()
+  #   $ConfigData = Import-ConfigFileData -file $ConfigFile
+  #   $TenantID = $ConfigData.TenantID | Select-Object -First 1
+  #   $Scopes += foreach ($SubscriptionId in $ConfigData.subscriptionids) {
+  #     if ((Test-SubscriptionId $SubscriptionId)) {
+  #       $SubscriptionId
+  #     } else {
+  #       Write-Host 'Invalid Subscription parameters. Exiting...' -ForegroundColor Red
+  #       Exit
+  #     }
+  #   }
+  #   $Scopes += foreach ($resourcegroup in $ConfigData.resourcegroups) {
+  #     if ((Test-ResourceGroupId $resourcegroup)) {
+  #       $resourcegroup
+  #     } else {
+  #       Write-Host 'Invalid ResourceGroup parameters. Exiting...' -ForegroundColor Red
+  #       Exit
+  #     }
+  #   }
+  #   $Scopes += $ConfigData.resources
+  #   $locations = $ConfigData.locations
+  #   $RunbookFile = $ConfigData.RunbookFile
+  #   if ($ConfigData.Tags) {
+  #     $Tags = foreach ($tag in $ConfigData.Tags) {
+  #       if ((Test-TagPattern $tag)) {
+  #         $tag
+  #       } else {
+  #         Write-Host 'Invalid Tag parameters. Exiting...' -ForegroundColor Red
+  #         Exit
+  #       }
+  #     }
+  #   }
+  # } else {
+  #   $Scopes = @()
+  #   if ($SubscriptionIds) {
+  #     $Scopes += foreach ($Sub in $SubscriptionIds) {
+  #       $_guid = [Guid]::NewGuid()
 
-  if ($ConfigFile) {
-    $Scopes=@()
-    $ConfigData = Import-ConfigFileData -file $ConfigFile
-    $TenantID = $ConfigData.TenantID | Select-Object -First 1
-    $Scopes += foreach ($SubscriptionId in $ConfigData.subscriptionids) {
-      if ((Test-SubscriptionId $SubscriptionId)) {
-        $SubscriptionId
-      } else {
-        Write-Host 'Invalid Subscription parameters. Exiting...' -ForegroundColor Red
-        Exit
-      }
-    }
-    $Scopes += foreach ($resourcegroup in $ConfigData.resourcegroups) {
-      if ((Test-ResourceGroupId $resourcegroup)) {
-        $resourcegroup
-      } else {
-        Write-Host 'Invalid ResourceGroup parameters. Exiting...' -ForegroundColor Red
-        Exit
-      }
-    }
-    $Scopes += $ConfigData.resources
-    $locations = $ConfigData.locations
-    $RunbookFile = $ConfigData.RunbookFile
-    if ($ConfigData.Tags) {
-      $Tags = foreach ($tag in $ConfigData.Tags) {
-        if ((Test-TagPattern $tag)) {
-          $tag
+  #       if ([Guid]::TryParse($Sub, [ref]$_guid)) {
+  #         $SubId = "/subscriptions/$Sub"
+  #         Write-Host "[-SubscriptionIds]: Fixed '$Sub' >> '$SubId'" -ForegroundColor Yellow
+  #         "/subscriptions/$Sub" # Fixed!
+  #       } else {
+  #         Write-Host "[-SubscriptionIds]: $Sub" -ForegroundColor Cyan
+  #         $Sub
+  #       }
+  #     }
+  #   }
+  #   if ($ResourceGroups) {
+  #     $Scopes += foreach ($RG in $ResourceGroups) {
+  #       Write-Host "[-ResourceGroups]: $RG" -ForegroundColor Cyan
+  #       $RG
+  #     }
+  #   }
+  # }
+
+  # $scopes = $scopes | Where-Object {$_ -and $_.trim()}
+  # $Script:ImplicitSubscriptionIds = ($scopes | ForEach-Object {$_.split("/")[0..2] -join "/"} | Group-Object | Select-Object Name).Name
+  
+  # cwhd: has to be global
+  $Scopes = @()
+
+  # cwhd: new function created from above code
+  function Set-Scopes() {
+    if ($ConfigFile) {
+      $Scopes=@()
+      $ConfigData = Import-ConfigFileData -file $ConfigFile
+      $TenantID = $ConfigData.TenantID | Select-Object -First 1
+      $Scopes += foreach ($SubscriptionId in $ConfigData.subscriptionids) {
+        if ((Test-SubscriptionId $SubscriptionId)) {
+          $SubscriptionId
         } else {
-          Write-Host 'Invalid Tag parameters. Exiting...' -ForegroundColor Red
+          Write-Host 'Invalid Subscription parameters. Exiting...' -ForegroundColor Red
           Exit
         }
       }
-    }
-  } else {
-    $Scopes = @()
-    if ($SubscriptionIds) {
-      $Scopes += foreach ($Sub in $SubscriptionIds) {
-        $_guid = [Guid]::NewGuid()
-
-        if ([Guid]::TryParse($Sub, [ref]$_guid)) {
-          $SubId = "/subscriptions/$Sub"
-          Write-Host "[-SubscriptionIds]: Fixed '$Sub' >> '$SubId'" -ForegroundColor Yellow
-          "/subscriptions/$Sub" # Fixed!
+      $Scopes += foreach ($resourcegroup in $ConfigData.resourcegroups) {
+        if ((Test-ResourceGroupId $resourcegroup)) {
+          $resourcegroup
         } else {
-          Write-Host "[-SubscriptionIds]: $Sub" -ForegroundColor Cyan
-          $Sub
+          Write-Host 'Invalid ResourceGroup parameters. Exiting...' -ForegroundColor Red
+          Exit
+        }
+      }
+      $Scopes += $ConfigData.resources
+      $locations = $ConfigData.locations
+      $RunbookFile = $ConfigData.RunbookFile
+      if ($ConfigData.Tags) {
+        $Tags = foreach ($tag in $ConfigData.Tags) {
+          if ((Test-TagPattern $tag)) {
+            $tag
+          } else {
+            Write-Host 'Invalid Tag parameters. Exiting...' -ForegroundColor Red
+            Exit
+          }
+        }
+      }
+    } else {
+
+      # get subscription dynamically instead of passing in as parameter
+      foreach ($sub in Get-AzSubscription)
+      {
+        $SubscriptionIds += $sub.Id
+      }
+
+      #$Scopes = @()
+      if ($SubscriptionIds) {
+        $global:Scopes += foreach ($Sub in $SubscriptionIds) {
+          $_guid = [Guid]::NewGuid()
+  
+          if ([Guid]::TryParse($Sub, [ref]$_guid)) {
+            $SubId = "/subscriptions/$Sub"
+            Write-Host "[-SubscriptionIds]: Fixed '$Sub' >> '$SubId'" -ForegroundColor Yellow
+            "/subscriptions/$Sub" # Fixed!
+          } else {
+            Write-Host "[-SubscriptionIds]: $Sub" -ForegroundColor Cyan
+            $Sub
+          }
+        }
+      }
+      if ($ResourceGroups) {
+        $Scopes += foreach ($RG in $ResourceGroups) {
+          Write-Host "[-ResourceGroups]: $RG" -ForegroundColor Cyan
+          $RG
         }
       }
     }
-    if ($ResourceGroups) {
-      $Scopes += foreach ($RG in $ResourceGroups) {
-        Write-Host "[-ResourceGroups]: $RG" -ForegroundColor Cyan
-        $RG
-      }
-    }
+  
+    $scopes = $scopes | Where-Object {$_ -and $_.trim()}
+    $Script:ImplicitSubscriptionIds = ($scopes | ForEach-Object {$_.split("/")[0..2] -join "/"} | Group-Object | Select-Object Name).Name
   }
 
-  $scopes = $scopes | Where-Object {$_ -and $_.trim()}
-  $Script:ImplicitSubscriptionIds = ($scopes | ForEach-Object {$_.split("/")[0..2] -join "/"} | Group-Object | Select-Object Name).Name
+  # cwhd: extracted from analyzer.ps1
+  function Convert-JSON-from-Analyzer($collector_result_json) {
+    Write-Host 'Processing JSON File'
+
+    #cwhd: ignore reading file
+    # Load the JSON file from the collector script...
+    # $JSONFile = Get-Item -Path $JSONFile
+    # $JSONFile = $JSONFile.FullName
+    # $results = Get-Content -Path $JSONFile | ConvertFrom-Json
+    $results = $collector_result_json
+
+    $Script:AllResourceTypesOrdered = $results.ResourceType
+    $Script:Outages = $results.Outages
+    $Script:SupportTickets = $results.SupportTickets
+    $Script:Retirements = $results.Retirements
+    $Script:ServiceHealth = $results.ServiceHealth
+    $Script:CollectorDetails = $results.ScriptDetails
+    $Script:OutOfScope = $results.OutOfScope
+
+    # $RepoVersion = $RepoVersion = Get-RepoVersion -ClonePath $Script:clonePath
+
+    # if ($Script:CollectorDetails.Version -eq $RepoVersion.Collector) {
+    #   Write-Host 'The JSON file was created by the current version of the Collector Script. ' -BackgroundColor DarkGreen
+    # } else {
+    #   Write-Host "The JSON file was created by an outdated version ($($Script:CollectorDetails.Version)) of the Collector Script. The latest version is $($RepoVersion.Collector)" -BackgroundColor DarkRed
+    # }
+
+    $CoreResources = $results.ImpactedResources
+    $CoreAdvisories = $results.Advisory
+
+    $Script:ServicesYAML = Get-ChildItem -Path ($Script:clonePath + '\azure-resources') -Filter 'recommendations.yaml' -Recurse
+    $Script:WAFYAML = Get-ChildItem -Path ($Script:clonePath + '\azure-waf') -Filter 'recommendations.yaml' -Recurse
+
+    if ($Script:CollectorDetails.SAP -eq 'True') {
+      $Script:ServicesYAML += Get-ChildItem -Path ($Script:clonePath + '\azure-specialized-workloads\sap') -Filter 'recommendations.yaml' -Recurse
+    }
+    if ($Script:CollectorDetails.AVD -eq 'True') {
+      $Script:ServicesYAML += Get-ChildItem -Path ($Script:clonePath + '\azure-specialized-workloads\avd') -Filter 'recommendations.yaml' -Recurse
+    }
+    if ($Script:CollectorDetails.AVS -eq 'True') {
+      $Script:ServicesYAML += Get-ChildItem -Path ($Script:clonePath + '\azure-specialized-workloads\avs') -Filter 'recommendations.yaml' -Recurse
+    }
+    if ($Script:CollectorDetails.HPC -eq 'HPC') {
+      $Script:ServicesYAML += Get-ChildItem -Path ($Script:clonePath + '\azure-specialized-workloads\hpc') -Filter 'recommendations.yaml' -Recurse
+    }
+
+    $Script:AdvisorContent = $CoreAdvisories | Select-Object -Property recommendationId, type, category, impact, description -Unique
+
+    # Load custom YAML content if provided...
+    # Custom YAML variable is always here regardless of whether a custom file is provided.
+    $Script:CustomYAMLContent = @()
+
+    # If a custom file is provided, load it and add it to the custom YAML content.
+    if (![string]::IsNullOrWhiteSpace(($CustomRecommendationsYAMLPath))) {
+      $Script:CustomYAMLContent = Get-Content -Path $CustomRecommendationsYAMLPath | ConvertFrom-Yaml
+    }
+
+    $Script:ServicesYAMLContent = @()
+    foreach ($YAML in $Script:ServicesYAML) {
+      if (![string]::IsNullOrEmpty($YAML)) {
+        $Script:ServicesYAMLContent += Get-Content -Path $YAML | ConvertFrom-Yaml
+      }
+    }
+    $Script:WAFYAMLContent = @()
+    foreach ($YAML in $Script:WAFYAML) {
+      if (![string]::IsNullOrEmpty($YAML)) {
+        $Script:WAFYAMLContent += Get-Content -Path $YAML | ConvertFrom-Yaml
+      }
+    }
+
+    $Script:MergedRecommendation = @()
+
+    foreach ($Recom in $CoreResources | Where-Object { $_ -ne $null }) {
+      if ($($Recom.checkName) -and $($Recom.selector)) {
+        # This is a runbook recommendation...
+        $recomContent = $Script:CustomYAMLContent `
+        | Where-Object { ($_.aprlGuid -eq $Recom.recommendationId) -and ($_.checkName -eq $Recom.checkName) } `
+        | Select-Object -First 1
+
+        if (-not $recomContent) {
+          # If we couldn't find a check-specific recommendation, try to find a generic one...
+          $recomContent = $Script:CustomYAMLContent `
+          | Where-Object { ($_.aprlGuid -eq $Recom.recommendationId) } `
+          | Select-Object -First 1
+        }
+
+        if (-not $recomContent) {
+          # If we couldn't find a check-specific recommendation, try to find a generic one...
+          $recomContent = $Script:ServicesYAMLContent `
+          | Where-Object { ($_.aprlGuid -eq $Recom.recommendationId) } `
+          | Select-Object -First 1
+        }
+
+        if (-not $recomContent) {
+          # If we still couldn't find a recommendation, create a default one..
+          $recomContent = [pscustomobject]@{
+            description                = [string]::Empty
+            recommendationResourceType = 'Unknown'
+            recommendationImpact       = 'Unknown'
+          }
+        }
+
+        $tmp = @{
+          'How was the resource/recommendation validated or what actions need to be taken?' = $Recom.validationAction;
+          recommendationId                                                                  = $Recom.recommendationId;
+          recommendationTitle                                                               = $recomContent.description;
+          resourceType                                                                      = $recomContent.recommendationResourceType;
+          impact                                                                            = $recomContent.recommendationImpact;
+          subscriptionId                                                                    = $Recom.subscriptionId;
+          resourceGroup                                                                     = $Recom.resourceGroup;
+          name                                                                              = $Recom.name;
+          id                                                                                = $Recom.id;
+          location                                                                          = $Recom.location;
+          param1                                                                            = $Recom.param1;
+          param2                                                                            = $Recom.param2;
+          param3                                                                            = $Recom.param3;
+          param4                                                                            = $Recom.param4;
+          param5                                                                            = $Recom.param5;
+          supportTicketId                                                                   = [string]::Empty;
+          source                                                                            = $Recom.selector;
+          checkName                                                                         = $Recom.checkName;
+          'WAF Pillar'                                                                      = 'Reliability';
+          tagged                                                                            = $Recom.tagged
+        }
+
+        $Script:MergedRecommendation += $tmp
+
+      } else {
+        # This isn't a runbook recommendation...
+        $RecomTitle = $Script:ServicesYAMLContent | Where-Object { $_.aprlGuid -eq $Recom.recommendationId }
+
+        if ([string]::IsNullOrEmpty($RecomTitle.recommendationTypeId) -or (![string]::IsNullOrEmpty($RecomTitle.recommendationTypeId) -and $RecomTitle.recommendationTypeId -notin $CoreAdvisories.recommendationId)) {
+          $Ticket = $Script:SupportTickets | Where-Object { $_.'Related Resource' -eq $Recom.id }
+          if (($RecomTitle.recommendationMetadataState -eq 'Active') -or $Recom.validationAction -eq 'IMPORTANT - Recommendation cannot be validated with ARGs - Validate Resources manually' -or $Recom.validationAction -eq 'IMPORTANT - Query under development - Validate Resources manually' ) {
+            $Tickets = if ($Ticket.'Ticket ID'.count -gt 1) { $Ticket.'Ticket ID' | ForEach-Object { $_ + ' /' } }else { $Ticket.'Ticket ID' }
+            $Tickets = [string]$Tickets
+            $Tickets = if ($Tickets -like '* /*') { $Tickets -replace '.$' }else { $Tickets }
+            $tmp = @{
+              'How was the resource/recommendation validated or what actions need to be taken?' = $Recom.validationAction;
+              recommendationId                                                                  = $Recom.recommendationId;
+              recommendationTitle                                                               = $RecomTitle.description;
+              resourceType                                                                      = $RecomTitle.recommendationResourceType;
+              impact                                                                            = $RecomTitle.recommendationImpact;
+              subscriptionId                                                                    = $Recom.subscriptionId;
+              resourceGroup                                                                     = $Recom.resourceGroup;
+              name                                                                              = $Recom.name;
+              id                                                                                = $Recom.id;
+              location                                                                          = $Recom.location;
+              param1                                                                            = $Recom.param1;
+              param2                                                                            = $Recom.param2;
+              param3                                                                            = $Recom.param3;
+              param4                                                                            = $Recom.param4;
+              param5                                                                            = $Recom.param5;
+              supportTicketId                                                                   = '';
+              source                                                                            = $Recom.selector;
+              checkName                                                                         = $Recom.checkName;
+              'WAF Pillar'                                                                      = 'Reliability';
+              tagged                                                                            = $Recom.tagged
+            }
+            $Script:MergedRecommendation += $tmp
+          } elseif ($Recom.validationAction -eq 'IMPORTANT - Resource Type is not available in either APRL or Advisor - Validate Resources manually if Applicable, if not Delete this line' ) {
+            $tmp = @{
+              'How was the resource/recommendation validated or what actions need to be taken?' = $Recom.validationAction;
+              recommendationId                                                                  = '';
+              recommendationTitle                                                               = $RecomTitle.description;
+              resourceType                                                                      = $Recom.recommendationId;
+              impact                                                                            = '';
+              subscriptionId                                                                    = $Recom.subscriptionId;
+              resourceGroup                                                                     = $Recom.resourceGroup;
+              name                                                                              = $Recom.name;
+              id                                                                                = $Recom.id;
+              location                                                                          = $Recom.location;
+              param1                                                                            = $Recom.param1;
+              param2                                                                            = $Recom.param2;
+              param3                                                                            = $Recom.param3;
+              param4                                                                            = $Recom.param4;
+              param5                                                                            = $Recom.param5;
+              supportTicketId                                                                   = $Tickets;
+              source                                                                            = $Recom.selector;
+              checkName                                                                         = $Recom.checkName;
+              'WAF Pillar'                                                                      = 'Reliability';
+              tagged                                                                            = $Recom.tagged
+            }
+            $Script:MergedRecommendation += $tmp
+          }
+        }
+      }
+    }
+
+    $Script:RecommendedAdv = @()
+    foreach ($adv in $CoreAdvisories) {
+      if (![string]::IsNullOrEmpty($adv.recommendationId)) {
+        #$APRLADV = $Script:ServicesYAMLContent | Where-Object { $_.recommendationTypeId -eq $adv.recommendationId }
+
+        #if ($APRLADV.recommendationTypeId -eq $adv.recommendationId ) {
+          $Ticket = $Script:SupportTickets | Where-Object { $_.'Related Resource' -eq $adv.id }
+          $Tickets = if ($Ticket.'Ticket ID'.count -gt 1) { $Ticket.'Ticket ID' | ForEach-Object { $_ + ' /' } }else { $Ticket.'Ticket ID' }
+          $Tickets = [string]$Tickets
+          $Tickets = if ($Tickets -like '* /*') { $Tickets -replace '.$' }else { $Tickets }
+          $WAFPillar = if ($adv.category -eq 'HighAvailability') { 'Reliability' }else { $adv.category }
+          $tmp = @{
+            'How was the resource/recommendation validated or what actions need to be taken?' = 'Advisor - Queries';
+            recommendationId                                                                  = $adv.recommendationId;
+            recommendationTitle                                                               = $adv.description;
+            impact                                                                            = $adv.impact;
+            resourceType                                                                      = $adv.type;
+            subscriptionId                                                                    = $adv.subscriptionId;
+            resourceGroup                                                                     = $adv.resourceGroup;
+            name                                                                              = $adv.name;
+            id                                                                                = $adv.id;
+            location                                                                          = $adv.location;
+            param1                                                                            = '';
+            param2                                                                            = '';
+            param3                                                                            = '';
+            param4                                                                            = '';
+            param5                                                                            = '';
+            supportTicketId                                                                   = $Tickets;
+            source                                                                            = 'ADVISOR';
+            checkName                                                                         = '';
+            'WAF Pillar'                                                                      = $WAFPillar;
+            tagged                                                                            = $true
+          }
+          $Script:MergedRecommendation += $tmp
+          $Script:RecommendedAdv += $adv.recommendationId
+        #}
+      }
+    }
+
+    foreach ($WAF in $Script:WAFYAMLContent) {
+      $tmp = @{
+        'How was the resource/recommendation validated or what actions need to be taken?' = "IMPORTANT - Update this item based on Discovery Workshop Questionnaire";
+        recommendationId                                                                  = [string]$WAF.aprlGuid;
+        recommendationTitle                                                               = [string]$WAF.description;
+        resourceType                                                                      = [string]$WAF.recommendationResourceType;
+        impact                                                                            = [string]$WAF.recommendationImpact;
+        subscriptionId                                                                    = '';
+        resourceGroup                                                                     = '';
+        name                                                                              = 'Entire Workload';
+        id                                                                                = '';
+        location                                                                          = '';
+        param1                                                                            = '';
+        param2                                                                            = '';
+        param3                                                                            = '';
+        param4                                                                            = '';
+        param5                                                                            = '';
+        supportTicketId                                                                   = '';
+        source                                                                            = 'APRL';
+        checkName                                                                         = ''
+        'WAF Pillar'                                                                      = 'Reliability';
+        tagged                                                                            = $true
+      }
+      $Script:MergedRecommendation += $tmp
+    }
+
+    $result = @()
+    $result += $Script:MergedRecommendation
+    $result += $Script:AllResourceTypesOrdered
+    $result += $Script:Outages
+    $result += $Script:SupportTickets
+    $result += $Script:Retirements
+    $result += $Script:ServiceHealth
+    $result += $Script:CollectorDetails
+    $result += $Script:OutOfScope
+    $result += $Script:RecommendedAdv
+
+    return $result
+  }
+
+  function Get-WAFObjectByList {
+    param (
+      [Parameter(Mandatory = $true)]
+      [array]$ObjectList,
+
+      [Parameter(Mandatory = $true)]
+      [array]$FilterList
+    )
+
+
+
+    $matchingObjects = foreach ($obj in $ObjectList) {
+      if ($obj -in $FilterList) {
+        $obj
+      }
+    }
+
+    return $matchingObjects
+  }
 
   Write-Debug 'Reseting Variables'
   Invoke-ResetVariable
 
+  
   Write-Debug 'Calling Function: Test-Requirements'
   Test-Requirement
 
@@ -1724,11 +2077,16 @@ $Script:Runtime = Measure-Command -Expression {
   Write-Debug 'Building Recommendation Object'
   $Script:RecommendationObject = Invoke-RestMethod 'https://raw.githubusercontent.com/Azure/Azure-Proactive-Resiliency-Library-v2/refs/heads/main/tools/data/recommendations.json'
 
+  #cwhd: ignore
   Write-Debug 'Calling Function: Test-Runbook'
-  Test-Runbook
+  #Test-Runbook
 
   Write-Debug 'Calling Function: Connect-ToAzure'
   Connect-ToAzure -TenantID $TenantID -AzureEnvironment $AzureEnvironment
+
+  #cwhd: newly added
+  Write-Debug 'Calling Function: Set-Scopes (newly added for CWHD)'
+  Set-Scopes
 
   Write-Debug 'Calling Function: Start-ScopesLoop'
   Start-ScopesLoop
@@ -1748,9 +2106,16 @@ $Script:Runtime = Measure-Command -Expression {
   Write-Debug 'Calling Function: Resolve-SupportTickets'
   Resolve-SupportTicket
 
+  # cwhd: new-jsonfile now returns hash map instead of writing to file
   Write-Debug 'Calling Function: New-JsonFile'
-  New-JsonFile
+  
+  # New-JsonFile
+  $ExporterArray = New-JsonFile
 
+  # cwhd: new function extracted from analyzer.ps1
+  $WARAReport = Convert-JSON-from-Analyzer -collector_result_json $ExporterArray
+
+  $WARAReport | ConvertTo-Json -Depth 15
 }
 
 $TotalTime = $Script:Runtime.Totalminutes.ToString('#######.##')

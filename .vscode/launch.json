@@ -2,6 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "debug pwsh",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${workspaceFolder}/src/telemetry_forager/wara",
+            "args": ["-TenantID", "efea8ebe-8cf5-4d02-b3c3-1f3afb129e55"]
+        },
+        {
             "name": "debug forager",
             "type": "debugpy",
             "request": "launch",
