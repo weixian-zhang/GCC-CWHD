@@ -38,22 +38,25 @@ def init(appconfig: AppConfig) -> None:
              return
         
 
-        azmon_exporter = AzureMonitorTraceExporter.from_connection_string(appconfig.appinsightsConnString)
-
         # Set up OpenTelemetry tracer
         exporter = ConsoleSpanExporter()
         trace.set_tracer_provider(TracerProvider())
         trace.get_tracer_provider().add_span_processor(
             SimpleSpanProcessor(exporter)
         )
-        trace.get_tracer_provider().add_span_processor(
-            SimpleSpanProcessor(azmon_exporter)
-        )
 
-        configure_azure_monitor(
+        if appconfig.appinsightsConnString:
+            azmon_exporter = AzureMonitorTraceExporter.from_connection_string(appconfig.appinsightsConnString)
+            
+            trace.get_tracer_provider().add_span_processor(
+                SimpleSpanProcessor(azmon_exporter)
+            )
 
-            connection_string=appconfig.appinsightsConnString
-        )
+            configure_azure_monitor(
+                connection_string=appconfig.appinsightsConnString
+            )
+
+        
 
         tracer = trace.get_tracer(__name__)
 
