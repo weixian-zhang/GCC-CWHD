@@ -89,32 +89,36 @@ class AppServiceHealthRetriever(HealthRetriever):
             3. Resource Health
         '''
 
-        with Log.get_tracer().start_as_current_span("log_query_app_insights_standard_test_result"):
+        Log.debug("AppServiceHealthRetriever: getting health status for App Service")
             
-            queryTimeSpanHour = self.appconfig.queryTimeSpanHour
-            subscriptionId = resource.subscriptionId
-            resourceId = resource.resourceId
+        queryTimeSpanHour = self.appconfig.queryTimeSpanHour
+        subscriptionId = resource.subscriptionId
+        resourceId = resource.resourceId
 
-            hr = HealthReport(resourceId=resourceId,
-                                description='Resource is unhealthy or data not found',
-                                availabilityState= 0,
-                                reportedTime= datetime.now())
-            
+        hr = HealthReport(resourceId=resourceId,
+                            description='Resource is unhealthy or data not found',
+                            availabilityState= 0,
+                            reportedTime= datetime.now())
+        
 
-            # get health status from app insights availability test
-            ok, hr = self._get_health_status_from_app_insights_availability_test(resource, queryTimeSpanHour)
-            if ok:
-                return hr
-            
-
-            ok, hr = self._get_health_status_from_connection_monitor_test(resource, queryTimeSpanHour)
-            if ok:
-                return hr
-            
-            hr = super()._get_health_report_by_resource_health(resourceId=resourceId, subscriptionId=subscriptionId)
-            hr.description += ', status from Resource-Health'
-
+        # get health status from app insights availability test
+        Log.debug("AppServiceHealthRetriever: try get health status from App Insights Availability Test")
+        ok, hr = self._get_health_status_from_app_insights_availability_test(resource, queryTimeSpanHour)
+        if ok:
+            Log.debug("AppServiceHealthRetriever: try get health status from App Insights Availability Test successful")
             return hr
+        
+        Log.debug("AppServiceHealthRetriever: try get health status from Network Watcher Connection Monitor Test")
+        ok, hr = self._get_health_status_from_connection_monitor_test(resource, queryTimeSpanHour)
+        if ok:
+            Log.debug("AppServiceHealthRetriever: try get health status from Network Watcher Connection Monitor Test successful")
+            return hr
+        
+        Log.debug("AppServiceHealthRetriever: get health status from Resource Health")
+        hr = super()._get_health_report_by_resource_health(resourceId=resourceId, subscriptionId=subscriptionId)
+        hr.description += ', status from Resource-Health'
+
+        return hr
             
         
     def _get_health_status_from_app_insights_availability_test(
@@ -253,67 +257,63 @@ class VMHealthRetriever(HealthRetriever):
         subscriptionId = resource.subscriptionId
         workspaceId = resource.workspaceId
         
-        tracer = Log.get_tracer()
+        Log.debug("get_vm_health_status")
 
-        with tracer.start_as_current_span("get_vm_health_status"):
-
-            if not workspaceId:
-                with tracer.start_as_current_span('get_vm_health_status_by_resource_health'):
-                    hr = super()._get_health_report_by_resource_health(resourceId=resourceId, subscriptionId=subscriptionId)
-                    hr.description += ', status from Resource-Health only'
-                    return hr
+        if not workspaceId:
+            hr = super()._get_health_report_by_resource_health(resourceId=resourceId, subscriptionId=subscriptionId)
+            hr.description += ', status from Resource-Health only'
+            return hr
 
 
-            with tracer.start_as_current_span('retrieve_cpu_metric'):
-                # scalar value
-                current_cpu_percent = self.query_cpu_usage_percenage(resource, queryTimeSpanHour)
+        Log.debug('retrieve_cpu_metric')
+        # scalar value
+        current_cpu_percent = self.query_cpu_usage_percenage(resource, queryTimeSpanHour)
 
-            with tracer.start_as_current_span('retrieve_memory_metric'):
-                # scalar value
-                current_memory_percent = self.query_memory_usage_percenage(resource, queryTimeSpanHour)
+        Log.debug('retrieve_memory_metric')
+        # scalar value
+        current_memory_percent = self.query_memory_usage_percenage(resource, queryTimeSpanHour)
 
-            with tracer.start_as_current_span('retrieve_disk_drives_metrics'):
-                # result contains dictionary of win drive/linux file path : used space percentage
-                current_disk_used_percent = self.query_disk_usage_percenage(resource, queryTimeSpanHour)
+        Log.debug('retrieve_disk_drives_metrics')
+        # result contains dictionary of win drive/linux file path : used space percentage
+        current_disk_used_percent = self.query_disk_usage_percenage(resource, queryTimeSpanHour)
         
 
+        hr = super()._get_health_report_by_resource_health(resourceId=resourceId, subscriptionId=subscriptionId)
 
-            hr = super()._get_health_report_by_resource_health(resourceId=resourceId, subscriptionId=subscriptionId)
-
-            # only if resource health availabilityState is 1 then consider metrics
-            if hr.availabilityState == 0:
-                return hr
-            else:
-                cpuThreshold = self.appconfig.health_status_threshold.VM.cpuUsagePercentage
-                memoryThreshold = self.appconfig.health_status_threshold.VM.memoryUsagePercentage
-                diskThreshold = self.appconfig.health_status_threshold.VM.diskUsagePercentage
-
-                # any metric hits threshold is warning, availabilityState = 2
-                if current_cpu_percent >= cpuThreshold:
-                    hr.availabilityState = 2
-                    hr.description.append(f'CPU % reaches {cpuThreshold}% threshold')
-                    
-                if current_memory_percent >= memoryThreshold:
-                    hr.availabilityState = 2
-                    hr.description.append(f'Memory usage reaches {memoryThreshold}% threshold')
-
-                diskUsagePercentages = list(current_disk_used_percent.values())
-                if any(x >= diskThreshold for x in diskUsagePercentages):
-                    hr.availabilityState = 2
-                    hr.description.append(f'One or more disk usage reaches {diskThreshold}% threshold')
-                    Log.warn(description)
-
-                if len(description) >= 1:
-                    hr.description = ', '.join(description)
-                    Log.warn(description)
-                else:
-                    hr.description = f'''Resource is healthy
-                    - CPU: {current_cpu_percent}%
-                    - Memory: {current_memory_percent}%
-                    - Disk: {json.dumps(current_disk_used_percent)}
-                    '''
-
+        # only if resource health availabilityState is 1 then consider metrics
+        if hr.availabilityState == 0:
             return hr
+        else:
+            cpuThreshold = self.appconfig.health_status_threshold.VM.cpuUsagePercentage
+            memoryThreshold = self.appconfig.health_status_threshold.VM.memoryUsagePercentage
+            diskThreshold = self.appconfig.health_status_threshold.VM.diskUsagePercentage
+
+            # any metric hits threshold is warning, availabilityState = 2
+            if current_cpu_percent >= cpuThreshold:
+                hr.availabilityState = 2
+                hr.description.append(f'CPU % reaches {cpuThreshold}% threshold')
+                
+            if current_memory_percent >= memoryThreshold:
+                hr.availabilityState = 2
+                hr.description.append(f'Memory usage reaches {memoryThreshold}% threshold')
+
+            diskUsagePercentages = list(current_disk_used_percent.values())
+            if any(x >= diskThreshold for x in diskUsagePercentages):
+                hr.availabilityState = 2
+                hr.description.append(f'One or more disk usage reaches {diskThreshold}% threshold')
+                Log.warn(description)
+
+            if len(description) >= 1:
+                hr.description = ', '.join(description)
+                Log.warn(description)
+            else:
+                hr.description = f'''Resource is healthy
+                - CPU: {current_cpu_percent}%
+                - Memory: {current_memory_percent}%
+                - Disk: {json.dumps(current_disk_used_percent)}
+                '''
+
+        return hr
         
         
         
@@ -321,30 +321,30 @@ class GeneralHealthRetriever(HealthRetriever):
 
     def get_health_status(self, resource: ResourceParameter):
 
-        with Log.get_tracer().start_as_current_span("get_resource_health_availability_status"):
+        Log.debug("GeneralHealthRetriever: get health status")
 
-            resourceId = resource.resourceId
-            subscriptionId = resource.subscriptionId
+        resourceId = resource.resourceId
+        subscriptionId = resource.subscriptionId
 
-            client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
+        client = ResourceHealthMgmtClient(credential=DefaultAzureCredential(), subscription_id = subscriptionId)
 
-            asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
-            
-            description = 'Resource is unhealthy'
-            availabilityState= 0
-            if asResult.properties.availability_state == 'Available':
-                availabilityState = 1
-                description = 'Resource is healthy'
-            elif asResult.properties.availability_state == 'Unknown':
-                availabilityState = 2
-                description = 'Resource status is Unknowny'
+        asResult = client.availability_statuses.get_by_resource(resource_uri=resourceId)
+        
+        description = 'Resource is unhealthy'
+        availabilityState= 0
+        if asResult.properties.availability_state == 'Available':
+            availabilityState = 1
+            description = 'Resource is healthy'
+        elif asResult.properties.availability_state == 'Unknown':
+            availabilityState = 2
+            description = 'Resource status is Unknowny'
 
-            hr = HealthReport(resourceId=resourceId,
-                                description=description,
-                                availabilityState=availabilityState,
-                                reportedTime=asResult.properties.reported_time)
-            
-            return hr
+        hr = HealthReport(resourceId=resourceId,
+                            description=description,
+                            availabilityState=availabilityState,
+                            reportedTime=asResult.properties.reported_time)
+        
+        return hr
 
 class AzResourceType(Enum):
     VM = 1

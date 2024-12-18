@@ -119,21 +119,18 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
     try:
         response.headers["cwhd-version"] = appconfig.version
         
-        tracer = Log.get_tracer()
+        Log.debug('start main_request_RHRetriever')
         
-        with tracer.start_as_current_span("main_request_RHRetriever", kind=SpanKind.SERVER):
-            Log.debug('start main_request_RHRetriever')
-            
-            ok, resources = get_resource_params(req_body_param)
+        ok, resources = get_resource_params(req_body_param)
 
-            if not ok:
-                Log.exception('no resource ID supplied')
-                response.status_code = 400
-                return 'no resource ID supplied'
+        if not ok:
+            Log.exception('no resource ID supplied')
+            response.status_code = 400
+            return 'no resource ID supplied'
 
-            rhState = get_resource_health_states(resources)
+        rhState = get_resource_health_states(resources)
 
-            return jsons.dumps(rhState)
+        return jsons.dumps(rhState)
         
     except Exception as e:
         Log.exception(f'error occured: {str(e)}')
@@ -144,7 +141,7 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 # powershell test
 @app.post("/wara/runonce", status_code=202)
 def run_pwsh():
-    ap = WARAActionPlanner()
+    ap = WARAActionPlanner(config=appconfig)
     ap.run_wara()
     return 'accepted'
 

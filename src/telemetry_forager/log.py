@@ -1,4 +1,5 @@
 import logging
+from loguru import logger
 from config import AppConfig
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
@@ -15,15 +16,15 @@ from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
 settings.tracing_implementation = OpenTelemetrySpan
+import sys
 
-
-tracer = None
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-stream = logging.StreamHandler()
-logger.addHandler(stream)
-
-
+# tracer = None
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
+# stream = logging.StreamHandler(sys.stdout)
+# logger.addHandler(stream)
+logger.add(sys.stdout, format="{time} | {level} - {message}", level="DEBUG")
+logger.add(sys.stderr, format="{time} | {level} - {message}", level="DEBUG")
 loaded = False
 
 def init(appconfig: AppConfig) -> None:
@@ -39,33 +40,26 @@ def init(appconfig: AppConfig) -> None:
         
 
         # Set up OpenTelemetry tracer
-        exporter = ConsoleSpanExporter()
-        trace.set_tracer_provider(TracerProvider())
-        trace.get_tracer_provider().add_span_processor(
-            SimpleSpanProcessor(exporter)
-        )
+        # disable tracing for now to prevent overlogging. Too noisy disrupts log finding
+        # exporter = ConsoleSpanExporter()
+        # trace.set_tracer_provider(TracerProvider())
+        # trace.get_tracer_provider().add_span_processor(
+        #     SimpleSpanProcessor(exporter)
+        # )
 
         if appconfig.appinsightsConnString:
-            azmon_exporter = AzureMonitorTraceExporter.from_connection_string(appconfig.appinsightsConnString)
+            # azmon_exporter = AzureMonitorTraceExporter.from_connection_string(appconfig.appinsightsConnString)
             
-            trace.get_tracer_provider().add_span_processor(
-                SimpleSpanProcessor(azmon_exporter)
-            )
+            # trace.get_tracer_provider().add_span_processor(
+            #     SimpleSpanProcessor(azmon_exporter)
+            # )
 
             configure_azure_monitor(
                 connection_string=appconfig.appinsightsConnString
             )
 
-        
 
-        tracer = trace.get_tracer(__name__)
-
-        
-
-        
-
-        
-
+        #tracer = trace.get_tracer(__name__)
 
 
 def debug(msg):

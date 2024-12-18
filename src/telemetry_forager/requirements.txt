@@ -7,6 +7,7 @@ azure-core-tracing-opentelemetry==1.0.0b11
 azure-identity==1.19.0
 azure-mgmt-core==1.5.0
 azure-mgmt-resourcehealth==1.0.0b6
+azure-mgmt-subscription==3.1.1
 azure-monitor-opentelemetry==1.6.4
 azure-monitor-opentelemetry-exporter==1.0.0b32
 azure-monitor-query==1.4.0
@@ -30,6 +31,7 @@ importlib_metadata==8.5.0
 iniconfig==2.0.0
 isodate==0.7.2
 jsons==1.6.3
+loguru==0.7.3
 msal==1.31.0
 msal-extensions==1.2.0
 msrest==0.7.1
@@ -85,5 +87,6 @@ urllib3==2.2.3
 uvicorn==0.32.0
 watchfiles==0.24.0
 websockets==13.1
+win32_setctime==1.2.0
 wrapt==1.16.0
 zipp==3.20.2

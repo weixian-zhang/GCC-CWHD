@@ -19,8 +19,7 @@
                 "--reload"
             ],
             "jinja": true,
-            "cwd": "${workspaceFolder}/src/telemetry_forager",
-            "preLaunchTask": "pip freeze"
+            "cwd": "${workspaceFolder}/src/telemetry_forager"
         }
     ]
 }

@@ -2,6 +2,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "docker build",
+			"type": "shell",
+			"command": "docker build -t docker.io/wxzd/cwhd:v0.1.1-wara .",
+			"options": {
+				"cwd": "${workspaceFolder}/src/telemetry_forager"
+			}
+		},
+		{
 			"label": "zip and deploy func app",
 			"type": "shell",
 			"command": "python zip_and_deploy_func_app.py",

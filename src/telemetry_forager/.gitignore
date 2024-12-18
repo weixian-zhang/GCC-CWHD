@@ -13,6 +13,8 @@ project.lock.json
 
 func-app.zip
 
+/wara/temp_wara_exec
+
 /packages
 /TestResults
 

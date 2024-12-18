@@ -1,6 +1,7 @@
 # --- Stage 1: Build Stage ---
 FROM python:3.11-slim AS builder
 
+
 # Set working directory
 WORKDIR /app
 
@@ -17,7 +18,7 @@ FROM python:3.11-slim
 ENV HealthStatusThreshold='{     "metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }'
 ENV APPLICATIONINSIGHTS_CONNECTION_STRING='InstrumentationKey=afbee56f-64be-4972-aff4-eeda6947851a;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=669e72e2-38ff-4883-aebf-e0f0b2faab79'
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-
+ENV PYTHONUNBUFFERED=1
 
 # Set working directory
 WORKDIR /app
@@ -33,6 +34,13 @@ RUN rm -rf /var/lib/apt/lists/*
 # Update the list of packages
 RUN apt-get update
 
+# ssh for troubleshooting
+RUN apt-get install -y openssh-server
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+RUN useradd -m -s /bin/bash admin
+RUN echo "admin:1234" | chpasswd
+
 # Install pre-requisite packages.
 RUN apt-get install -y wget
 
@@ -47,7 +55,7 @@ RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.24/powe
 # Install the PowerShell package
 RUN dpkg -i powershell_7.2.24-1.deb_amd64.deb || true
 
-# RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
 
@@ -64,8 +72,12 @@ RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
 # get-azcontext; \
 # "
 
+
+
 # Expose the port FastAPI will run on
-EXPOSE 8000
+EXPOSE 8000 
 
 # Run FastAPI with Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# /usr/sbin/sshd -D

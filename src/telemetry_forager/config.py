@@ -32,8 +32,10 @@ class AppConfig:
         self.version = os.environ.get('Version') if os.environ.get('Version') else '1.1'
         self.queryTimeSpanHour = int(os.environ.get('QueryTimeSpanHour')) if os.environ.get('QueryTimeSpanHour') else 2
         self.appinsightsConnString= os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING') if os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING') else ''
-
         self.health_status_threshold = self.get_thresholds()
+
+        self.wara_tenantId = os.environ.get('WARA_TenantId') if os.environ.get('WARA_TenantId') else ''
+        self.wara_subsciptionIds = self._get_wara_subscriptionIds()
      
         self.loaded = True
 
@@ -59,6 +61,19 @@ class AppConfig:
             return ht
         except Exception as e:
             raise Exception(f'Error in parsing config HealthStatusThreshold {e}')
+        
+
+    def _get_wara_subscriptionIds(self):
+        try:
+            subscriptionIds = os.environ.get('WARA_SubscriptionIds')
+            if not subscriptionIds:
+                return []
+            return subscriptionIds.split(',')
+        except Exception as e:
+            raise Exception(f'Error in parsing config SubscriptionIds {e}')
+        
+
+    
         
         
         
