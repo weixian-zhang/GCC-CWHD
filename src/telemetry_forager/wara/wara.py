@@ -7,6 +7,12 @@ from config import AppConfig
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.subscription import SubscriptionClient
 import pandas as pd
+
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).absolute().parent))
+from db import DB
+
 class RunContext:
    def __init__(self):
       self.run_start_time = datetime.datetime.now()
@@ -17,6 +23,7 @@ class WARAActionPlanner:
    def __init__(self, config: AppConfig):
       file_full_path = os.path.realpath(__file__)
       cwd = os.path.dirname(file_full_path)
+      self.db = DB(config)
 
       self.config = config
       self.exec_root_dir = os.path.join(cwd, 'temp_wara_exec') #, datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
@@ -90,7 +97,6 @@ class WARAActionPlanner:
    # run analyzer script
    def _exec_analyzer_ps1(self):
 
-
       def _get_collector_json_result_file_name():
          for file in os.listdir(self.exec_root_dir):
             if file.endswith(".json"):
@@ -122,8 +128,11 @@ class WARAActionPlanner:
 
       Log.debug(f'WARA - executed connector.ps1 sucessfully. {p_out}')
 
+
    # pandas read excel from Excel
-   def _load_analyzer_excel_result(self):
+   def _load_analyzer_excel_result(self, run_start_time: datetime.datetime):
+
+      db_row_key = str(run_start_time.timestamp())
 
       def _get_analyzer_excel_result_file_name():
          for file in os.listdir(self.exec_root_dir):
@@ -139,15 +148,60 @@ class WARAActionPlanner:
       
       excel_file_path = os.path.join(self.exec_root_dir, excel_file_name)
 
-      df_recommendations = pd.read_excel(excel_file_path, 'Recommendations')
+      def _get_recommendations_json(self, file_path: str) -> str:
+         try:
+            
+            df = pd.read_excel(file_path, 'Recommendations')
 
-      df_impacted_resources = pd.read_excel(excel_file_path, 'ImpactedResources')
+            # drop redundant columns
+            df = df.drop(['Recommendation Source', 
+                          'Add associated Outage TrackingID and/or Support Request # and/or Service Retirement TrackingID', 
+                          'Observation / Annotation',
+                          'Recommendation Id'])
+            
+            return df.to_json(orient='records')
+         except Exception as e:
+            Log.exception(e)
+      
+      def _get_impacted_resources_json(self, file_path: str) -> str:
+         try:
+            df = pd.read_excel(file_path, 'ImpactedResources')
 
-      df_resource_type = pd.read_excel(excel_file_path, 'ResourceTypes')
+            # drop redundant columns
+            df = df.drop(['How was the resource/recommendation validated or what actions need to be taken?', 
+                          'recommendationId', 
+                          'supportTicketId',
+                          'checkName'])
+            
+            return df.to_json(orient='records')
+         except Exception as e:
+            Log.exception(e)
 
-      df_retirements = pd.read_excel(excel_file_path, 'Retirements')
+      def _get_resource_types_json(self, file_path: str) -> str:
+         try:
+            df = pd.read_excel(file_path, 'ResourceTypes')
 
-      pass
+            # drop redundant columns
+            df = df.drop(['Available in APRL?', 
+                          'Custom1', 
+                          'Custom2',
+                          'Custom3'])
+            
+            return df.to_json(orient='records')
+         except Exception as e:
+            Log.exception(e)
+
+      def _get_retirements_json(self, file_path: str) -> str:
+         try:
+            df = pd.read_excel(file_path, 'Retirements')
+            return df.to_json(orient='records')
+         except Exception as e:
+            Log.exception(e)
+
+      rjson = _get_recommendations_json(excel_file_path)
+
+
+      self.db.insert(self.db.recommendation_table_name, rjson)
 
 
    # save data to table storage for Grafana query
@@ -171,6 +225,8 @@ class WARAActionPlanner:
          if not self.config.wara_tenantId:
             Log.debug('WARA_TenantId is not set, WARA will not ignored')
             return
+         
+         self.db.init()
 
          self._create_root_exec_dir()
 
@@ -178,11 +234,21 @@ class WARAActionPlanner:
 
          subscription_ids = self._get_subscription_ids()
 
+         # get resource groups for each subscritpion
+         # wara report will generate for each resource group level by default
+         # in this way, we can filter recommendations and impacted resource by subscription id and resource group
+         # # table storage partition key is {subid + resource group id}
+         # table storage row key is {run_start_time_epoch}
+         # **to reconsider becoz multiple runs at resource group may cause unreliability. And error at any resource group causes
+         # whole report at subscription level to fail.
+
+         # run history still remains subscription id:run_start_time_epoch
+
          #self._exec_collector_ps1(subscription_ids)
 
          # self._exec_analyzer_ps1()
 
-         self._load_analyzer_excel_result()
+         self._load_analyzer_excel_result(datetime.datetime.now())
 
          Log.debug('WARA - run completed')
 

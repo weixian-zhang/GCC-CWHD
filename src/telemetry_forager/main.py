@@ -7,7 +7,7 @@ import jsons
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
-from wara.action_plan import WARAActionPlanner
+from wara.wara import WARAActionPlanner
 from opentelemetry.trace import (
     SpanKind
 )

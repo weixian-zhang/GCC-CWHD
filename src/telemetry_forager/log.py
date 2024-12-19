@@ -25,7 +25,7 @@ import sys
 # logger.addHandler(stream)
 logger.remove()
 logger.add(sys.stdout, format="{time} | {level} - {message}", level="DEBUG")
-logger.add(sys.stderr, format="{time} | {level} - {message}", level="DEBUG")
+# logger.add(sys.stderr, format="{time} | {level} - {message}", level="DEBUG")
 loaded = False
 
 def init(appconfig: AppConfig) -> None:

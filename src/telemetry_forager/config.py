@@ -36,7 +36,8 @@ class AppConfig:
 
         self.wara_tenantId = os.environ.get('WARA_TenantId') if os.environ.get('WARA_TenantId') else ''
         self.wara_subsciptionIds = self._get_wara_subscriptionIds()
-     
+
+        self.table_storage_url = os.environ.get('Table_Storage_URL') if os.environ.get('Table_Storage_URL') else ''
         self.loaded = True
 
     def get_thresholds(self) -> HealthStatusThreshold:
