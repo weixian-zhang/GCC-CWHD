@@ -66,13 +66,17 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 <br />
 <br />
 
-CWHD has a REST backend call Telemetry Forager that retrieves and curates telemetry from different telemetry sources including:
+Telemetry Forager is the backend service that curates telemetry from different data sources including:
 
- * Azure Monitor REST API for
-   * App Service health status - executes kusto query to get App Insights availability result from Log Analytics AppAvailabilityResults table
+ * Azure Monitor REST API
+   * App Service health status determine by any one of the following result:
+     * Kusto query - Application Insights Availability Test result (AppAvailabilityResults table)
+     * Kusto query - Network Watcher Connection Monitor (NWConnectionMonitorTestResult table)
+     * Resource Health API as last option to determine health status if above options are not available
    * VM: health status is determine by 2 factors
      * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
-     * If resource health status is Available/Green, additional 3 metrics CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
+     * If resource health status is Available/Green, Log Analytics Workspace ID is provided,
+       additional 3 metrics of CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
        In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
  * [Azure Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01) - get resource health for all resource types except App Service, which gets health status from App Insight Standard Test
 
