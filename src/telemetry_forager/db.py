@@ -34,3 +34,7 @@ class DB:
     def query(self, table_name, partition_key, row_key):
         self.table_client = self.table_service_client.get_table_client(table_name=table_name)
         return self.table_client.get_entity(partition_key, row_key)
+
+    def get_all_rows(self, table_name):
+        self.table_client = self.table_service_client.get_table_client(table_name=table_name)
+        return self.table_client.list_entities()

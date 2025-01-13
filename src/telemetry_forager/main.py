@@ -7,7 +7,7 @@ import jsons
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
-from wara.wara import WARAActionPlanner
+from telemetry_forager.wara.wara_executor import WARAExecutor
 from opentelemetry.trace import (
     SpanKind
 )
@@ -141,8 +141,8 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 # powershell test
 @app.post("/wara/runonce", status_code=202)
 def run_pwsh():
-    ap = WARAActionPlanner(config=appconfig)
-    ap.run_wara()
+    wap = WARAExecutor(config=appconfig)
+    wap.run()
     return 'accepted'
 
 

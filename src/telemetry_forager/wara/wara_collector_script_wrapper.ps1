@@ -5,7 +5,10 @@ Param(
   [GUID]$TenantID
 )
 
-Connect-AzAccount -Identity
+Connect-AzAccount
 & "$PSScriptRoot\temp_wara_exec\1_wara_collector.ps1" -tenantid $TenantID -subscriptionids $SubscriptionIds
+
+# Connect-AzAccount -Identity
+# & "$PSScriptRoot\temp_wara_exec\1_wara_collector.ps1" -tenantid $TenantID -subscriptionids $SubscriptionIds
 
 
