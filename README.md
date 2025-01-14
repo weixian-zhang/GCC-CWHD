@@ -15,7 +15,9 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 <br />
 
-* [Prerequisite](#prerequisites)
+* [Tech Stack](#tech-stack)
+* [Telemtry Required](#telemtry-required)
+* [Deployment & Configuration ](#deployment--configuration)
 * [Architecture](#architecture)
 * [Level 0 dashboard](#level-0-dashboard)
 * [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
@@ -23,41 +25,65 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 <br />  
 
-
-### Prerequisites
-
-*  <b>Telemtry Required</b>
-   * for App Service and Web App health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
-   * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
-   * All PaaS resources under monitoring, to have Diagnostic Setting configured to send Logs to 1 central Log Analytics Workspace. For e.g: [API Management send resource logs to workspace](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor#resource-logs)
-* <b>Azure Resources Required</b>
-     * a "central" Log Analytics Workspace 
-     * Azure Managed Grafana
-       *  enable Managed Identity
-       *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
-          *  Subscriptions containing resources under monitoring
-          *  Log Analytics Workspace (if workspace in different subscription from above) 
-     * Azure Function - App Service Plan S1
-       *  enable Managed Identity
-       *  add Azure role assignment (RBAC) for Function Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
-          *  Subscriptions containing resources under monitoring
-          *  Log Analytics Workspace (if workspace in different subscription from above)
-     * All Application Insights must be linked to the same central Log Analytics Workspace
-     * Create App Insights Standard Tests to perform availability tests for all App Services and Web Apps.
-       (Standard Tests logs are stored in AppAvailabilityResults table)
-
-*  <b>Assumption</b>
-   * has an existing Log Analytics Workspace where "all" Application Insights are linked to
- 
-<br />
-
-### Tech Stack  
+## Tech Stack  
 * Python 3.11
 * Azure Managed Grafana Standard - Grafana 10.4.11
 * [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
-* [Python modules](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/requirements.txt)
 
+## Telemtry Required
+
+   * for App Service health signal - based on any one of the following available result
+     * Application Insights Availability Test result
+     * Network Watcher Connection Monitor
+     * lastly, Resource Health if any of the above isnot available
+   * for Virtual Machines health signal - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
+   * for rest of resource types - defaults to Resource Health
+ 
+## Deployment & Configuration 
+1.  App Service for Containers
+    * Publish = Container
+    * Operating System = Linux
+    * container image - from Dockerhub image [wxzd/cwhd:v1.1.1](https://hub.docker.com/layers/wxzd/cwhd/v1.1.1/images/sha256-d36e9b8868efd0cc223237a1c7ee4df20c5e64a814f034dc9f9b8e8fdcd5147f)
+    * App Service Plan - Standard S1, Premium v3 P0V3 or higher
+    * Environment Variables
+      * <b>APPLICATIONINSIGHTS_CONNECTION_STRING</b>={conn string}
+      * <b>HealthStatusThreshold</b>={"metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }
+      * <b>QueryTimeSpanHour</b>=2
+      * <b>WEBSITES_PORT</b>=8000
+      * <b>Version</b>=1.1.1
+    * enable Managed Identity
+      * add Azure role assignment (RBAC) for Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+         *  Subscriptions containing resources under monitoring
+         *  Log Analytics Workspace (if workspace in different subscription from above)
+    *  Enable Application Insights
+    * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) with Microsoft Provider
+      * <b>Easy Auth GUI experience will auto create a service principal with name similar to App Service name. Add "Monitoring Reader" role for service principal to App Service</b>
+    * Networking / Access Restrictions / Site access and rules (After Managed Grafana is deployed and configured)
+      * Public network access = "Enabled from selected virtual networks and IP addresses"
+      * Unmatched rule action = Deny
+      * add 2 Grafana Static IP addresses found under "Deterministic outbound IP"
+
+2.  Azure Managed Grafana
+     *  Sku = Standard
+     *  enable Managed Identity
+        *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+           *  Subscriptions containing resources under monitoring
+           *  Log Analytics Workspaces (if workspaces are in different subscription from above)
+     *  [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
+        *  Add Infinity plugin
+        *  Configure Infinity data source authn with Entra ID
+           * Auth type = OAuth2
+           * Grant type = Client Credentials  
+           * Client Id (App Service Easy Auth service principal)
+           * Client secret (App Service Easy Auth service principal)
+           * Token Url: https://login.microsoftonline.com/{tenant id}/oauth2/token
+           * Endpoint param: Resource : api://{client id} e.g: api://73667734-67cf-49e9-96e1-927ca23d6c18
+           * Allowed hosts:	{Domain of App Service} e.g: https://web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
+        *  Test if Infinity data source is able to authenticate with CWHD web app
+        *  Configuration / Deterministic outbound IP - Enable
+ 
 <br />
+
 
 ### Architecture  
 
@@ -66,13 +92,17 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 <br />
 <br />
 
-CWHD has a REST backend call Telemetry Forager that retrieves and curates telemetry from different telemetry sources including:
+Telemetry Forager is the backend service that curates telemetry from different data sources including:
 
- * Azure Monitor REST API for
-   * App Service health status - executes kusto query to get App Insights availability result from Log Analytics AppAvailabilityResults table
+ * Azure Monitor REST API
+   * App Service health status determine by any one of the following result:
+     * Kusto query - Application Insights Availability Test result (AppAvailabilityResults table)
+     * Kusto query - Network Watcher Connection Monitor (NWConnectionMonitorTestResult table)
+     * Resource Health API as last option to determine health status if above options are not available
    * VM: health status is determine by 2 factors
      * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
-     * If resource health status is Available/Green, additional 3 metrics CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
+     * If resource health status is Available/Green, Log Analytics Workspace ID is provided,
+       additional 3 metrics of CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
        In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
  * [Azure Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01) - get resource health for all resource types except App Service, which gets health status from App Insight Standard Test
 
@@ -102,7 +132,7 @@ CWHD has a REST backend call Telemetry Forager that retrieves and curates teleme
 </table>
 
     
-<br />
+<br />  
 
 ## Samples  
 
