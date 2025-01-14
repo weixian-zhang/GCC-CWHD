@@ -11,6 +11,8 @@ Publish
 *.Cache
 project.lock.json
 
+temp_wara_exec
+
 func-app.zip
 
 /packages
