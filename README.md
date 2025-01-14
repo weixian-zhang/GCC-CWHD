@@ -63,13 +63,15 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
         *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
            *  Subscriptions containing resources under monitoring
            *  Log Analytics Workspaces (if workspaces are in different subscription from above)
-     *  Add [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
-     *  Configure Infinity data source authn with Entra ID
-        * Client Id (App Service Easy Auth service principal)
-        * Client secret (App Service Easy Auth service principal)
-        * Token Url: https://login.microsoftonline.com/{tenant id}/oauth2/token
-        * Endpoint param: Resource : api://{client id} e.g: api://73667734-67cf-49e9-96e1-927ca23d6c18
-        * Allowed hosts:	{Domain of App Service} e.g: https:// web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
+     *  [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
+        *  Add Infinity plugin
+        *  Configure Infinity data source authn with Entra ID
+           * Client Id (App Service Easy Auth service principal)
+           * Client secret (App Service Easy Auth service principal)
+           * Token Url: https://login.microsoftonline.com/{tenant id}/oauth2/token
+           * Endpoint param: Resource : api://{client id} e.g: api://73667734-67cf-49e9-96e1-927ca23d6c18
+           * Allowed hosts:	{Domain of App Service} e.g: https:// web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
+        *  Test if Infinity data source is able to authenticate with CWHD web app 
  
 <br />
 
