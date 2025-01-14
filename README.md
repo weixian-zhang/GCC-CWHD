@@ -41,6 +41,8 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
  
 ## Deployment & Configuration 
 1.  App Service for Containers
+    * Publish = Container
+    * Operating System = Linux
     * container image - from Dockerhub image [wxzd/cwhd:v1.1.1](https://hub.docker.com/layers/wxzd/cwhd/v1.1.1/images/sha256-d36e9b8868efd0cc223237a1c7ee4df20c5e64a814f034dc9f9b8e8fdcd5147f)
     * App Service Plan - Standard S1, Premium v3 P0V3 or higher
     * Environment Variables
@@ -56,6 +58,10 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
     *  Enable Application Insights
     * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) with Microsoft Provider
       * <b>Easy Auth GUI experience will auto create a service principal with name similar to App Service name. Add "Monitoring Reader" role for service principal to App Service</b>
+    * Networking / Access Restrictions / Site access and rules (After Managed Grafana is deployed and configured)
+      * Public network access = "Enabled from selected virtual networks and IP addresses"
+      * Unmatched rule action = Deny
+      * add 2 Grafana Static IP addresses found under "Deterministic outbound IP"
 
 2.  Azure Managed Grafana
      *  Sku = Standard
@@ -71,7 +77,8 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
            * Token Url: https://login.microsoftonline.com/{tenant id}/oauth2/token
            * Endpoint param: Resource : api://{client id} e.g: api://73667734-67cf-49e9-96e1-927ca23d6c18
            * Allowed hosts:	{Domain of App Service} e.g: https:// web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
-        *  Test if Infinity data source is able to authenticate with CWHD web app 
+        *  Test if Infinity data source is able to authenticate with CWHD web app
+        *  Configuration / Deterministic outbound IP - Enable
  
 <br />
 
