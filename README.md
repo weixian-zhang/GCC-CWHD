@@ -15,7 +15,9 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 <br />
 
-* [Prerequisite](#prerequisites)
+* [Tech Stack](#tech-stack)
+* [Telemtry Required](#telemtry-required)
+* [Deployment & Configuration ](#deployment--configuration)
 * [Architecture](#architecture)
 * [Level 0 dashboard](#level-0-dashboard)
 * [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
@@ -23,6 +25,10 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 
 <br />  
 
+## Tech Stack  
+* Python 3.11
+* Azure Managed Grafana Standard - Grafana 10.4.11
+* [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
 
 ## Telemtry Required
 
@@ -31,40 +37,41 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
      * Network Watcher Connection Monitor
      * lastly, Resource Health if any of the above isnot available
    * for Virtual Machines health signal - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
+   * for rest of resource types - defaults to Resource Health
  
 ## Deployment & Configuration 
-* Azure Managed Grafana
-  *  enable Managed Identity
-  *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
-     *  Subscriptions containing resources under monitoring
-     *  Log Analytics Workspace (if workspace in different subscription from above) 
-* App Service for Container
-  * container image - from Dockerhub image [wxzd/cwhd:v1.1.1](https://hub.docker.com/layers/wxzd/cwhd/v1.1.1/images/sha256-d36e9b8868efd0cc223237a1c7ee4df20c5e64a814f034dc9f9b8e8fdcd5147f)
-  * App Service Plan - S1 or P0v3 or higher
-  * Environment Variables
-    * <b>APPLICATIONINSIGHTS_CONNECTION_STRING</b>={conn string}
-    * <b>HealthStatusThreshold</b>={"metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }
-    * <b>QueryTimeSpanHour</b>=2
-    * <b>WEBSITES_PORT</b>=8000
-    * <b>Version</b>=1.1.1
-  * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) with Microsoft Provider
-    * <b>Easy Auth GUI experience will auto create a service principal with name similar to App Service name. Add "Monitoring Reader" role for service principal to App Service</b>
-  * enable Managed Identity
-    * add Azure role assignment (RBAC) for Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
-       *  Subscriptions containing resources under monitoring
-       *  Log Analytics Workspace (if workspace in different subscription from above)
+1.  App Service for Containers
+    * container image - from Dockerhub image [wxzd/cwhd:v1.1.1](https://hub.docker.com/layers/wxzd/cwhd/v1.1.1/images/sha256-d36e9b8868efd0cc223237a1c7ee4df20c5e64a814f034dc9f9b8e8fdcd5147f)
+    * App Service Plan - Standard S1, Premium v3 P0V3 or higher
+    * Environment Variables
+      * <b>APPLICATIONINSIGHTS_CONNECTION_STRING</b>={conn string}
+      * <b>HealthStatusThreshold</b>={"metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }
+      * <b>QueryTimeSpanHour</b>=2
+      * <b>WEBSITES_PORT</b>=8000
+      * <b>Version</b>=1.1.1
+    * enable Managed Identity
+      * add Azure role assignment (RBAC) for Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+         *  Subscriptions containing resources under monitoring
+         *  Log Analytics Workspace (if workspace in different subscription from above)
     *  Enable Application Insights
+    * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) with Microsoft Provider
+      * <b>Easy Auth GUI experience will auto create a service principal with name similar to App Service name. Add "Monitoring Reader" role for service principal to App Service</b>
+
+2.  Azure Managed Grafana
+     *  Sku = Standard
+     *  enable Managed Identity
+        *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+           *  Subscriptions containing resources under monitoring
+           *  Log Analytics Workspaces (if workspaces are in different subscription from above)
+     *  Add [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
+     *  Configure Infinity data source authn with Entra ID
+        * Client Id (App Service Easy Auth service principal)
+        * Client secret (App Service Easy Auth service principal)
+        * Token Url: https://login.microsoftonline.com/{tenant id}/oauth2/token
+        * Endpoint param: Resource : api://{client id} e.g: api://73667734-67cf-49e9-96e1-927ca23d6c18
+        * Allowed hosts:	{Domain of App Service} e.g: https:// web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
  
 <br />
-
-### Tech Stack  
-* Python 3.11
-* Azure Managed Grafana Standard - Grafana 10.4.11
-* [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
-* [Python modules](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/requirements.txt)
-
-<br />
-
 
 
 ### Architecture  
