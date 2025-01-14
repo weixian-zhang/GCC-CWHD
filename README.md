@@ -24,30 +24,36 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 <br />  
 
 
-### Prerequisites
+## Telemtry Required
 
-*  <b>Telemtry Required</b>
-   * for App Service and Web App health signals - all [Workspace-based Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/convert-classic-resource) Standard Test results send to a single Log Analytics Workspace
-   * for Virtual Machines health signals - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
-   * All PaaS resources under monitoring, to have Diagnostic Setting configured to send Logs to 1 central Log Analytics Workspace. For e.g: [API Management send resource logs to workspace](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor#resource-logs)
-* <b>Azure Resources Required</b>
-     * a "central" Log Analytics Workspace 
-     * Azure Managed Grafana
-       *  enable Managed Identity
-       *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
-          *  Subscriptions containing resources under monitoring
-          *  Log Analytics Workspace (if workspace in different subscription from above) 
-     * Azure Function - App Service Plan S1
-       *  enable Managed Identity
-       *  add Azure role assignment (RBAC) for Function Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
-          *  Subscriptions containing resources under monitoring
-          *  Log Analytics Workspace (if workspace in different subscription from above)
-     * All Application Insights must be linked to the same central Log Analytics Workspace
-     * Create App Insights Standard Tests to perform availability tests for all App Services and Web Apps.
-       (Standard Tests logs are stored in AppAvailabilityResults table)
-
-*  <b>Assumption</b>
-   * has an existing Log Analytics Workspace where "all" Application Insights are linked to
+   * for App Service health signal - based on any one of the following available result
+     * Application Insights Availability Test result
+     * Network Watcher Connection Monitor
+     * lastly, Resource Health if any of the above isnot available
+   * for Virtual Machines health signal - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
+ 
+## Deployment & Configuration 
+* Azure Managed Grafana
+  *  enable Managed Identity
+  *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+     *  Subscriptions containing resources under monitoring
+     *  Log Analytics Workspace (if workspace in different subscription from above) 
+* App Service for Container
+  * container image - from Dockerhub image [wxzd/cwhd:v1.1.1](https://hub.docker.com/layers/wxzd/cwhd/v1.1.1/images/sha256-d36e9b8868efd0cc223237a1c7ee4df20c5e64a814f034dc9f9b8e8fdcd5147f)
+  * App Service Plan - S1 or P0v3 or higher
+  * Environment Variables
+    * <b>APPLICATIONINSIGHTS_CONNECTION_STRING</b>={conn string}
+    * <b>HealthStatusThreshold</b>={"metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }
+    * <b>QueryTimeSpanHour</b>=2
+    * <b>WEBSITES_PORT</b>=8000
+    * <b>Version</b>=1.1.1
+  * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) with Microsoft Provider
+    * <b>Easy Auth GUI experience will auto create a service principal with name similar to App Service name. Add "Monitoring Reader" role for service principal to App Service</b>
+  * enable Managed Identity
+    * add Azure role assignment (RBAC) for Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
+       *  Subscriptions containing resources under monitoring
+       *  Log Analytics Workspace (if workspace in different subscription from above)
+    *  Enable Application Insights
  
 <br />
 
@@ -58,6 +64,8 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
 * [Python modules](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/requirements.txt)
 
 <br />
+
+
 
 ### Architecture  
 
@@ -106,7 +114,7 @@ Telemetry Forager is the backend service that curates telemetry from different d
 </table>
 
     
-<br />
+<br />  
 
 ## Samples  
 
