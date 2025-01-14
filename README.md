@@ -72,11 +72,13 @@ The dashboards are organized in Level 0 and Level 1 depicting the "depth" of mon
      *  [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
         *  Add Infinity plugin
         *  Configure Infinity data source authn with Entra ID
+           * Auth type = OAuth2
+           * Grant type = Client Credentials  
            * Client Id (App Service Easy Auth service principal)
            * Client secret (App Service Easy Auth service principal)
            * Token Url: https://login.microsoftonline.com/{tenant id}/oauth2/token
            * Endpoint param: Resource : api://{client id} e.g: api://73667734-67cf-49e9-96e1-927ca23d6c18
-           * Allowed hosts:	{Domain of App Service} e.g: https:// web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
+           * Allowed hosts:	{Domain of App Service} e.g: https://web-container-cwhd-e3cxcfdyg6bdfza7.southeastasia-01.azurewebsites.net
         *  Test if Infinity data source is able to authenticate with CWHD web app
         *  Configuration / Deterministic outbound IP - Enable
  
