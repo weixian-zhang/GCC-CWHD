@@ -411,18 +411,18 @@ class WARAExecutor:
 
          for sub_id in subscription_ids:
 
-            # json_file_path = self._exec_collector_ps1(sub_id)
+            json_file_path = self._exec_collector_ps1(sub_id)
 
-            # if not json_file_path:
-            #    raise Exception('WARA - collector.ps1 failed execution')
+            if not json_file_path:
+               raise Exception('WARA - collector.ps1 failed execution')
 
-            # excel_file_path = self.exec_analyzer_ps1(json_file_path)
+            excel_file_path = self.exec_analyzer_ps1(json_file_path)
 
-            # if not excel_file_path:
-            #    raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
+            if not excel_file_path:
+               raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
 
-            json_file_path = 'C:\\Weixian\projects\VBD\GCC-CWHD\\src\\telemetry_forager\\wara\\temp_wara_exec\\WARA Action Plan 2025-01-15-18-01.xlsx'
-            excel_file_path = ''
+            # json_file_path = ''
+            # excel_file_path = 'C:\\Weixian\projects\VBD\GCC-CWHD\\src\\telemetry_forager\\wara\\temp_wara_exec\\WARA Action Plan 2025-01-15-18-01.xlsx'
 
 
             self.read_and_save_analyzer_excel_result(excel_file_path, sub_id, execution_id)

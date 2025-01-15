@@ -1,3 +1,4 @@
+import json
 from typing import List
 import fastapi #import FastAPI, Response
 import uvicorn
@@ -11,6 +12,15 @@ from wara.wara_executor import WARAExecutor
 from wara.wara_report import WARAReport
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
 from opentelemetry.propagate import extract
+import threading
+import time
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from memory_queue import MemoryQueue
+
+
+# init global queue
+mem_queue = MemoryQueue()
 
 # load environment variables
 appconfig = AppConfig()
@@ -90,7 +100,6 @@ def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHe
         healthStatuses.append(healthReport)
 
     return ResourceHealthResult(healthStatuses)
-
 
 
 @app.get("/", status_code=200)
@@ -204,10 +213,40 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAR
 # powershell test
 @app.post("/wara/runonce", status_code=202)
 def run_pwsh():
-    wap = WARAExecutor(config=appconfig)
-    wap.run()
-    return 'accepted'
+    mem_queue.enqueue('run_wara')
+    return json.dumps({'status': 'success'})
 
+
+# background task
+def always_running_job_generate_wara_report():
+    while True:
+        task = mem_queue.dequeue()
+        if task:
+            wap = WARAExecutor(config=appconfig)
+            wap.run()
+        time.sleep(5)
+
+def scheduled_job_generate_wara_report():
+     mem_queue.enqueue('run_wara')
+
+def setup_scheduled_job():
+    scheduler = BackgroundScheduler()
+    scheduler.start()
+    trigger = CronTrigger(
+        year="*", month="*", day="*", hour="*/3", minute="0", second="0"
+    )
+    scheduler.add_job(
+        scheduled_job_generate_wara_report,
+        trigger=trigger,
+        name="Background_Task_WARA_Report_Generation",
+    )
+
+# setup background tasks
+# Create and start a new thread
+thread = threading.Thread(target=always_running_job_generate_wara_report)
+thread.start()
+
+setup_scheduled_job()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
