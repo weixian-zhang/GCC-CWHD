@@ -1,27 +1,31 @@
 # GCC Azure - Central Workload Health Dashboard (AZCWHD)
  
-CWHD is a custom Azure monitoring solution leveraging Grafana to monitor the following aspects:  
+CWHD is a custom Azure monitoring solution leveraging Grafana dashboards to provide color coded health signals.  
+The colors Green, Amber and Red tells the overall state of the system at a glance.  
 
-  Color code signals in Grafana dashboards showing Green, Amber and Red tiles depending on:
-   * overall resource heath from Azure Resource Health signals
-   * all App health using App Insights Standard Test (HTTP ping) web app availability signals
-    * for VM only - configurable threshold of CPU, Memory and Disk usage to display Amber color when threshold is met.
-    (only works for VM)
-  * dashboard visualization tiles uses Green, Amber and Red color code to determine the overall availability of an application aggregated by one or more Azure resource's Resource Health
+<br />
 
-The dashboards are organized in Level 0 and Level 1 depicting the "depth" of monitoring. 
-  * Level 0 - shows availability status if all Apps.  
-  * Level 1 - drills into Resource Health of each Azure resource used by the app
+### Level 0 Dashboard  
 
+<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
+
+### Level 1 - Cloud Crafty Dashboard
+
+<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
+
+### Level 1 - Pocket Geek Dashboard 
+
+<img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
+
+<img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
+
+<br />
 <br />
 
 * [Tech Stack](#tech-stack)
 * [Telemtry Required](#telemtry-required)
 * [Deployment & Configuration ](#deployment--configuration)
 * [Architecture](#architecture)
-* [Level 0 dashboard](#level-0-dashboard)
-* [Level 1 dashboard](#level-1---cloud-crafty-dashboard)
-* [Level 2 dashboard](#level-2-dashboard)
 
 <br />  
 
@@ -130,39 +134,5 @@ Telemetry Forager is the backend service that curates telemetry from different d
     </td>
   </tr>
 </table>
-
-    
-<br />  
-
-## Samples  
-
-### Level 0 Dashboard  
-
-<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
-
-
-
- The overall available status (green) depends on the dependent Azure resources that each app here is using.
- If there is any one of the Azure resource used by Cloud Crafty or Pocket Geeks apps that has Resource Health status as "Unavailable", the overall health status at Level 0 will be Unavailable.
- For example Cloud Crafty uses 3 Azure resources: App Service, Key Vault and APIM. The overall availability status will only be Green when all 3 
- resourcecs' Resource Health + App Insight Standard Test availability status is available.
-
-### Level 1 - Cloud Crafty Dashboard
-
-<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
-
-
-
-### Level 1 - Pocket Geek Dashboard 
-
-<img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
-
-<img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
-
-
-### Level 2 Dashboard
-
-Proposed Distributed Tracing with OpenTelemetry Collector to collect OpenTelemetry traces from apps, collector sends traces to Jaeger backed by Azure Managed Cassandra.
-Grafana gets traces from Jaeger as datasource to display traces within Grafana centrally, in addition to viewing traces in Jaeger UI.
 
 
