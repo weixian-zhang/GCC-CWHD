@@ -8,6 +8,8 @@ from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
 from wara.wara_executor import WARAExecutor
+from wara.wara_report import WARAReport
+from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
 from opentelemetry.propagate import extract
 
 # load environment variables
@@ -132,6 +134,71 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
         Log.exception(f'error occured: {str(e)}')
         response.status_code = 500
         return str(e)
+    
+# WARA module
+
+@app.get("/api/wara/report/runhistory", status_code=200)
+def run_pwsh() -> list[WARAExecution]:
+    wr = WARAReport(config=appconfig)
+    executions = wr.list_execution_history()
+    return executions
+
+@app.get("/api/wara/report/recommendations", status_code=200)
+def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
+    params = request.query_params
+    subid = params.get('subscription_id', '')
+    executionid = params.get('executionid', '')
+
+    if not subid or not executionid:
+        response.status_code = 400
+        return 'subscription_id and executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_recommendations(subid, executionid)
+    return result
+
+@app.get("/api/wara/report/impactedresources", status_code=200)
+def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAImpactedResource]:
+    params = request.query_params
+    subid = params.get('subscription_id', '')
+    executionid = params.get('executionid', '')
+
+    if not subid or not executionid:
+        response.status_code = 400
+        return 'subscription_id and executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_impacted_resources(subid, executionid)
+    return result
+
+@app.get("/api/wara/report/impactedresourcetypes", status_code=202)
+def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
+    params = request.query_params
+    subid = params.get('subscription_id', '')
+    executionid = params.get('executionid', '')
+
+    if not subid or not executionid:
+        response.status_code = 400
+        return 'subscription_id and executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_impacted_resource_types(subid, executionid)
+    return result
+
+
+@app.get("/api/wara/report/retirements", status_code=202)
+def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARARetirement]:
+    params = request.query_params
+    subid = params.get('subscription_id', '')
+    executionid = params.get('executionid', '')
+
+    if not subid or not executionid:
+        response.status_code = 400
+        return 'subscription_id and executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_retirements(subid, executionid)
+    return result
     
 
 # powershell test

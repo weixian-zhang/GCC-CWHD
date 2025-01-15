@@ -55,6 +55,7 @@ RUN choco install powershell-core --version=7.4.2 -y
 RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name powershell-yaml -Force -SkipPublisherCheck
 
 # Set working directory
 WORKDIR /app
