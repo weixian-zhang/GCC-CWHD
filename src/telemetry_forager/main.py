@@ -7,11 +7,7 @@ import jsons
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
-from telemetry_forager.wara.wara_executor import WARAExecutor
-from opentelemetry.trace import (
-    SpanKind
-)
-
+from wara.wara_executor import WARAExecutor
 from opentelemetry.propagate import extract
 
 # load environment variables

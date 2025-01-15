@@ -1,77 +1,70 @@
-# --- Stage 1: Build Stage ---
-FROM python:3.11-slim AS builder
+# Build stage
+# FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
+# Set shell to PowerShell
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-# Set working directory
-WORKDIR /app
+# Download and install Python 3.12
+# RUN Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.12.2/python-3.12.2-amd64.exe -OutFile python-installer.exe ; \
+#     Start-Process python-installer.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait ; \
+#     Remove-Item python-installer.exe
 
-# Copy only requirements to install dependencies
-COPY requirements.txt .
+# Install pip and any build dependencies
+# RUN python -m pip install --upgrade pip
 
-# Install dependencies in a temporary directory
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+#RUN python -m pip install -r requirements.txt:
 
+# Runtime stage
+#FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
-# --- Stage 2: Runtime Stage ---
-FROM python:3.11-slim
+# Copy Python installation from builder stage
+# COPY --from=builder C:/Python312 C:/Python312
 
-ENV HealthStatusThreshold='{     "metricUsageThreshold": {         "vm": {             "cpuUsagePercentage": 80,             "memoryUsagePercentage": 80,             "diskUsagePercentage": 80         }     } }'
-ENV APPLICATIONINSIGHTS_CONNECTION_STRING='InstrumentationKey=afbee56f-64be-4972-aff4-eeda6947851a;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=669e72e2-38ff-4883-aebf-e0f0b2faab79'
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-ENV PYTHONUNBUFFERED=1
+# # # Copy PowerShell Core installation from builder stage
+# COPY --from=builder C:/Program C:/Program 
+# COPY --from=builder Files/PowerShell Files/PowerShell
 
-# Set working directory
-WORKDIR /app
+# Download and install PowerShell Core
+# RUN Invoke-WebRequest -Uri https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/PowerShell-7.3.4-win-x64.msi -OutFile powershell-installer.msi ; \
+#     Start-Process msiexec.exe -ArgumentList '/i powershell-installer.msi /quiet ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1' -Wait ; \
+#     Remove-Item powershell-installer.msi
 
-# Copy dependencies from the builder stage
-COPY --from=builder /install /usr/local
+# Set Python and PowerShell paths
+#RUN setx /M PATH $($Env:PATH + ';C:\Python312;C:\Python312\Scripts;C:\Program Files\PowerShell')
 
-# Copy application code
-COPY . .
+# Set shell to PowerShell
+#SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-RUN rm -rf /var/lib/apt/lists/*
+# install chocolatey
+RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-# Update the list of packages
-RUN apt-get update
+#install git
+# RUN choco install git -y
+RUN choco install git.install -y
+RUN git config --global core.autocrlf true
 
-# ssh for troubleshooting
-RUN apt-get install -y openssh-server
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# install python 3.11
+RUN choco install python311 -y
+RUN python -m pip install --upgrade pip
 
-RUN useradd -m -s /bin/bash admin
-RUN echo "admin:1234" | chpasswd
+# install powershell core
+RUN choco install powershell-core --version=7.4.2 -y
 
-# Install pre-requisite packages.
-RUN apt-get install -y wget
-
-# install git
-RUN apt-get install git -y
-RUN git --version
-
-# Download the PowerShell package file
-RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.24/powershell_7.2.24-1.deb_amd64.deb
-
-###################################
-# Install the PowerShell package
-RUN dpkg -i powershell_7.2.24-1.deb_amd64.deb || true
-
+# install WARA required Powershell modules
 RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
 RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
 
-# authn SPN
-# https://www.techtarget.com/searchwindowsserver/tutorial/Using-PowerShell-for-Azure-service-principal-authentication
-# docker powershell command for debian
-# https://github.com/PowerShell/PowerShell-Docker/blob/44a656a80ea5f72bcba5de3fc31c9617ef0bd674/release/7-3/debian11/docker/Dockerfile
+# Set working directory
+WORKDIR /app
 
-# RUN pwsh -c " \
-# \$clientId = ''; \
-# \$clientSecret = '' | ConvertTo-SecureString -AsPlainText -Force; \
-# \$credential = [PSCredential]::New(\$clientId,\$clientSecret); \
-# Connect-AzAccount -ServicePrincipal -Credential \$credential -Tenant ''; \
-# get-azcontext; \
-# "
+# Copy application code
+COPY . .
 
+# Install dependencies in a temporary directory
+# RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
 
 # Expose the port FastAPI will run on
@@ -80,4 +73,3 @@ EXPOSE 8000
 # Run FastAPI with Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
-# /usr/sbin/sshd -D

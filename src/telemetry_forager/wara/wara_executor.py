@@ -46,8 +46,9 @@ class WARAExecutor:
       os.rmdir(self.exec_root_dir)
 
 
-   def generate_execution_id(self):
-      return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+   def generate_execution_id(self) -> list[datetime.datetime, str]:
+      now =  datetime.datetime.now()
+      return now, now.strftime('%Y%m%d%H%M%S')
    
    # download scripts
    # 1_wara_collector.ps1
@@ -96,14 +97,25 @@ class WARAExecutor:
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
       
+      try:
+         while True:
+            line = p.stdout.readline()
+            if not line:
+               break
+            Log.debug(f'WARA - {line.rstrip()}')
 
-      p_out, p_err = p.communicate()
+         p.wait(timeout=3)
+      except subprocess.TimeoutExpired:
+         p.kill(p.pid)
+      
 
-      Log.debug(f'WARA - {p_out}')
+      #p_out, p_err = p.communicate()
 
-      if p_err:
-         Log.exception(p_err)
-         return
+      # Log.debug(f'WARA - {p_out}')
+
+      # if p_err:
+      #    Log.exception(p_err)
+      #    return
 
       for file in os.listdir(self.exec_root_dir):
             if file.endswith(".json"):
@@ -119,14 +131,6 @@ class WARAExecutor:
       returns json file file
       '''
 
-      # def _get_collector_json_result_file_name():
-      #    for file in os.listdir(self.exec_root_dir):
-      #       if file.endswith(".json"):
-      #          return file
-      #    return ''
-      
-      # json_file_name = _get_collector_json_result_file_name()
-
       if not json_file_path:
          Log.exception('WARA - cannot find collector.ps1 json file result')
          return
@@ -141,14 +145,28 @@ class WARAExecutor:
                            stdin=subprocess.PIPE,
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
+      
+      
 
-      p_out, p_err = p.communicate()
+      try:
+         while True:
+            line = p.stdout.readline()
+            if not line:
+               break
+            Log.debug(f'WARA - {line.rstrip()}')
 
-      Log.debug(f'WARA - {p_out}')
+         p.wait(timeout=3)
+      except subprocess.TimeoutExpired:
+         p.kill(p.pid)
 
-      if p_err:
-         Log.exception(p_err)
-         return
+      # p_out, p_err = p.communicate()
+
+      # Log.debug(f'WARA - {p_out}')
+
+      # if p_err:
+      #    Log.exception(p_err)
+      #    return
+
       
       for file in os.listdir(self.exec_root_dir):
             if file.endswith(".xlsx"):
@@ -161,28 +179,36 @@ class WARAExecutor:
    def read_and_save_recommendations_json(self, file_path: str, execution_id, subscription_id) -> bool:
          try:
             
-            df = pd.read_excel(file_path, 'Recommendations')
+            # worksheet may not exist, catch and return True
+            try:
+               df = pd.read_excel(file_path, 'Recommendations')
+            except:
+               return True
 
-            # drop unused columns: 
-               # Azure Service / Well-Architected
-               # Recommendation Source
-               # Add associated Outage TrackingID and/or Support Request # and/or Service Retirement TrackingID 
-               # Observation / Annotation
-               # Recommendation Id
-            cols = [2,3,11,12,13]
-            df.drop(df.columns[cols],axis=1,inplace=True)
 
-            json = df.to_json(orient='records')
+            # clean data before saving
+            newdf = pd.DataFrame()
 
-            compessed_recomm_json = self.compress_string(json)
+            newdf['Implemented'] = df.iloc[:,0]
+            newdf['Number_of_Impacted_Resources'] = df.iloc[:,1]
+            newdf['Service_Category'] = df.iloc[:,4]
+            newdf['Resiliency_Category'] = df.iloc[:,6]
+            newdf['Recommendation'] = df.iloc[:,7]
+            newdf['Impact'] = df.iloc[:,8]
+            newdf['Best_Practice_Guidance'] = df.iloc[:,9]
+            newdf['Read_More'] = df.iloc[:,10]
 
-            recomm_entity = {
-               'PartitionKey': execution_id,
-               'RowKey': subscription_id,
-               'data': compessed_recomm_json
+            json = newdf.to_json(orient='records')
+
+            compressed = self.compress_string(json)
+
+            entity = {
+               'PartitionKey': subscription_id,
+               'RowKey': execution_id,
+               'data': compressed
             }
 
-            self.db.insert(self.db.recommendation_table_name, recomm_entity)
+            self.db.insert(self.db.recommendation_table_name, entity)
 
             return True
             
@@ -190,77 +216,147 @@ class WARAExecutor:
             Log.exception(e)
             return False
       
-   def read_impacted_resources_json(self, file_path: str) -> str:
+   def read_impacted_resources_json(self,subscription_id, execution_id, file_path: str) -> str:
       try:
-         df = pd.read_excel(file_path, 'ImpactedResources')
+         # worksheet may not exist, catch and return True
+         try:
+            df = pd.read_excel(file_path, 'ImpactedResources')
+         except:
+            return True
+      
 
-         # drop unused columns: 
-            # How was the resource/recommendation validated or what actions need to be taken?
-            # recommendationId
-            # supportTicketId
-            # source
-            # WAF Pillar
-            # checkName
+         # clean data before saving
+         newdf = pd.DataFrame()
 
-         cols = [0,3,15,16,17,18]
-         df.drop(df.columns[cols],axis=1,inplace=True)
+         newdf['SubscriptionId'] = df.iloc[:,5]
+         newdf['ResourceGroup'] = df.iloc[:,6]
+         newdf['ResourceType'] = df.iloc[:,1]
+         newdf['Name'] = df.iloc[:,8]
+         newdf['Impact'] = df.iloc[:,4]
+         newdf['Recommendation'] = df.iloc[:,2]
+         newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
 
-         return df.to_json(orient='records')
-      except Exception as e:
-         Log.exception(e)
+         json = newdf.to_json(orient='records')
 
-   def read_resource_types_json(self, file_path: str) -> str:
-      try:
-         df = pd.read_excel(file_path, 'ResourceTypes')
+         compressed = self.compress_string(json)
 
-         # drop unused columns: 
-            # Available in APRL/ADVISOR?
-            # Assessment Owner
-            # Status
-            # Notes
+         entity = {
+            'PartitionKey': subscription_id,
+            'RowKey': execution_id,
+            'data': compressed
+         }
 
-         cols = [2,3,4,5]
-         df.drop(df.columns[cols],axis=1,inplace=True)
-         
-         return df.to_json(orient='records')
+         self.db.insert(self.db.impacted_resources_table_name, entity)
+
+         return True
       
       except Exception as e:
          Log.exception(e)
+         return False
 
-   def read_retirements_json(self, file_path: str) -> str:
+   def read_resource_types_json(self, subscription_id, execution_id, file_path: str) -> str:
       try:
-         df = pd.read_excel(file_path, 'Retirements')
-         return df.to_json(orient='records')
+         # worksheet may not exist, catch and return True
+         try:
+            df = pd.read_excel(file_path, 'ResourceTypes')
+         except:
+            return True
+      
+
+         # clean data before saving
+         newdf = pd.DataFrame()
+
+         newdf['ResourceType'] = df.iloc[:,0]
+         newdf['NumberOfResources'] = df.iloc[:,1]
+         
+         json = newdf.to_json(orient='records')
+
+         compressed = self.compress_string(json)
+
+         entity = {
+            'PartitionKey': subscription_id,
+            'RowKey': execution_id,
+            'data': compressed
+         }
+
+         self.db.insert(self.db.resource_type_table_name, entity)
+
+         return True
+      
       except Exception as e:
          Log.exception(e)
+         return False
+
+   def read_retirements_json(self, subscription_id, execution_id, file_path: str) -> str:
+      try:
+
+         # worksheet may not exist, catch and return True
+         try:
+            df = pd.read_excel(file_path, 'Retirements')
+         except:
+            return True
+         
+         # drop unused columns: 
+            # Tracking ID
+         cols = [1]
+         df.drop(df.columns[cols],axis=1,inplace=True)
+
+         json = df.to_json(orient='records')
+
+         compressed = self.compress_string(json)
+
+         entity = {
+            'PartitionKey': subscription_id,
+            'RowKey': execution_id,
+            'data': compressed
+         }
+
+         self.db.insert(self.db.retirements_table_name, entity)
+
+         return True
+
+      except Exception as e:
+         Log.exception(e)
+         return False
 
    # pandas read excel from Excel
    def read_and_save_analyzer_excel_result(self, excel_file_path, subscription_id: str, execution_id: str):
 
-      # def _get_analyzer_excel_result_file_name():
-      #    for file in os.listdir(self.exec_root_dir):
-      #       if file.endswith(".xlsx"):
-      #          return file
-      #    return ''
+      try:
 
-      # excel_file_name = _get_analyzer_excel_result_file_name()
+         if not excel_file_path:
+            Log.exception('WARA - cannot find analyzer.ps1 Excel file result')
+            return False
+         
+         r_ok = self.read_and_save_recommendations_json(excel_file_path, execution_id, subscription_id)
 
-      if not excel_file_path:
-         Log.exception('WARA - cannot find analyzer.ps1 Excel file result')
-         return
-      
-      #excel_file_path = os.path.join(self.exec_root_dir, excel_file_name)
+         if not r_ok:
+            return False
 
-      r_ok = self.read_and_save_recommendations_json(excel_file_path)
+         i_ok = self.read_impacted_resources_json(subscription_id, execution_id, excel_file_path)
 
-      if not r_ok:
-         return
+         if not i_ok:
+            return False
+
+         rt_ok = self.read_resource_types_json(subscription_id, execution_id, excel_file_path)
+
+         if not rt_ok:
+            return False
+
+         ret_ok = self.read_retirements_json(subscription_id, execution_id, excel_file_path)
+
+         if not ret_ok:
+            return False
+
+      except Exception as e:
+         return False
 
    
-   def save_execution_context(self, execution_id: str, subscription_ids: list[str]):
+   def save_execution_context(self, execution_start_time, execution_id: str, subscription_ids: list[str]):
       entity = {
          'PartitionKey': execution_id,
          'RowKey': execution_id,
+         "execution_start_time": execution_start_time,
          'subscription_ids': ','.join(subscription_ids),
       }
 
@@ -271,23 +367,6 @@ class WARAExecutor:
       data = zlib.compress(data.encode())
       return data
 
-   def decompress_string(self, data: str) -> str:
-      data = zlib.decompress(data).decode()
-      return data
-
-   # save data to table storage for Grafana query
-
-   # zip and upload
-      # Excel action plan
-      # executive ppt
-      # assessment report word doc
-
-   # FastAPI - endpoints
-      # run WARA script anytime
-      # 
-
-   # delete root exec dir
-
 
    def run(self):
 
@@ -297,9 +376,14 @@ class WARAExecutor:
             Log.debug('WARA_TenantId is not set, WARA will not ignored')
             return
          
-         execution_id = self.generate_execution_id()
+         # delete root dir
+         if os.path.exists(self.exec_root_dir):
+            Log.debug('WARA - deleting previous root folder')
+            os.remove(self.exec_root_dir)
+         
+         execution_start_time, execution_id = self.generate_execution_id()
 
-         Log.debug(f'WARA in running with execution id: {execution_id}')
+         Log.debug(f'WARA - executing with execution id: {execution_id}')
          
          self.db.init()
 
@@ -309,40 +393,36 @@ class WARAExecutor:
 
          subscription_ids = self._get_subscription_ids()
 
+         Log.debug(f'WARA - preparing execution for subscription ids: {",".join(subscription_ids)}')
+
          for sub_id in subscription_ids:
 
+            json_file_path = self._exec_collector_ps1(sub_id)
 
-            # get resource groups for each subscritpion
-            # wara report will generate for each resource group level by default
-            # in this way, we can filter recommendations and impacted resource by subscription id and resource group
-            # # table storage partition key is {subid + resource group id}
-            # table storage row key is {run_start_time_epoch}
-            # **to reconsider becoz multiple runs at resource group may cause unreliability. And error at any resource group causes
-            # whole report at subscription level to fail.
+            if not json_file_path:
+               raise Exception('WARA - collector.ps1 failed execution')
 
-            # json_file_path = self._exec_collector_ps1(sub_id)
+            excel_file_path = self.exec_analyzer_ps1(json_file_path)
 
-            # if not json_file_path:
-            #    raise Exception('WARA - collector.ps1 failed execution')
+            if not excel_file_path:
+               raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
 
-            # excel_file_path = self.exec_analyzer_ps1(json_file_path)
+            self.read_and_save_analyzer_excel_result(excel_file_path, sub_id, execution_id)
 
-            # if not excel_file_path:
-            #    raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
+            if os.path.exists(json_file_path):
+               os.remove(json_file_path)
 
-            #self.read_and_save_analyzer_excel_result(excel_file_path, sub_id, execution_id)
-            self.read_and_save_analyzer_excel_result('C:\\Weixian\\projects\\VBD\\GCC-CWHD\\src\\telemetry_forager\\wara\\temp_wara_exec\\WARA Action Plan 2025-01-13-21-29.xlsx',
-                                                     sub_id, execution_id)
+            if os.path.exists(excel_file_path):
+               os.remove(excel_file_path)
 
-            # if os.path.exists(json_file_path):
-            #    os.remove(json_file_path)
+            Log.debug(f'WARA - execution completed for subscription id: {sub_id}')
 
-            # if os.path.exists(excel_file_path):
-            #    os.remove(excel_file_path)
+         self.save_execution_context(execution_start_time, execution_id, subscription_ids)
 
-            Log.debug(f'WARA - {execution_id}run completed')
+         Log.debug('WARA - entire execution completed successfully')
 
-         self.save_execution_context(execution_id, subscription_ids)
-
+         
       except Exception as e:
          Log.exception(e)
+         if os.path.exists(self.exec_root_dir):
+               os.remove(self.exec_root_dir)

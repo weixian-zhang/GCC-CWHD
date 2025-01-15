@@ -24,8 +24,8 @@ class DB:
         self.table_service_client.create_table_if_not_exists(table_name=self.retirements_table_name)
         self.table_service_client.create_table_if_not_exists(table_name=self.resource_type_table_name)
         self.table_service_client.create_table_if_not_exists(table_name=self.impacted_resources_table_name)
-        self.table_service_client.create_table_if_not_exists(table_name=self.outages_table_name)
-        self.table_service_client.create_table_if_not_exists(table_name=self.support_tickets_table_name)
+        # self.table_service_client.create_table_if_not_exists(table_name=self.outages_table_name)
+        # self.table_service_client.create_table_if_not_exists(table_name=self.support_tickets_table_name)
 
     def insert(self, table_name, entity):
         self.table_client = self.table_service_client.get_table_client(table_name=table_name)
