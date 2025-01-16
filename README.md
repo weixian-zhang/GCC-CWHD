@@ -22,12 +22,17 @@ The colors Green, Amber and Red tells the overall state of the system at a glanc
 <br />
 <br />
 
+* [Coming Soon](#coming-soon)
 * [Tech Stack](#tech-stack)
 * [Telemtry Required](#telemtry-required)
 * [Deployment & Configuration ](#deployment--configuration)
 * [Architecture](#architecture)
 
 <br />  
+
+## Coming Soon
+* WAF Reliability Assessment on Grafana
+* read-to-use Grafana dashbaord templates
 
 ## Tech Stack  
 * Python 3.11
@@ -41,7 +46,7 @@ The colors Green, Amber and Red tells the overall state of the system at a glanc
      * Network Watcher Connection Monitor
      * lastly, Resource Health if any of the above isnot available
    * for Virtual Machines health signal - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
-   * for rest of resource types - defaults to Resource Health
+   * PaaS services - enable Diagnostic Settings for all services under monitoring
  
 ## Deployment & Configuration 
 1.  App Service for Containers
