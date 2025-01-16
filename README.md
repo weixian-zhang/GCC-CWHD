@@ -24,7 +24,7 @@ The colors Green, Amber and Red tells the overall state of the system at a glanc
 
 * [Coming Soon](#coming-soon)
 * [Tech Stack](#tech-stack)
-* [Telemtry Required](#telemtry-required)
+* [Azure Telemtry Required](#azure-telemtry-required)
 * [Deployment & Configuration ](#deployment--configuration)
 * [Architecture](#architecture)
 
@@ -39,7 +39,7 @@ The colors Green, Amber and Red tells the overall state of the system at a glanc
 * Azure Managed Grafana Standard - Grafana 10.4.11
 * [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
 
-## Telemtry Required
+## Azure Telemtry Required
 
    * for App Service health signal - based on any one of the following available result
      * Application Insights Availability Test result
