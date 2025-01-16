@@ -1,3 +1,4 @@
+import json
 import subprocess
 import os
 import log as Log
@@ -9,6 +10,7 @@ from azure.mgmt.subscription import SubscriptionClient
 import pandas as pd
 import zlib
 import sys
+from wara.model import Subscription
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
 from db import DB
@@ -47,8 +49,9 @@ class WARAExecutor:
 
 
    def generate_execution_id(self) -> list[datetime.datetime, str]:
-      now =  datetime.datetime.now()
-      return now, now.strftime('%Y%m%d%H%M%S')
+      execution_start_time =  datetime.datetime.now()
+      execution_id = str(execution_start_time.timestamp())
+      return execution_start_time, execution_id
    
    # download scripts
    # 1_wara_collector.ps1
@@ -61,22 +64,19 @@ class WARAExecutor:
 
 
    # get subscription ids
-   def _get_subscription_ids(self):
-      if self.config.wara_subsciptionIds:
-         subids = ','.join(self.config.wara_subsciptionIds)
-         Log.debug(f'WARA - subscription ids in envar {subids}')
-         return self.config.wara_subsciptionIds
-         #return ','.join(self.config.wara_subsciptionIds)
-      
+   def get_subscriptions(self):
+      result = []
+
       client = SubscriptionClient(DefaultAzureCredential())
+
       subscription_list  = client.subscriptions.list()
-      subscription_ids = [sub.subscription_id for sub in subscription_list]
-      #result = ','.join(subscription_ids)
 
-      subids = ','.join(self.config.wara_subsciptionIds)
-      Log.debug(f'WARA - subscription ids fetched from API {subids}')
+      for sub in subscription_list:
+         result.append(Subscription(sub.subscription_id, sub.display_name))
 
-      return subscription_ids
+      Log.debug(f'WARA - subscription fetched successfully {result}')
+
+      return result
 
    # run collector script
    def _exec_collector_ps1(self, subscription_id: str) -> str:
@@ -347,15 +347,24 @@ class WARAExecutor:
          return False
 
    
-   def save_execution_context(self, execution_start_time, execution_id: str, subscription_ids: list[str]):
+   def save_execution_context(self, execution_start_time, execution_id: str, subscriptions: list[Subscription]):
       entity = {
          'PartitionKey': execution_id,
          'RowKey': execution_id,
-         "execution_start_time": execution_start_time,
-         'subscription_ids': ','.join(subscription_ids),
+         "execution_start_time": execution_start_time
       }
 
       self.db.insert(self.db.run_history_table_name, entity)
+
+      js = json.dumps(subscriptions, default = lambda x: x.__dict__)
+
+      sub_entity = {
+         'PartitionKey': execution_id,
+         'RowKey': execution_id,
+         'data': self.compress_string(js)
+      }
+
+      self.db.insert(self.db.run_subscription_table_name, sub_entity)
 
 
    def compress_string(self, data: str) -> str:
@@ -374,7 +383,7 @@ class WARAExecutor:
          try:
             # delete root dir
             if os.path.exists(self.exec_root_dir):
-               Log.debug('WARA - deleting previous root folder')
+               Log.debug('WARA - deleting root folder from previous run')
                os.remove(self.exec_root_dir)
          except:
             pass
@@ -390,13 +399,13 @@ class WARAExecutor:
 
          self._download_scripts()
 
-         subscription_ids = self._get_subscription_ids()
+         subscriptions = self.get_subscriptions()
 
-         Log.debug(f'WARA - preparing execution for subscription ids: {",".join(subscription_ids)}')
+         Log.debug(f'WARA - preparing execution for subscription ids: {",".join([sub.name for sub in subscriptions])}')
 
-         for sub_id in subscription_ids:
+         for sub in subscriptions:
 
-            json_file_path = self._exec_collector_ps1(sub_id)
+            json_file_path = self._exec_collector_ps1(sub.id)
 
             if not json_file_path:
                raise Exception('WARA - collector.ps1 failed execution')
@@ -406,11 +415,7 @@ class WARAExecutor:
             if not excel_file_path:
                raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
 
-            # json_file_path = ''
-            # excel_file_path = 'C:\\Weixian\projects\VBD\GCC-CWHD\\src\\telemetry_forager\\wara\\temp_wara_exec\\WARA Action Plan 2025-01-15-18-01.xlsx'
-
-
-            self.read_and_save_analyzer_excel_result(excel_file_path, sub_id, execution_id)
+            self.read_and_save_analyzer_excel_result(excel_file_path, sub.id, execution_id)
 
             if os.path.exists(json_file_path):
                os.remove(json_file_path)
@@ -418,9 +423,9 @@ class WARAExecutor:
             if os.path.exists(excel_file_path):
                os.remove(excel_file_path)
 
-            Log.debug(f'WARA - execution completed for subscription id: {sub_id}')
+            Log.debug(f'WARA - execution completed for subscription id: {sub.id}')
 
-         self.save_execution_context(execution_start_time, execution_id, subscription_ids)
+         self.save_execution_context(execution_start_time, execution_id, subscriptions)
 
          Log.debug('WARA - entire execution completed successfully')
 

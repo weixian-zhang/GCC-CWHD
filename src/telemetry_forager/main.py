@@ -152,6 +152,19 @@ def run_pwsh() -> list[WARAExecution]:
     executions = wr.list_execution_history()
     return executions
 
+@app.get("/api/wara/report/subscriptions", status_code=200, response_model=None)
+def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
+    params = request.query_params
+    executionid = params.get('execid', '')
+
+    if not executionid:
+        response.status_code = 400
+        return 'executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_run_subscriptions(executionid)
+    return result
+
 @app.get("/api/wara/report/recommendations", status_code=200, response_model=None)
 def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
     params = request.query_params
@@ -210,7 +223,7 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAR
     return result
     
 
-@app.post("api/wara/runonce", status_code=202)
+@app.post("/api/wara/runonce", status_code=202)
 def run_pwsh():
     mem_queue.enqueue('run_wara')
     return json.dumps({'status': 'success'})

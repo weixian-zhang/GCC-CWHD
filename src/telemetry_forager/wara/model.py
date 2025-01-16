@@ -1,12 +1,15 @@
 from datetime import datetime
 
+class Subscription:
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
 class WARAExecution:
     execution_id: str
     execution_start_time: datetime
     subscription_ids: list[str]
     
     def __init__(self, execution_id, execution_start_time, subscription_ids):
-        #super().__init__(**kwargs)
         self.execution_id = execution_id if execution_id else ''
         self.execution_start_time = execution_start_time
         self.subscription_ids = subscription_ids if subscription_ids else []
