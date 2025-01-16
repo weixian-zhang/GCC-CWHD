@@ -1,19 +1,21 @@
 # GCC Azure - Central Workload Health Dashboard (AZCWHD)
  
-CWHD is a custom Azure monitoring solution leveraging Grafana dashboards to provide color coded health signals.  
-The colors Green, Amber and Red tells the overall state of the system at a glance.  
+CWHD is a custom Azure monitoring solution leveraging Grafana dashboards to provide color-coded summarized health signals.  
 
-<br />
+Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tiles to know if:
+* all Azure services are up with Green color
+* 1 or more service is down given a Red color
+* 1 or more VM has unhealthy level of CPU, memory or disk given an Amber color
 
 ### Level 0 Dashboard  
 
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
 
-### Level 1 - Cloud Crafty Dashboard
+### Level 1 - Cloud Crafty
 
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
 
-### Level 1 - Pocket Geek Dashboard 
+### Level 1 - Pocket Geek 
 
 <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
 
@@ -31,8 +33,8 @@ The colors Green, Amber and Red tells the overall state of the system at a glanc
 <br />  
 
 ## Coming Soon
-* WAF Reliability Assessment on Grafana
-* read-to-use Grafana dashbaord templates
+* WAF Reliability Assessment report on Grafana
+* ready-to-use Grafana dashboard templates (currently dashboard experience is custom built)
 
 ## Tech Stack  
 * Python 3.11
