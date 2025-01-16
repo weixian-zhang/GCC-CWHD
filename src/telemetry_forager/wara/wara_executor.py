@@ -109,14 +109,6 @@ class WARAExecutor:
          p.kill(p.pid)
       
 
-      #p_out, p_err = p.communicate()
-
-      # Log.debug(f'WARA - {p_out}')
-
-      # if p_err:
-      #    Log.exception(p_err)
-      #    return
-
       for file in os.listdir(self.exec_root_dir):
             if file.endswith(".json"):
                fp = os.path.join(self.exec_root_dir, file)
@@ -159,14 +151,6 @@ class WARAExecutor:
       except subprocess.TimeoutExpired:
          p.kill(p.pid)
 
-      # p_out, p_err = p.communicate()
-
-      # Log.debug(f'WARA - {p_out}')
-
-      # if p_err:
-      #    Log.exception(p_err)
-      #    return
-
       
       for file in os.listdir(self.exec_root_dir):
             if file.endswith(".xlsx"):
@@ -188,6 +172,7 @@ class WARAExecutor:
 
             # clean data before saving
             newdf = pd.DataFrame()
+            # https://stackoverflow.com/questions/21608228/conditional-replace-pandas
 
             newdf['Implemented'] = df.iloc[:,0]
             newdf['Number_of_Impacted_Resources'] = df.iloc[:,1]

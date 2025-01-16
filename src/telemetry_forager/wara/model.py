@@ -1,18 +1,18 @@
-from pydantic import BaseModel
 from datetime import datetime
 
-class WARAExecution(BaseModel):
+class WARAExecution:
     execution_id: str
     execution_start_time: datetime
     subscription_ids: list[str]
-
+    
     def __init__(self, execution_id, execution_start_time, subscription_ids):
+        #super().__init__(**kwargs)
         self.execution_id = execution_id if execution_id else ''
         self.execution_start_time = execution_start_time
         self.subscription_ids = subscription_ids if subscription_ids else []
 
 
-class WARARecommendation(BaseModel):
+class WARARecommendation:
     implemented: bool
     number_of_impacted_resources: int
     service_category: str
@@ -34,7 +34,7 @@ class WARARecommendation(BaseModel):
         self.read_more = read_more
 
 
-class WARARecommendation(BaseModel):
+class WARARecommendation:
     def __init__(self, implemented, number_of_impacted_resources, 
                  service_category, resiliency_category, recommendation, impact, best_practice_guidance, read_more):
         self.implemented = implemented
@@ -47,7 +47,7 @@ class WARARecommendation(BaseModel):
         self.read_more = read_more
 
 
-class WARAImpactedResource(BaseModel):
+class WARAImpactedResource:
     def __init__(self, subscriptionId, resource_group, 
                     Resource_type, name, impact, recommendation, params):
         self.subscriptionId = subscriptionId
@@ -59,13 +59,13 @@ class WARAImpactedResource(BaseModel):
         self.params = params
 
 
-class WARAResourceType(BaseModel):
+class WARAResourceType:
     def __init__(self, resource_type, number_of_resources):
         self.resource_type = resource_type
         self.number_of_resources = number_of_resources
 
 
-class WARARetirement(BaseModel):
+class WARARetirement:
     def __init__(self, subscriptionId, status, 
                     last_update_time, end_time, impacted_service, title, summary, details, required_action):
         self.subscriptionId = subscriptionId

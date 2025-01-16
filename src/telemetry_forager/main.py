@@ -146,17 +146,17 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
     
 # WARA module
 
-@app.get("/api/wara/report/runhistory", status_code=200)
+@app.get("/api/wara/report/runhistory", status_code=200, response_model=None)
 def run_pwsh() -> list[WARAExecution]:
     wr = WARAReport(config=appconfig)
     executions = wr.list_execution_history()
     return executions
 
-@app.get("/api/wara/report/recommendations", status_code=200)
+@app.get("/api/wara/report/recommendations", status_code=200, response_model=None)
 def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
     params = request.query_params
-    subid = params.get('subscription_id', '')
-    executionid = params.get('executionid', '')
+    subid = params.get('subid', '')
+    executionid = params.get('execid', '')
 
     if not subid or not executionid:
         response.status_code = 400
@@ -166,11 +166,11 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARA
     result = wr.get_recommendations(subid, executionid)
     return result
 
-@app.get("/api/wara/report/impactedresources", status_code=200)
+@app.get("/api/wara/report/impactedresources", status_code=200, response_model=None)
 def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAImpactedResource]:
     params = request.query_params
-    subid = params.get('subscription_id', '')
-    executionid = params.get('executionid', '')
+    subid = params.get('subid', '')
+    executionid = params.get('execid', '')
 
     if not subid or not executionid:
         response.status_code = 400
@@ -180,11 +180,11 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAI
     result = wr.get_impacted_resources(subid, executionid)
     return result
 
-@app.get("/api/wara/report/impactedresourcetypes", status_code=202)
+@app.get("/api/wara/report/impactedresourcetypes", status_code=200, response_model=None)
 def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
     params = request.query_params
-    subid = params.get('subscription_id', '')
-    executionid = params.get('executionid', '')
+    subid = params.get('subid', '')
+    executionid = params.get('execid', '')
 
     if not subid or not executionid:
         response.status_code = 400
@@ -195,11 +195,11 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAR
     return result
 
 
-@app.get("/api/wara/report/retirements", status_code=202)
+@app.get("/api/wara/report/retirements", status_code=200, response_model=None)
 def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARARetirement]:
     params = request.query_params
-    subid = params.get('subscription_id', '')
-    executionid = params.get('executionid', '')
+    subid = params.get('subid', '')
+    executionid = params.get('execid', '')
 
     if not subid or not executionid:
         response.status_code = 400
@@ -210,8 +210,7 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAR
     return result
     
 
-# powershell test
-@app.post("/wara/runonce", status_code=202)
+@app.post("api/wara/runonce", status_code=202)
 def run_pwsh():
     mem_queue.enqueue('run_wara')
     return json.dumps({'status': 'success'})
