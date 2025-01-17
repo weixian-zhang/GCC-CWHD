@@ -81,7 +81,8 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
            *  Subscriptions containing resources under monitoring
            *  Log Analytics Workspaces (if workspaces are in different subscription from above)
      *  [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
-        *  Add Infinity plugin
+        *  Add Infinity plugin - Azure Portal / Plugin Management, search for "Infinity".  
+           Select and hit "Save"
         *  Configure Infinity data source authn with Entra ID
            * Auth type = OAuth2
            * Grant type = Client Credentials  
