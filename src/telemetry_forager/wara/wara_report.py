@@ -18,8 +18,7 @@ class WARAReport:
         for entity in entities:
             execution_id = entity['PartitionKey']
             execution_start_time = entity['execution_start_time']
-            sub_ids = entity['subscription_ids'].split(',')
-            executions.append(WARAExecution(execution_id, execution_start_time, sub_ids))
+            executions.append(WARAExecution(execution_id, execution_start_time))
         
         return executions
     
