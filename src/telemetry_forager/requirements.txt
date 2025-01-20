@@ -34,6 +34,7 @@ idna==3.10
 importlib_metadata==8.5.0
 iniconfig==2.0.0
 isodate==0.7.2
+jsonpickle==4.0.1
 jsons==1.6.3
 loguru==0.7.3
 msal==1.31.0

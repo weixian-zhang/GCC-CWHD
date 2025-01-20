@@ -7,6 +7,15 @@
 			"command": "docker build -t docker.io/wxzd/cwhd:v0.1.1-wara .",
 			"options": {
 				"cwd": "${workspaceFolder}/src/telemetry_forager"
+			},
+			"dependsOn": ["pip freeze"]
+		},
+		{
+			"label": "docker push",
+			"type": "shell",
+			"command": "docker push docker.io/wxzd/cwhd:v0.1.1-wara",
+			"options": {
+				"cwd": "${workspaceFolder}/src/telemetry_forager"
 			}
 		},
 		{

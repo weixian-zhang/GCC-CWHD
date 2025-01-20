@@ -49,7 +49,7 @@ class WARAExecutor:
 
 
    def generate_execution_id(self) -> list[datetime.datetime, str]:
-      execution_start_time =  datetime.datetime.now()
+      execution_start_time =  datetime.datetime.now().strftime("%a %d %b %Y %H %M %S")
       execution_id = str(execution_start_time.timestamp())
       return execution_start_time, execution_id
    
