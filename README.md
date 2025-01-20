@@ -96,6 +96,37 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
  
 <br />
 
+### Telemetry Forager API Spec  
+
+<table>
+  <tr>
+    <th>Path</th>
+    <th>Method</th>
+    <th>Param</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>/RHRetriever</td>
+    <td>POST</td>
+    <td>
+     { <br />
+      "resources": [ <br />
+          { [ <br />
+              "resourceId":"{resource id}", [ <br />
+              "standardTestName": "{ App Insights standard test name }", [ <br />
+  			         "workspaceId": "{Log Analytics Workspace Id}" [ <br />
+              "network_watcher_conn_mon_test_group_name": "{network watcher connection monitor test group name}"
+          &nbsp&nbsp}  <br />
+         &nbsp] <br />
+      } <br />
+    </td>
+    <td>
+     standardTestName and network_watcher_conn_mon_test_group_name are optional params for getting App Service health and will fall back to Resource Health API if not supplied
+    </td>
+  </tr>
+</table>
+
+<br />
 
 ### Architecture  
 
@@ -117,30 +148,5 @@ Telemetry Forager is the backend service that curates telemetry from different d
        additional 3 metrics of CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
        In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
  * [Azure Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01) - get resource health for all resource types except App Service, which gets health status from App Insight Standard Test
-
-### Telemetry Forager API Spec  
-
-<table>
-  <tr>
-    <th>Path</th>
-    <th>Method</th>
-    <th>Param</th>
-  </tr>
-  <tr>
-    <td>/RHRetriever</td>
-    <td>POST</td>
-    <td>
-     { <br />
-      "resources": [ <br />
-          { [ <br />
-              "resourceId":"{resource id}", [ <br />
-              "standardTestName": "{ App Insights standard test name }", [ <br />
-  			         "workspaceId": "{Log Analytics Workspace Id}" [ <br />
-          &nbsp&nbsp}  <br />
-         &nbsp] <br />
-      } <br />
-    </td>
-  </tr>
-</table>
 
 
