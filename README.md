@@ -103,14 +103,13 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
   <tr>
     <th>Path</th>
     <th>Method</th>
-    <th>Param</th>
+    <th>Input Param</th>
     <th>Description</th>
   </tr>
   <tr>
     <td>/</td>
     <td>GET</td>
     <td>
-     "alive"
     </td>
     <td>
      Root path returns "alive"
