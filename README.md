@@ -24,15 +24,16 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
 <br />
 <br />
 
-* [Coming Soon](#coming-soon)
+* [Roadmap](#roadmap)
 * [Tech Stack](#tech-stack)
 * [Azure Telemtry Required](#azure-telemtry-required)
 * [Deployment & Configuration ](#deployment--configuration)
+* [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
 * [Architecture](#architecture)
 
 <br />  
 
-## Coming Soon
+## Roadmap
 * WAF Reliability Assessment report on Grafana
 * ready-to-use Grafana dashboard templates (currently dashboard experience is custom built)
 
@@ -96,7 +97,7 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
  
 <br />
 
-### Telemetry Forager API Spec  
+### Telemetry Forager REST API Spec  
 
 <table>
   <tr>
@@ -105,6 +106,17 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
     <th>Param</th>
     <th>Description</th>
   </tr>
+  <tr>
+    <td>/</td>
+    <td>GET</td>
+    <td>
+     "alive"
+    </td>
+    <td>
+     Root path returns "alive"
+    </td>
+  </tr>
+ 
   <tr>
     <td>/RHRetriever</td>
     <td>POST</td>
