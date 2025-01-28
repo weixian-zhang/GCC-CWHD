@@ -68,14 +68,24 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
          *  Subscriptions containing resources under monitoring
          *  Log Analytics Workspace (if workspace in different subscription from above)
     *  Enable Application Insights
-    * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) with Microsoft Provider
-      * <b>Easy Auth GUI experience will auto create a service principal with name similar to App Service name. Add "Monitoring Reader" role for service principal to App Service</b>
+    * Setup [Easy Auth](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#how-it-works) with Microsoft Provider
+      * Option 1: [Create and use new App registration](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-configuration#express)
+      * Option 2: [Use an existing registration created separately](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-configuration#-option-2-use-an-existing-registration-created-separately).
+        Entra ID App configuration example below.  
+        <img src = "https://github.com/user-attachments/assets/e8388734-d499-4977-a768-b8fde7ea185e" height="350px" width="700px" />
+
+        <img src = "https://github.com/user-attachments/assets/b69880e0-41b1-45e6-bdce-36194970d65a" height="350px" width="700px" />
+
+        <img src = "https://github.com/user-attachments/assets/f063c6c2-8f15-42cf-b42e-6294933b26f5" height="350px" width="700px" />
+
+        <img src = "https://github.com/user-attachments/assets/c0d053c4-cd6b-4f8e-88a7-b0a7c90026dc" height="400px" width="700px" />
+
     * Networking / Access Restrictions / Site access and rules (After Managed Grafana is deployed and configured)
       * Public network access = "Enabled from selected virtual networks and IP addresses"
       * Unmatched rule action = Deny
       * add 2 Grafana Static IP addresses found under "Deterministic outbound IP"
 
-2.  Azure Managed Grafana
+1.  Azure Managed Grafana
      *  Sku = Standard
      *  enable Managed Identity
         *  add Azure role assignment (RBAC) for Grafana Managed Identity with [Monitor Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/roles-permissions-security#monitoring-reader) to:
