@@ -42,14 +42,116 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
 * Azure Managed Grafana Standard - Grafana 10.4.11
 * [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
 
-## Azure Telemtry Required
+## Logs Required
+<table>
+  <tr>
+    <th>Grafana Dashboards</th>
+    <th>Logs required in Workspace</th>
+  </tr>
+  <tr>
+    <td>
+     <ul>
+       <li>Tier 0 resource specific dashboard</li>
+       <li>Tier 1 resource specific dashboard</li>
+     </ul>
+    </td>
+    <td>
+      <ul>
+          <li>
+            App Service health signal - either one of the following logs
+            <ul>
+              <li>Application Insights Availability Test result</li>
+              <li>Network Watcher Connection Monitor</li>
+             <li>Resource Health if any of the above is not available</li>
+            </ul>
+          </li>
+          <li>
+            <span></span>Virtual Machine CPU, Memory and Disk usage percentage  requires Performance Counters
+            collected by Data Collection Rule / Data Sources / Performance Counters - Basic -> / Destination / Log Analytics Workspace</li></ul></td>
+            </span>
+          </li>
+        </ul>
+     </td>
+  </tr>
 
-   * for App Service health signal - based on any one of the following available result
-     * Application Insights Availability Test result
-     * Network Watcher Connection Monitor
-     * lastly, Resource Health if any of the above isnot available
-   * for Virtual Machines health signal - enable [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview#vm-insights-data-collection-rule)
-   * PaaS services - enable Diagnostic Settings for all services under monitoring
+ <tr>
+    <td>
+     Tier 2 / Activity Audit dashboard
+    </td>
+    <td>
+       send Activity Log to Workspace
+    </td>
+ </tr>
+ 
+ <tr>
+    <td>
+     Tier 2 / Firewall dashboard
+    </td>
+    <td>
+        Firewall diagnostics settings send to Workspace for following categories
+        <ul>
+          <li> Azure Firewall Network Rule</li>
+          <li> Azure Firewall Application Rule</li>
+          <li> Azure Firewall Nat Rule</li>
+          <li> Azure Firewall Threat Intelligence</li>
+          <li> Azure Firewall IDPS Signature</li>
+          <li> Azure Firewall DNS query</li>
+        </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+     <span>Tier 2 / API Management dashboard <div>(a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))</div></span>
+    </td>
+    <td>
+      enable APIM diagnostics settings
+      <ul>
+        <li>
+          <ul>
+            <li>Logs related to APIManagement Gateway</li>
+          </ul>
+        </li>
+        <li>
+          enable Application Insights linked to Workspace
+        </li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+     <span>Tier 2 / Application Gateway dashboard <div></div>(a modified version from Azure Monitor)</div></span>
+    </td>
+    <td>
+     <ul>
+       <li>
+        enable App Gateway diagnostics settings
+        <ul>
+          <liApplication Gateway Access Log</li>
+          <li>Application Gateway Performance Log</li>
+          <li>Application Gateway Firewall Log</li>
+        </ul>
+       </li>
+       <li>enable Application Insights linked to Workspace</li>
+     </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+     <span>Tier 2 / Key Vault dashboard <div>(a modified version from Azure Monitor's Grafana dashboards)</div></span>
+    </td>
+    <td>
+      App Gateway diagnostics settings
+      <ul>
+        <li>Audit Logs  </li>
+      </ul>
+    </td>
+  </tr>
+  
+</table>
+
  
 ## Deployment & Configuration 
 1.  App Service for Containers
@@ -92,7 +194,9 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
            *  Subscriptions containing resources under monitoring
            *  Log Analytics Workspaces (if workspaces are in different subscription from above)
      *  [Infinity](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) plugin
-        *  Add Infinity plugin - Azure Portal / Plugin Management, search for "Infinity".  
+        *  Plugin Management, add plugins
+           * Infinity
+           * Business Variable
            Select and hit "Save"
         *  Configure Infinity data source authn with Entra ID
            * Auth type = OAuth2
