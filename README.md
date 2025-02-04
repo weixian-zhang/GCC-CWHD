@@ -7,15 +7,15 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
 * 1 or more service is down given a Red color
 * 1 or more VM has unhealthy level of CPU, memory or disk given an Amber color
 
-### Level 0 Dashboard  
+### Tier 0 Dashboard  
 
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
 
-### Level 1 - Cloud Crafty
+### Tier 1 - Cloud Crafty
 
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
 
-### Level 1 - Pocket Geek 
+### Tier 1 - Pocket Geek 
 
 <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
 
