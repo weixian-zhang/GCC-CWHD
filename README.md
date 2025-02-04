@@ -2,11 +2,6 @@
  
 CWHD is a custom Azure monitoring solution leveraging Grafana dashboards to provide color-coded summarized health signals.  
 
-Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tiles to know if:
-* all Azure services are up with Green color
-* 1 or more service is down given a Red color
-* 1 or more VM has unhealthy level of CPU, memory or disk given an Amber color
-
 ### Tier 0 Dashboard  
 
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
@@ -24,12 +19,31 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
 <br />
 <br />
 
+* [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
+* [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 * [Roadmap](#roadmap)
 * [Tech Stack](#tech-stack)
-* [Azure Telemtry Required](#azure-telemtry-required)
+* [Logs Required](#logs-required)
 * [Deployment & Configuration ](#deployment--configuration)
 * [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
 * [Architecture](#architecture)
+
+<br />  
+
+## What are Tier 0, 1 & 2 dashboards?
+
+### Tier 1 Dashboard
+### Tier 0 Dashboard
+### Tier 2 Dashboard
+
+<br />  
+
+## What is a Color-coded tile?
+
+Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tiles to know if:
+* all Azure services are up with Green color
+* 1 or more service is down given a Red color
+* 1 or more VM has unhealthy level of CPU, memory or disk given an Amber color
 
 <br />  
 
