@@ -1,6 +1,6 @@
 # GCC Azure - Central Workload Health Dashboard (AZCWHD)
  
-CWHD is a custom Azure monitoring solution leveraging Grafana dashboards to provide color-coded summarized health signals.  
+CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web app.  
 
 ### Tier 0 Dashboard  
 
@@ -40,16 +40,30 @@ CWHD is a custom Azure monitoring solution leveraging Grafana dashboards to prov
 
 ## What is a Color-coded tile?
 
-Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tiles to know if:
-* all Azure services are up with Green color
-* 1 or more service is down given a Red color
-* 1 or more VM has unhealthy level of CPU, memory or disk given an Amber color
+Color-coded tiles exist in Tier 1 and 2 dashboards only, each Azure resource is represented by a tile.  
+Each color-coded tile displays any of the 3 color at any one time: Green, Amber and Red which represents the different health status of each Azure resource.   
+<img src ="https://github.com/user-attachments/assets/2ec6e7b4-0f75-49a3-9894-82f3701eeb46" height="150px" width="500px" />
+
+* Green
+  * health status from Azure Resource Health API is healthy
+  * App Service specific health status are determined by either one of the following data source
+    * Application Insights Availability Test
+    * Network Watcher Connection Monitor
+    * Azure Resource Health API 
+* Amber
+  * affects only Virtual Machine resources. if VM's CPU, Memory and/or Disk usage percentage hits threshold. amber color will be shown. See [Deployment & Configuration](#deployment--configuration)
+* Red
+  * when Resource Health API returns unhealthy result
+  * for App Service specifically, if either of the following returns unhealthy status
+    * Application Insights Availability Test
+    * Network Watcher Connection Monitor
+    * Azure Resource Health API  
 
 <br />  
 
 ## Roadmap
-* WAF Reliability Assessment report on Grafana
-* ready-to-use Grafana dashboard templates (currently dashboard experience is custom built)
+* WARA on Grafana - WAF Reliability Assessment report on Grafana
+* ready-to-use Tier 2 Grafana dashboards
 
 ## Tech Stack  
 * Python 3.11
@@ -76,7 +90,7 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
             <ul>
               <li>Application Insights Availability Test result</li>
               <li>Network Watcher Connection Monitor</li>
-             <li>Resource Health if any of the above is not available</li>
+              <li>Resource Health API if above are not available</li>
             </ul>
           </li>
           <li>
