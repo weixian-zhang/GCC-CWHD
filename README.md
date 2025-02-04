@@ -1,6 +1,19 @@
 # GCC Azure - Central Workload Health Dashboard (AZCWHD)
  
-CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web app.  
+CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web backend.  
+
+<br />
+
+* [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
+* [What is a Color-coded tile?](#what-is-a-color-coded-tile)
+* [Roadmap](#roadmap)
+* [Tech Stack](#tech-stack)
+* [Logs Required](#logs-required)
+* [Deployment & Configuration ](#deployment--configuration)
+* [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
+* [Architecture](#architecture)
+
+<br />
 
 ### Tier 0 Dashboard  
 
@@ -15,18 +28,6 @@ CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded h
 <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
 
 <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
-
-<br />
-<br />
-
-* [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
-* [What is a Color-coded tile?](#what-is-a-color-coded-tile)
-* [Roadmap](#roadmap)
-* [Tech Stack](#tech-stack)
-* [Logs Required](#logs-required)
-* [Deployment & Configuration ](#deployment--configuration)
-* [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
-* [Architecture](#architecture)
 
 <br />  
 
