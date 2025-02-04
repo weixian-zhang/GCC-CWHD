@@ -88,7 +88,7 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
      Tier 2 / Firewall dashboard
     </td>
     <td>
-        Firewall diagnostics settings send to Workspace for following categories
+        enable Firewall diagnostics settings
         <ul>
           <li> Azure Firewall Network Rule</li>
           <li> Azure Firewall Application Rule</li>
@@ -143,7 +143,7 @@ Example of 2 systems Cloud Crafty and Pocket Geek using color-coded summary tile
      <span>Tier 2 / Key Vault dashboard <div>(a modified version from Azure Monitor's Grafana dashboards)</div></span>
     </td>
     <td>
-      App Gateway diagnostics settings
+      enable Key Vault diagnostics settings
       <ul>
         <li>Audit Logs  </li>
       </ul>
