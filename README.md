@@ -33,7 +33,11 @@ CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded h
 
 ## What are Tier 0, 1 & 2 dashboards?
 
-### Tier 1 Dashboard
+### Tier 1 Dashboard  
+
+You aim to to cohesively group up all dependent Azure resources for a single system in a Tier 1 dashboard.  
+For e.g: You have a system that leverages App Services, VMs, Redis Cache, Azure SQL, Storage, Azure OpenAI service and Azure Function.
+If Any one or more of these services fails  your system will be affected. The Tier 1 dashboard should monitor all these 7 services in the above example with 7 separate Color-coded tiles representing the health of each of dependent resource.
 ### Tier 0 Dashboard
 ### Tier 2 Dashboard
 
