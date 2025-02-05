@@ -1,0 +1,12 @@
+ApiManagementGatewayLogs 
+| where $__timeFilter(TimeGenerated)
+| where OperationId != ""
+| extend Success = iff(IsRequestSuccess=="false", 0, 1)
+| parse Url with * "azure-api.net/" UrlPath
+| extend Operation = UrlPath
+| summarize RequestCount=count(CorrelationId),
+            AverageResponseTime=strcat(round(avg(TotalTime), 3), " ms"), 
+            AverageResponseSize=strcat(round(avg(ResponseSize), 1), " B"),
+            SuccessRate=strcat(round(avg(Success)*100, 3), "%") 
+            by Operation //OperationId,
+               

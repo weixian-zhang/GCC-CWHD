@@ -1,0 +1,9 @@
+AppRequests
+| where TimeGenerated >= ago(30d)
+//| where $__timeFilter(TimeGenerated)
+| extend AppInsights = split(_ResourceId, '/')[-1]
+| summarize
+ RequestsCount=sum(ItemCount), 
+ AverageDurationMs=round(avg(DurationMs),2),
+  percentiles(DurationMs, 50, 95, 99) by OperationName, tostring(AppInsights)
+| order by RequestsCount desc

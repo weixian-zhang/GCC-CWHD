@@ -1,0 +1,8 @@
+AGWFirewallLogs 
+| where TimeGenerated >= $__timeFrom()
+| project 
+['Datetime SG'] = datetime_local_to_utc(TimeGenerated, 'Asia/Singapore'), 
+ClientIp,
+Action,
+Url=strcat(Hostname,RequestUri), 
+Message=strcat(Message, '\n', DetailedMessage, '\n', FileDetails), FileDetails

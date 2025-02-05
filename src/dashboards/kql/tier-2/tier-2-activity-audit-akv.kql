@@ -1,0 +1,21 @@
+AzureDiagnostics 
+| where TimeGenerated >= $__timeFrom()
+// Ignore Authentication operations with a 401. This is normal when using Key Vault SDK, first an unauthenticated request is done then the response is used for authentication.
+| where Category == "AuditEvent" and not (OperationName == "Authentication" and httpStatusCode_d == 401)
+| where OperationName in ('AfterAuthentication', 'CertificateCreate', 'CertificateGet', 'CertificateList', 'CertificateListVersions', 'CertificateGetDeleted' 'KeyCreate', 'KeyGet', 'KeyList', 'SecretGet', 'SecretList', 'SecretListDeleted', 'SecretListVersions', 'SecretSet', 'VaultGet', 'VaultPut')
+| extend  UserName = case(isnotempty(identity_claim_unique_name_s) , identity_claim_unique_name_s, 
+                       isnotempty(identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s), identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s, 
+                       "")
+| extend UserType = iff(isnotempty(identity_claim_idtyp_s), identity_claim_idtyp_s, "Azure/SPN")
+| project
+    // SubscriptionId,
+    // ResourceGroup,
+    DateTimeSG=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'),
+    Name=Resource,
+    Operation=OperationName,
+    RequestUrl=requestUri_s,
+    ClientInfo=clientInfo_s,
+    UserName, 
+    UserType,
+    ['Success/Failed']=ResultType,
+    ClientIP=identity_claim_ipaddr_s

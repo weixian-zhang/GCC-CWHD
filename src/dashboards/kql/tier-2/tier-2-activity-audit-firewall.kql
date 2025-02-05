@@ -1,0 +1,17 @@
+AzureActivity
+| where TimeGenerated >= $__timeFrom()
+| where toupper(OperationNameValue) == 'MICROSOFT.NETWORK/FIREWALLPOLICIES/RULECOLLECTIONGROUPS/WRITE' 
+| where CategoryValue == 'Administrative' and ActivityStatusValue  == 'Success'
+| extend properties = parse_json(Properties)
+| extend Who = properties['caller']
+| extend FirewallPolicy = properties['resource']
+| extend authorization_evidence = parse_json(Authorization)['evidence']
+| extend  principalType = authorization_evidence['principalType']
+| extend  Role = authorization_evidence['role']
+| extend  RoleAssignToScope = authorization_evidence['roleAssignmentScope']
+| extend azfwRuleCollectionGroup = split(properties['resource'], '/')[1]
+| extend ruleType = case(azfwRuleCollectionGroup == 'defaultdnatrulecollectiongroup', "DNAT", 
+                         azfwRuleCollectionGroup == 'DefaultNetworkRuleCollectionGroup', "Network", 
+                         "App")
+| extend DatetimeSG = datetime_utc_to_local(TimeGenerated, 'Asia/Singapore')
+| project DatetimeSG, SubscriptionId, ResourceGroup, ruleType, FirewallPolicy, Who, Role, RoleAssignToScope 
