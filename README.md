@@ -73,8 +73,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 ### Tier 2 Dashboard  
 
-These dashboards are ready to use using without further configuration.  
-<div>Tier 2 dasboards are resource specific, there are 5 Tier 2 dashboards today</div>
+There are 5 Tier 2 dashboards today ready to use without further configuration
 
 * Activity Audit dashboard
 * Applcation Gateway dashbaord (a modifed version from Azure Monitor)
