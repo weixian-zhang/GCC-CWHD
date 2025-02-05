@@ -1,0 +1,9 @@
+AZFWApplicationRule
+| extend dest = strcat(tolower(Protocol), '://', Fqdn, ':', DestinationPort)
+| extend rule = strcat(RuleCollection, '/', Rule)
+| where TimeGenerated >= $__timeFrom()
+| project 
+  ['DateTime SG']=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'),
+  ['Source']=strcat(SourceIp,':',SourcePort), 
+  ['Destination']=dest, 
+  ['Firewall Rule']=rule

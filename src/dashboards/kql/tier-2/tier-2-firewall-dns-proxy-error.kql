@@ -1,0 +1,5 @@
+AZFWDnsQuery
+| extend src = strcat(SourceIp, ':', SourcePort)
+| where ErrorNumber != 0
+| where TimeGenerated >= $__timeFrom()
+| project ['DateTime SG']=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'), ['Source']=src, QueryType, QueryName, RequestDurationSecs

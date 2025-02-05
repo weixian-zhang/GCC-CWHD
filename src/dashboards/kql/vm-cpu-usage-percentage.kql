@@ -1,0 +1,8 @@
+InsightsMetrics
+| where Namespace == "Processor" and Name == "UtilizationPercentage"
+//| where TimeGenerated >= ago(2h)
+| where _ResourceId == tolower("{resourceId}")
+| extend CPUPercent = round(Val,1)
+| order by TimeGenerated desc
+| take 1
+| project TimeGenerated, CPUPercent

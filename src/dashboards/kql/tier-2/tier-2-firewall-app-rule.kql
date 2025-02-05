@@ -1,0 +1,5 @@
+AZFWApplicationRule
+| where TimeGenerated >= $__timeFrom()
+| extend dest = strcat(tolower(Protocol), '://', Fqdn, ':', DestinationPort)
+| extend rule = strcat(RuleCollection, '/', Rule)
+| project ['Source']=strcat(SourceIp,':',SourcePort), ['Destination']=dest, Action, ['Firewall Rule']=rule, ['Explicit Proxy Req']=IsExplicitProxyRequest

@@ -1,0 +1,7 @@
+AppAvailabilityResults 
+| extend SuccessFailStatusAndMessage = iif(Success == 'True', 'Success', strcat('Failed - ',Message))
+| where Location == 'Southeast Asia'
+| where TimeGenerated >= ago(8h)
+| project TimeGenerated, Name, Success, SuccessFailStatusAndMessage
+| summarize by Time=bin(TimeGenerated, 10min), Name, SuccessFailStatusAndMessage
+| evaluate pivot(Name, any(SuccessFailStatusAndMessage))

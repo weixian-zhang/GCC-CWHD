@@ -1,0 +1,72 @@
+AzureActivity
+| extend CallerIP = CallerIpAddress
+| extend ResourceCategory = parse_json(Properties).resourceProviderValue
+| extend ResourceIDSplit = split(_ResourceId, "/")
+| extend NSGName = tostring(ResourceIDSplit[array_length(ResourceIDSplit)-3])
+| extend RuleName = tostring(ResourceIDSplit[array_length(ResourceIDSplit)-1])
+| extend RequestBody = todynamic(parse_json(tostring(parse_json(Properties)["requestbody"]))["properties"])
+| extend IsArray = iif(array_length(RequestBody) > 0, true, false)
+| extend NSG = parse_json(tostring(parse_json(tostring(parse_json(Properties)["requestbody"]))["properties"]))
+| where
+    CategoryValue  == "Administrative" and
+    ActivityStatusValue in ("Start") and
+    toupper(OperationNameValue) == "MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE" and
+    ResourceCategory !in ("MICROSOFT.RESOURCEHEALTH", "MICROSOFT.RESOURCES")
+    | where TimeGenerated >= $__timeFrom()
+//join to get User and ServicePrincipal login related info only exist in ActivityStatusValue = Success
+| join kind=inner ( 
+            AzureActivity
+                | where ActivityStatusValue == "Success"
+                | extend JoinedAuthorization = Authorization
+                | extend JoinedClaims = Claims
+                | extend PrincipalType =  parse_json(parse_json(JoinedAuthorization).evidence).principalType
+                | extend AppId = parse_json(JoinedClaims)["appid"] //show appid/clientid of registered app if type = ServicePrincipal
+                | extend SignInAcctType = iif(PrincipalType == "", "User", PrincipalType)
+                | extend RBACRole = parse_json(parse_json(JoinedAuthorization).evidence).role
+                | extend SigninUPN = iif(SignInAcctType == "ServicePrincipal",AppId, parse_json(JoinedClaims)["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"])
+                | extend SigninName = iif(SignInAcctType == "ServicePrincipal",AppId, parse_json(JoinedClaims)["name"])
+          ) on CorrelationId
+| extend RuleName = RuleName
+| extend Direction = tostring(NSG.direction)
+| extend Priority = tostring(NSG.priority)
+| extend Protocol = tostring(NSG.protocol)
+| extend SourceAddressPrefix = tostring(NSG.sourceAddressPrefix)
+| extend SourcePortRange = tostring(NSG.sourcePortRange)
+| extend DestinationAddressPrefix = tostring(NSG.destinationAddressPrefix)
+| extend DestinationPortRange = tostring(NSG.destinationPortRange)
+| extend Description = tostring(NSG.description)
+| distinct TimeGenerated,
+           SubscriptionId,
+           ResourceGroup,
+           OperationName,
+           Resource,
+           NSGName,
+           RuleName,
+           Direction,
+           Priority,
+           Protocol,
+           SourceAddressPrefix, 
+           DestinationAddressPrefix,
+           DestinationPortRange,
+           Description,
+           SignInAcctType,
+           tostring(RBACRole),
+           tostring(SigninUPN),
+           tostring(SigninName)
+| project  DatetimeSG = datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'), //for column ordering
+           SubscriptionId,
+           ResourceGroup,
+           OperationName,
+           NSGName,
+           RuleName,
+           Direction,
+           Priority,
+           Protocol,
+           SourceAddressPrefix, 
+           DestinationAddressPrefix,
+           DestinationPortRange,
+           Description,
+           SignInAcctType,
+           tostring(RBACRole),
+           tostring(SigninUPN),
+           tostring(SigninName);

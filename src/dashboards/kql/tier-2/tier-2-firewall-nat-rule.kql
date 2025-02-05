@@ -1,0 +1,10 @@
+AZFWNatRule 
+| extend AzureFirewallIP = strcat(DestinationIp, ':', DestinationPort)
+| extend TranslatedIP = strcat(TranslatedIp, ':', TranslatedPort)
+| extend NatFlow = strcat('[incoming] ', SourceIp, ' -> [azfirewall] ', AzureFirewallIP, ' -> [translated]', TranslatedIp)
+| extend Rule = strcat(RuleCollection, '/', Rule)
+| where TimeGenerated >= $__timeFrom()
+| project
+    ['DateTime SG']=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'),
+    ['NAT Flow']=NatFlow,
+    Rule
