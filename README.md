@@ -1,11 +1,11 @@
-# CWHD - Central Workload Health Dashboard (used by agencies on [GCC Azure](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/)) 
+# CWHD - Azure Monitoring with Central Workload Health Dashboard (used by agencies on [GCC Azure](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/)) 
  
 CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web backend.  
 
 <br />
 
-* [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
 * [What is a Color-coded tile?](#what-is-a-color-coded-tile)
+* [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
 * [Roadmap](#roadmap)
 * [Tech Stack](#tech-stack)
 * [Logs Required](#logs-required)
@@ -13,6 +13,36 @@ CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded h
 * [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
 * [Architecture](#architecture)
 
+## What is a Color-coded tile?
+
+Color-coded tiles exist in Tier 0 and 1 dashboards only and each Azure resource is represented by a color-coded tile.  
+Each color-coded tile displays one of the 3 colors at any one time: Green, Amber and Red which represents the different health status.   
+<img src ="https://github.com/user-attachments/assets/2ec6e7b4-0f75-49a3-9894-82f3701eeb46" height="150px" width="500px" />
+
+
+* Green
+  * health status from Azure Resource Health API is healthy
+  * for App Service specifically, health status are determined by either one of the following data source
+    * Application Insights Availability Test
+    * Network Watcher Connection Monitor
+    * Azure Resource Health API
+  * when all resources in Tier 1 color-coded tiles are Green, Tier 0 summarizes system status as Green
+  <img src="https://github.com/user-attachments/assets/7c9b6c15-b36c-4a07-9e05-75aef7ea67c0" height="250px" width="600px" />
+  
+* Amber
+  * affects only Virtual Machine resources. if VM's CPU, Memory and/or Disk usage percentage hits threshold. amber color will be shown. See [Deployment & Configuration](#deployment--configuration)
+  * when any one of VM in Tier 1 color-coded tiles is Amber, Tier 0 dashboard summarizes system status as Amber
+    <img src="https://github.com/user-attachments/assets/f2a29c10-899a-48d8-92d2-d8ae8043bf94" height="250px" width="600px" />
+
+* Red
+  * when Resource Health API returns unhealthy result
+  * for App Service specifically, if either of the following returns unhealthy status
+    * Application Insights Availability Test
+    * Network Watcher Connection Monitor
+    * Azure Resource Health API
+  * when any one resource in Tier 1 color-coded tiles is Red, Tier 0 dashboard summarizes system status as Red. Red is "larger" than Amber.
+  
+    <img src="https://github.com/user-attachments/assets/98540059-8286-4c4b-8795-aeb23c0dc991" height="300px" width="650px" />
 
 <br />  
 
@@ -82,28 +112,6 @@ There are 5 Tier 2 dashboards today ready to use without further configuration
 * API Management dashboard (a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))
 * Key Vault dashboard (a modifed version from Azure Monitor)
 * Storage dashbaord (a modifed version from Azure Monitor)
-<br />  
-
-## What is a Color-coded tile?
-
-Color-coded tiles exist in Tier 1 and 2 dashboards only, each Azure resource is represented by a tile.  
-Each color-coded tile displays any of the 3 color at any one time: Green, Amber and Red which represents the different health status of each Azure resource.   
-<img src ="https://github.com/user-attachments/assets/2ec6e7b4-0f75-49a3-9894-82f3701eeb46" height="150px" width="500px" />
-
-* Green
-  * health status from Azure Resource Health API is healthy
-  * App Service specific health status are determined by either one of the following data source
-    * Application Insights Availability Test
-    * Network Watcher Connection Monitor
-    * Azure Resource Health API 
-* Amber
-  * affects only Virtual Machine resources. if VM's CPU, Memory and/or Disk usage percentage hits threshold. amber color will be shown. See [Deployment & Configuration](#deployment--configuration)
-* Red
-  * when Resource Health API returns unhealthy result
-  * for App Service specifically, if either of the following returns unhealthy status
-    * Application Insights Availability Test
-    * Network Watcher Connection Monitor
-    * Azure Resource Health API  
 
 <br />  
 
