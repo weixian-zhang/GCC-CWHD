@@ -1,0 +1,900 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 49,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AzureActivity\r\n| where TimeGenerated >= $__timeFrom()\r\n| where toupper(OperationNameValue) == 'MICROSOFT.NETWORK/FIREWALLPOLICIES/RULECOLLECTIONGROUPS/WRITE' \r\n| where CategoryValue == 'Administrative' and ActivityStatusValue  == 'Success'\r\n| extend properties = parse_json(Properties)\r\n| extend Who = properties['caller']\r\n| extend FirewallPolicy = properties['resource']\r\n| extend authorization_evidence = parse_json(Authorization)['evidence']\r\n| extend  principalType = authorization_evidence['principalType']\r\n| extend  Role = authorization_evidence['role']\r\n| extend  RoleAssignToScope = authorization_evidence['roleAssignmentScope']\r\n| extend azfwRuleCollectionGroup = split(properties['resource'], '/')[1]\r\n| extend ruleType = case(azfwRuleCollectionGroup == 'defaultdnatrulecollectiongroup', \"DNAT\", \r\n                         azfwRuleCollectionGroup == 'DefaultNetworkRuleCollectionGroup', \"Network\", \r\n                         \"App\")\r\n| extend DatetimeSG = datetime_utc_to_local(TimeGenerated, 'Asia/Singapore')\r\n| project DatetimeSG, SubscriptionId, ResourceGroup, ruleType, FirewallPolicy, Who, Role, RoleAssignToScope ",
+            "resources": [
+              "/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.OperationalInsights/workspaces/$law"
+            ],
+            "resultFormat": "logs"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Firewall",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 5,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<hr style=\"height: 1px; background-color: #FFFFFF\">",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AzureActivity\r\n| extend CallerIP = CallerIpAddress\r\n| extend ResourceCategory = parse_json(Properties).resourceProviderValue\r\n| extend ResourceIDSplit = split(_ResourceId, \"/\")\r\n| extend NSGName = tostring(ResourceIDSplit[array_length(ResourceIDSplit)-3])\r\n| extend RuleName = tostring(ResourceIDSplit[array_length(ResourceIDSplit)-1])\r\n| extend RequestBody = todynamic(parse_json(tostring(parse_json(Properties)[\"requestbody\"]))[\"properties\"])\r\n| extend IsArray = iif(array_length(RequestBody) > 0, true, false)\r\n| extend NSG = parse_json(tostring(parse_json(tostring(parse_json(Properties)[\"requestbody\"]))[\"properties\"]))\r\n| where\r\n    CategoryValue  == \"Administrative\" and\r\n    ActivityStatusValue in (\"Start\") and\r\n    toupper(OperationNameValue) == \"MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE\" and\r\n    ResourceCategory !in (\"MICROSOFT.RESOURCEHEALTH\", \"MICROSOFT.RESOURCES\")\r\n    | where TimeGenerated >= $__timeFrom()\r\n//join to get User and ServicePrincipal login related info only exist in ActivityStatusValue = Success\r\n| join kind=inner ( \r\n            AzureActivity\r\n                | where ActivityStatusValue == \"Success\"\r\n                | extend JoinedAuthorization = Authorization\r\n                | extend JoinedClaims = Claims\r\n                | extend PrincipalType =  parse_json(parse_json(JoinedAuthorization).evidence).principalType\r\n                | extend AppId = parse_json(JoinedClaims)[\"appid\"] //show appid/clientid of registered app if type = ServicePrincipal\r\n                | extend SignInAcctType = iif(PrincipalType == \"\", \"User\", PrincipalType)\r\n                | extend RBACRole = parse_json(parse_json(JoinedAuthorization).evidence).role\r\n                | extend SigninUPN = iif(SignInAcctType == \"ServicePrincipal\",AppId, parse_json(JoinedClaims)[\"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn\"])\r\n                | extend SigninName = iif(SignInAcctType == \"ServicePrincipal\",AppId, parse_json(JoinedClaims)[\"name\"])\r\n          ) on CorrelationId\r\n| extend RuleName = RuleName\r\n| extend Direction = tostring(NSG.direction)\r\n| extend Priority = tostring(NSG.priority)\r\n| extend Protocol = tostring(NSG.protocol)\r\n| extend SourceAddressPrefix = tostring(NSG.sourceAddressPrefix)\r\n| extend SourcePortRange = tostring(NSG.sourcePortRange)\r\n| extend DestinationAddressPrefix = tostring(NSG.destinationAddressPrefix)\r\n| extend DestinationPortRange = tostring(NSG.destinationPortRange)\r\n| extend Description = tostring(NSG.description)\r\n| distinct TimeGenerated,\r\n           SubscriptionId,\r\n           ResourceGroup,\r\n           OperationName,\r\n           Resource,\r\n           NSGName,\r\n           RuleName,\r\n           Direction,\r\n           Priority,\r\n           Protocol,\r\n           SourceAddressPrefix, \r\n           DestinationAddressPrefix,\r\n           DestinationPortRange,\r\n           Description,\r\n           SignInAcctType,\r\n           tostring(RBACRole),\r\n           tostring(SigninUPN),\r\n           tostring(SigninName)\r\n| project  DatetimeSG = datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'), //for column ordering\r\n           SubscriptionId,\r\n           ResourceGroup,\r\n           OperationName,\r\n           NSGName,\r\n           RuleName,\r\n           Direction,\r\n           Priority,\r\n           Protocol,\r\n           SourceAddressPrefix, \r\n           DestinationAddressPrefix,\r\n           DestinationPortRange,\r\n           Description,\r\n           SignInAcctType,\r\n           tostring(RBACRole),\r\n           tostring(SigninUPN),\r\n           tostring(SigninName);",
+            "resources": [
+              "/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.OperationalInsights/workspaces/$law"
+            ],
+            "resultFormat": "logs"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "NSG",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 8,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<hr style=\"height: 1px; background-color: #FFFFFF\">",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RequestUrl"
+            },
+            "properties": [
+              {
+                "id": "custom.inspect",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 215
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ResourceGroup"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 252
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Operation"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Success/Failed"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 126
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "UserName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 201
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ClientInfo"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 174
+              },
+              {
+                "id": "custom.inspect",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DateTime SG"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 162
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "AzureDiagnostics \r\n| where TimeGenerated >= $__timeFrom()\r\n// Ignore Authentication operations with a 401. This is normal when using Key Vault SDK, first an unauthenticated request is done then the response is used for authentication.\r\n| where Category == \"AuditEvent\" and not (OperationName == \"Authentication\" and httpStatusCode_d == 401)\r\n| where OperationName in ('AfterAuthentication', 'CertificateCreate', 'CertificateGet', 'CertificateList', 'CertificateListVersions', 'CertificateGetDeleted' 'KeyCreate', 'KeyGet', 'KeyList', 'SecretGet', 'SecretList', 'SecretListDeleted', 'SecretListVersions', 'SecretSet', 'VaultGet', 'VaultPut')\r\n| extend  UserName = case(isnotempty(identity_claim_unique_name_s) , identity_claim_unique_name_s, \r\n                       isnotempty(identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s), identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s, \r\n                       \"\")\r\n| extend UserType = iff(isnotempty(identity_claim_idtyp_s), identity_claim_idtyp_s, \"Azure/SPN\")\r\n| project\r\n    // SubscriptionId,\r\n    // ResourceGroup,\r\n    DateTimeSG=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'),\r\n    Name=Resource,\r\n    Operation=OperationName,\r\n    RequestUrl=requestUri_s,\r\n    ClientInfo=clientInfo_s,\r\n    UserName, \r\n    UserType,\r\n    ['Success/Failed']=ResultType,\r\n    ClientIP=identity_claim_ipaddr_s",
+            "resources": [
+              "/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.OperationalInsights/workspaces/$law"
+            ],
+            "resultFormat": "logs"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Key Vault",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 10,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<hr style=\"height: 1px; background-color: #FFFFFF\">",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-text"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RequestUrl"
+            },
+            "properties": [
+              {
+                "id": "custom.inspect",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 215
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ResourceGroup"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 189
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Operation"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Success/Failed"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 126
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DateTime SG"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 162
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Properties_resourceProviderValue"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 201
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ActionType"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 94
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DateTimeSG"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 163
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Subscription"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 216
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SigninUPN"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 213
+              },
+              {
+                "id": "custom.inspect",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SignInAcctType"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 129
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AccountType"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 123
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Action"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SigninName"
+            },
+            "properties": [
+              {
+                "id": "custom.inspect",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RBACRole"
+            },
+            "properties": [
+              {
+                "id": "custom.inspect",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Resource"
+            },
+            "properties": [
+              {
+                "id": "custom.inspect",
+                "value": true
+              },
+              {
+                "id": "custom.width",
+                "value": 244
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "dashboardTime": false,
+            "query": "let distinctActivities = AzureActivity\r\n| extend ResourceCategory = parse_json(Properties).resourceProviderValue\r\n| extend ActionNamespace = split(parse_json(Authorization).action, \"/\")\r\n| extend ActionType = toupper(ActionNamespace[array_length(ActionNamespace) -1])\r\n| where\r\n    ActionType in (\"WRITE\", \"DELETE\") and\r\n    CategoryValue  == \"Administrative\" and \r\n    ResourceCategory !in (\"MICROSOFT.RESOURCEHEALTH\", \"MICROSOFT.RESOURCES\") and\r\n    ActivityStatusValue == \"Success\"\r\n    | where TimeGenerated >= $__timeFrom()\r\n| distinct CorrelationId;\r\n\r\n\r\nAzureActivity\r\n| extend PrincipalType =  parse_json(parse_json(Authorization).evidence).principalType\r\n| extend SignInAcctType = iif(PrincipalType == \"\", \"User\", PrincipalType)\r\n| extend AppId = parse_json(Claims)[\"appid\"] //show appid (client id) of registered app if type = ServicePrincipal\r\n| extend RBACRole = parse_json(parse_json(Authorization).evidence).role\r\n| extend SigninUPN = iif(SignInAcctType == \"ServicePrincipal\",AppId, parse_json(Claims)[\"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn\"])\r\n| extend SigninName = iif(SignInAcctType == \"ServicePrincipal\",AppId, parse_json(Claims)[\"name\"])\r\n| extend CallerIP = CallerIpAddress\r\n| extend ResourceCategory = parse_json(Properties).resourceProviderValue\r\n| extend ResourceIDSplit = split(_ResourceId, \"/\")\r\n| extend Resource = strcat(toupper(ResourceIDSplit[array_length(ResourceIDSplit)-2]), \"/\",\r\n         toupper(ResourceIDSplit[array_length(ResourceIDSplit)-1]))\r\n| extend ActionNamespace = split(parse_json(Authorization).action, \"/\")\r\n| extend ActionType = toupper(ActionNamespace[array_length(ActionNamespace) -1])\r\n| extend SubscriptionName = split(Hierarchy, '/')[-2]\r\n| join (distinctActivities) on CorrelationId\r\n| where\r\n    ResourceCategory != \"\"\r\n| project \r\n    DateTimeSG = datetime_local_to_utc(TimeGenerated, 'Asia/Singapore'),\r\n    Subscription=SubscriptionName, \r\n    ResourceGroup, \r\n    Action=ActionType,\r\n    Resource=strcat(tostring(parse_json(Properties).resourceProviderValue),'/', Resource), \r\n    AccountType=SignInAcctType,\r\n    RBACRole, \r\n    SigninUPN, \r\n    SigninName",
+            "resources": [
+              "/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.OperationalInsights/workspaces/$law"
+            ],
+            "resultFormat": "logs"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Other Resources",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 6,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.11",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Weixian-1",
+          "value": "c9061bc7-fa28-41d9-a783-2600b29c6e2f"
+        },
+        "datasource": {
+          "type": "grafana-azure-monitor-datasource",
+          "uid": "azure-monitor-oob"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Subscription",
+        "multi": false,
+        "name": "sub",
+        "options": [],
+        "query": {
+          "azureLogAnalytics": {
+            "query": "",
+            "resources": []
+          },
+          "queryType": "Azure Subscriptions",
+          "refId": "A"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "rg-common",
+          "value": "rg-common"
+        },
+        "datasource": {
+          "type": "grafana-azure-monitor-datasource",
+          "uid": "azure-monitor-oob"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Resource Group",
+        "multi": false,
+        "name": "rg",
+        "options": [],
+        "query": {
+          "azureLogAnalytics": {
+            "query": "",
+            "resources": []
+          },
+          "queryType": "Azure Resource Groups",
+          "refId": "A",
+          "subscription": "$sub"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "law-common",
+          "value": "law-common"
+        },
+        "datasource": {
+          "type": "grafana-azure-monitor-datasource",
+          "uid": "azure-monitor-oob"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Workspace",
+        "multi": false,
+        "name": "law",
+        "options": [],
+        "query": {
+          "azureLogAnalytics": {
+            "query": "",
+            "resources": []
+          },
+          "namespace": "microsoft.operationalinsights/workspaces",
+          "queryType": "Azure Resource Names",
+          "refId": "A",
+          "region": "southeastasia",
+          "resourceGroup": "$rg",
+          "subscription": "$sub"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Tier 2 / Activity Audit",
+  "uid": "febwoqji3ubcwf",
+  "version": 2,
+  "weekStart": ""
+}

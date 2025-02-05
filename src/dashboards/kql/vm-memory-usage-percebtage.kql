@@ -1,0 +1,12 @@
+InsightsMetrics
+| where Namespace == "Memory" and Name == "AvailableMB"
+//| where TimeGenerated >= ago(2h)
+| where _ResourceId == tolower("{resourceId}")
+| extend AvailableGB = round(Val/1000,1)
+| extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)["vm.azm.ms/memorySizeMB"])) / 1000,1)
+| extend AvailableGB = round(Val/1000,1)
+| extend UsedGB = round((TotalMemoryGB - AvailableGB),1)
+| extend UsedMemoryPercentage = round(((UsedGB / TotalMemoryGB) * 100), 0)
+| order by TimeGenerated desc 
+| take 1
+| project TimeGenerated, UsedMemoryPercentage

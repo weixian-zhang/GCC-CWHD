@@ -1,0 +1,23 @@
+AGWAccessLogs 
+| where TimeGenerated >= $__timeFrom()
+| extend ReceivedBytesMB = ReceivedBytes / 1000
+| extend SentBytesdMB = SentBytes / 1000
+| extend RequestUrl = strcat(HttpMethod, ' ', OriginalHost, OriginalRequestUriWithArgs)
+| extend RouteFlow = strcat(ClientIp, ' -> ', RequestUrl, ' -> ', ServerRouted )
+| extend DatetimeSG = datetime_utc_to_local(TimeGenerated, 'Asia/Singapore')
+| project 
+    DatetimeSG,
+    ['TimeTakenSec'] = TimeTaken,
+    ReceivedBytesMB, 
+    SentBytesdMB,
+    SslEnabled,
+    RouteFlow,
+    ['Backend Status']=ServerStatus,
+    ['Backend Resp Latency (Sec)'] = ServerResponseLatency
+| summarize 
+    ['Max Data Received MB']=max(ReceivedBytesMB), 
+    ['Max Data Returned MB']=max(SentBytesdMB), 
+    ['Max Time Taken (Sec)']=max(TimeTakenSec) by 
+    RouteFlow, 
+    ['Backend Status'], 
+    SslEnabled

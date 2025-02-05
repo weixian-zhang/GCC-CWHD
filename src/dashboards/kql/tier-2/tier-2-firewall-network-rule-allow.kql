@@ -1,0 +1,6 @@
+AZFWNetworkRule
+| extend Src = strcat(SourceIp, ':', SourcePort)
+| extend Dest = strcat(Protocol, '://', DestinationIp, ':', DestinationPort)
+| where Action != 'Deny'
+| where TimeGenerated >= $__timeFrom()
+| project ['DateTime SG']=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'), Src, Dest, ActionReason

@@ -1,0 +1,9 @@
+ApiManagementGatewayLogs 
+| where $__timeFilter(TimeGenerated)
+| where IsRequestSuccess == "true"
+| extend ServiceResponseTimeSec = tostring(round(BackendTime/1000.0,2))
+| extend ResponseTimeSec = tostring(round(TotalTime/1000.0,2))
+| project TimeGenerated, Method, URL=Url, ResponseCode, ServiceResponseCode=BackendResponseCode, 
+          RequestSize=iff(RequestSize!="", strcat(RequestSize, " B"), "0 B"),
+          ResponseSize=strcat(ResponseSize, " B"),
+          ResponseTimeSec, ServiceResponseTimeSec, Cache, IPAddress=CallerIpAddress
