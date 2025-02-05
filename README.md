@@ -29,15 +29,19 @@ You aim to to cohesively group up all dependent Azure resources into a Tier 1 da
   </div>
   <br />
   <div>
-   For example if you have 2 systems Cloud Crafty and Pocket Geek, you will have 2 Tier 1 dashboards.  
+   <p></p>For example if you have 2 systems Cloud Crafty and Pocket Geek, you will have two Tier 1 dashboards.</p>
+   
+   <div>
    Tier 1 / Cloud Crafty
    <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
    </div>
-   <div></div>
+   </div>
+  
+   <div>
    Tier 1 / Pocket Geek
    <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
    <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
-  
+   </div>
  </li>
  
  <li>
