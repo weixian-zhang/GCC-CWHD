@@ -1,4 +1,4 @@
-# GCC Azure - Central Workload Health Dashboard (AZCWHD)
+# CWHD - Central Workload Health Dashboard (used by agencies on [GCC Azure](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/)) 
  
 CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web backend.  
 
@@ -13,21 +13,6 @@ CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded h
 * [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
 * [Architecture](#architecture)
 
-<br />
-
-### Tier 0 Dashboard  
-
-<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
-
-### Tier 1 - Cloud Crafty
-
-<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
-
-### Tier 1 - Pocket Geek 
-
-<img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
-
-<img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
 
 <br />  
 
@@ -35,10 +20,57 @@ CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded h
 
 ### Tier 1 Dashboard  
 
-You aim to to cohesively group up all dependent Azure resources for a single system in a Tier 1 dashboard.  
-For e.g: You have a system that leverages App Services, VMs, Redis Cache, Azure SQL, Storage, Azure OpenAI service and Azure Function.
-If Any one or more of these services fails  your system will be affected. The Tier 1 dashboard should monitor all these 7 services in the above example with 7 separate Color-coded tiles representing the health of each of dependent resource.
-### Tier 0 Dashboard
+You aim to to cohesively group up all dependent Azure resources into a Tier 1 dashboard. How do you want to group resources is entirely up to you, below is a general guideline:
+<ul>
+ <li>
+  <b>Group by system</b>
+  <div>
+   For e.g: You have a system that leverages App Services, VMs, Redis Cache, Azure SQL, Storage, Azure OpenAI service and Azure Function.
+   If any one or more of these services fails your system will be affected. The Tier 1 dashboard should monitor all these Azure resources that together supports the functioning of your system.
+  </div>
+  <br />
+  <div>
+   For example if you have 2 systems Cloud Crafty and Pocket Geek, you will have 2 Tier 1 dashboards.  
+   Tier 1 / Cloud Crafty
+   <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
+   </div>
+   <div></div>
+   Tier 1 / Pocket Geek
+   <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
+   <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
+  
+ </li>
+ 
+ <li>
+  <b>Group by Subscription/Resource Group</b>
+  <div>
+   The context could be cloud admin monitoring shared resources in landing zones and shared resources are already grouped by Subscription or Resource Group.  
+   In this case, 1 subscription = Tier 1 dashbaord
+  </div>
+ </li>
+
+  <li>
+  <b>Group scattered resources</b>
+  <div>
+   You could also group Azure resources from different subscriptions and resource groups into a Tier 1 dashboard.
+  </div>
+ </li>
+</ul>
+
+<br />  
+
+### Tier 0 Dashboard  
+
+This dashboard is a summary view of all Tier 1 dashboards.  
+Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 and 1 are fully customized and adapted to your specific grouping of resources.
+<div>Hence, for this reason, Tier 0 and 1 dashboards is the core delivery work I will do for my customers. In addition to other custom request for e.g: IIS App Pool start/stop</div>
+
+<br />
+<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
+<img width="876" alt="image" src="https://github.com/user-attachments/assets/91270009-931a-41e4-805b-75914e1f5b01">
+
+<br />  
+
 ### Tier 2 Dashboard
 
 <br />  
