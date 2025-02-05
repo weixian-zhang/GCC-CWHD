@@ -63,7 +63,7 @@ You aim to to cohesively group up all dependent Azure resources into a Tier 1 da
 
 This dashboard is a summary view of all Tier 1 dashboards.  
 Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 and 1 are fully customized and adapted to your specific grouping of resources.
-<div>Hence, for this reason, Tier 0 and 1 dashboards is the core delivery work I will do for my customers. In addition to other custom request for e.g: IIS App Pool start/stop</div>
+<div>For this reason, Tier 0 and 1 dashboards is the core delivery work I will do for my customers, in addition to other custom request for e.g: IIS App Pool start/stop</div>
 
 <br />
 <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
@@ -71,8 +71,18 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />  
 
-### Tier 2 Dashboard
+### Tier 2 Dashboard  
 
+These dashboards are ready to use using without further configuration.  
+<div>Tier 2 dasboards are resource specific, there are 5 Tier 2 dashboards today</div>
+
+* Activity Audit dashboard
+* Applcation Gateway dashbaord (a modifed version from Azure Monitor)
+* Firewall dashbaord
+* Applcation Gateway dashbaord (a modifed version from Azure Monitor)
+* API Management dashboard (a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))
+* Key Vault dashboard (a modifed version from Azure Monitor)
+* Storage dashbaord (a modifed version from Azure Monitor)
 <br />  
 
 ## What is a Color-coded tile?
@@ -167,7 +177,7 @@ Each color-coded tile displays any of the 3 color at any one time: Green, Amber 
 
   <tr>
     <td>
-     <span>Tier 2 / API Management dashboard <div>(a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))</div></span>
+     Tier 2 / API Management dashboard
     </td>
     <td>
       enable APIM diagnostics settings
@@ -186,7 +196,7 @@ Each color-coded tile displays any of the 3 color at any one time: Green, Amber 
 
   <tr>
     <td>
-     <span>Tier 2 / Application Gateway dashboard <div></div>(a modified version from Azure Monitor)</div></span>
+     Tier 2 / Application Gateway dashboard
     </td>
     <td>
      <ul>
@@ -205,7 +215,7 @@ Each color-coded tile displays any of the 3 color at any one time: Green, Amber 
 
   <tr>
     <td>
-     <span>Tier 2 / Key Vault dashboard <div>(a modified version from Azure Monitor's Grafana dashboards)</div></span>
+     Tier 2 / Key Vault dashboar
     </td>
     <td>
       enable Key Vault diagnostics settings
