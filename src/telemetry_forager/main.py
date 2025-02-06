@@ -232,15 +232,22 @@ def run_pwsh():
 # background task
 def always_running_job_generate_wara_report():
     while True:
-        task = mem_queue.dequeue()
-        if task:
-            wap = WARAExecutor(config=appconfig)
-            wap.run()
-        time.sleep(5)
+        try:
+            task = mem_queue.dequeue()
+            if task:
+                Log.debug('always_running_job receive task wara-report-generation')
+                wap = WARAExecutor(config=appconfig)
+                wap.run()
+            time.sleep(5)
+        except Exception as e:
+            Log.exception(f'error occured at always_running_job_generate_wara_report: {str(e)}')
+        
 
 def scheduled_job_generate_wara_report():
+     Log.debug('scheduled_job enqueue task wara-report-generation')
      mem_queue.enqueue('run_wara')
 
+# cron schedule default to 3 hours
 def setup_scheduled_job():
     scheduler = BackgroundScheduler()
     scheduler.start()
@@ -252,6 +259,8 @@ def setup_scheduled_job():
         trigger=trigger,
         name="Background_Task_WARA_Report_Generation",
     )
+
+    Log.debug('scheduled_job is setup successfully')
 
 # setup background tasks
 # Create and start a new thread

@@ -30,7 +30,6 @@ class WARAReport:
             return json.loads(data)
         return []
 
-        return subscriptions
 
     def get_recommendations(self, subscription_id, execution_id):
         entity = self.db.query(self.db.recommendation_table_name, subscription_id, execution_id) 
