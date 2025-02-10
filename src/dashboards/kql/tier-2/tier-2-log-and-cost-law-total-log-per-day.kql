@@ -1,0 +1,5 @@
+Usage
+    | where TimeGenerated > ago(1d)
+    | where IsBillable
+    | summarize IngestedGB=sum(Quantity)  / 1.0E3 by DataType
+    | summarize sum(IngestedGB)
