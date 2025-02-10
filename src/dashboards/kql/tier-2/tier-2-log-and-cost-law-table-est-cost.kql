@@ -1,0 +1,15 @@
+// let index = 4;
+// let dict = dynamic(["L1","L2", "L3", "L4"]);
+// datatable(Path:string)[@'foo\bar\baz', @'L1\L2\L3\L4']
+// | extend PathSeperated = split(Path, "\\")
+// | project Name = PathSeperated[index]
+// | where Name == tostring(dict[index])
+Usage
+    | where TimeGenerated > startofday(ago(31d))
+    | where StartTime > startofday(ago(31d))
+    | where IsBillable
+    | extend DateTimeSG = datetime_utc_to_local(TimeGenerated, 'Asia/Singapore')
+    | summarize LastIngestionDate =max(DateTimeSG), IngestedGB=sum(Quantity)  / 1.0E3 by DataType, Solution
+    | extend EstimatedCostDollars = IngestedGB * 2.3
+    | sort by IngestedGB desc
+    | project Solution, DataType, LastIngestionDate, IngestedGB, EstimatedCostDollars

@@ -1,0 +1,7 @@
+Usage
+    | where TimeGenerated > startofday(ago(31d))
+    | where StartTime > startofday(ago(31d))
+    | where IsBillable
+    | summarize IngestedGB=sum(Quantity)  / 1.0E3 by DataType, Solution
+    | extend EstimatedCostDollars = IngestedGB * 2.3
+    | summarize round(sum(EstimatedCostDollars))
