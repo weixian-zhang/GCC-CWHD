@@ -1,4 +1,7 @@
-# Azure Monitoring with Grafana - Central Workload Health Dashboard Solution (CWHD)
+<h1>
+ <p>Azure Monitoring with Grafana</p>
+ <p><sub>powered by</sub> Central Workload Health Dashboard Solution (CWHD)</p>
+</h1>
  
 CWHD uses Grafana dashboards to visualize performance and health signals of Azure resources and is used by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/).
 
