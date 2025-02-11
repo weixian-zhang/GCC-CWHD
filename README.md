@@ -1,6 +1,6 @@
-# CWHD - Azure Monitoring with Central Workload Health Dashboard (used by agencies on [GCC Azure](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/)) 
+# Azure Monitoring with Grafana - Central Workload Health Dashboard Solution (CWHD)
  
-CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web backend.  
+CWHD uses Grafana dashboards to visualize performance and health signals of Azure resources and is used by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/).
 
 <br />
 
@@ -99,12 +99,13 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
   ![image](https://github.com/user-attachments/assets/9ee45a31-dd07-4527-a038-dcff0f897983)
 
 #### API Management Dashboard
-<p>Shows you API Management metrics, requests and operations logs. (a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))</p>
+<p>Shows you API Management metrics, requests and operations logs. (a modified version from <a href="https://grafana.com/grafana/dashboards/16604-azure-api-management">Vikram Bala</a>)</p>
 
 ![image](https://github.com/user-attachments/assets/1b71439d-47c2-40e2-a767-ad4b37ace87e)
 
 #### Key Vault Dashboard 
-<p>Shows you Key Vault metrics and operation logs. (a modifed version from Azure Monitor)  </p>  
+<p>Shows you Key Vault metrics and operation logs. (a modifed version from Azure Monitor) </p>  
+
 ![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
 
 
