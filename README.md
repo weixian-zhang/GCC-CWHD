@@ -79,8 +79,14 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 There are 5 Tier 2 dashboards today ready to use without further configuration
 
 * Activity Audit dashboard
+  <p>Shows you who made changes to Firewall rules, NSG, Key Vaults and all other services</p>  
+  
+  ![image](https://github.com/user-attachments/assets/ef0ca381-bcf6-4d1d-84c1-7fd61d301283)
+
 * Applcation Gateway dashbaord (a modifed version from Azure Monitor)
 * Firewall dashbaord
+  ![image](https://github.com/user-attachments/assets/9ee45a31-dd07-4527-a038-dcff0f897983)
+
 * Applcation Gateway dashbaord (a modifed version from Azure Monitor)
 * API Management dashboard (a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))
 * Key Vault dashboard (a modifed version from Azure Monitor)
