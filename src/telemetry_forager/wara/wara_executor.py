@@ -49,8 +49,9 @@ class WARAExecutor:
 
 
    def generate_execution_id(self) -> list[datetime.datetime, str]:
-      execution_start_time =  datetime.datetime.now().strftime("%a %d %b %Y %H %M %S")
-      execution_id = str(execution_start_time.timestamp())
+      now = datetime.datetime.now()
+      execution_start_time =  now.strftime("%a %d %b %Y %H:%M:%S")
+      execution_id = str(now.timestamp())
       return execution_start_time, execution_id
    
    # download scripts
@@ -387,6 +388,12 @@ class WARAExecutor:
                os.remove(self.exec_root_dir)
          except:
             pass
+
+         subscriptions = self.get_subscriptions()
+
+         if not subscriptions:
+            Log.debug(f'WARA - not subscriptions found, execution ended')
+            return
         
          
          execution_start_time, execution_id = self.generate_execution_id()
@@ -398,8 +405,6 @@ class WARAExecutor:
          self._create_root_exec_dir()
 
          self._download_scripts()
-
-         subscriptions = self.get_subscriptions()
 
          Log.debug(f'WARA - preparing execution for subscription ids: {",".join([sub.name for sub in subscriptions])}')
 
@@ -432,5 +437,5 @@ class WARAExecutor:
          
       except Exception as e:
          Log.exception(e)
-         if os.path.exists(self.exec_root_dir):
-               os.remove(self.exec_root_dir)
+         # if os.path.exists(self.exec_root_dir):
+         #       os.remove(self.exec_root_dir)

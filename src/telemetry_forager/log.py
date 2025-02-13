@@ -29,11 +29,32 @@ def init(appconfig: AppConfig) -> None:
         #         connection_string=appconfig.appinsightsConnString
         #     )
         azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        azure_handler.setLevel(logging.DEBUG)
+
+        console_handler = logging.StreamHandler()
+
         logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
         logger.propagate = False
-        if(azure_handler not in logger.handlers):
-            logger.addHandler(azure_handler)
+        logger.addHandler(azure_handler)
+        logger.addHandler(console_handler)
+
+        # disable uvicorn logs
+        # logging.getLogger("uvicorn.error").handlers = []
+        # logging.getLogger("uvicorn.error").propagate = False
+
+        # logging.getLogger("uvicorn.access").handlers = []
+        # logging.getLogger("uvicorn.access").propagate = False
+
+        # logging.getLogger("uvicorn.asgi").handlers = []
+        # logging.getLogger("uvicorn.asgi").propagate = True
+
+        # http client related logs level t
+        az_http_logging = logging.getLogger('azure.core.pipeline.policies.http_logging_policy')
+        az_http_logging.setLevel(logging.ERROR)
+
+        # all azure library log level error only
+        all_azure_logger = logger = logging.getLogger('azure')
+        all_azure_logger.setLevel(logging.ERROR)
 
 
 def debug(msg):
