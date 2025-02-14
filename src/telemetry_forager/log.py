@@ -3,7 +3,7 @@ import logging
 from config import AppConfig
 # from azure.monitor.opentelemetry import configure_azure_monitor
 from opencensus.ext.azure.log_exporter import AzureLogHandler
-# import sys  
+import sys  
 
 #logger.remove()
 # logger.add(sys.stdout, format="{time} | {level} - {message}", level="DEBUG")
@@ -24,37 +24,24 @@ def init(appconfig: AppConfig) -> None:
         else:
              return
 
-        # if appconfig.appinsightsConnString:
-        #     configure_azure_monitor(
-        #         connection_string=appconfig.appinsightsConnString
-        #     )
-        azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
+        # http client related logs level t
+        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
+        # all azure library log level error only
+        az_logger = logging.getLogger('azure.storage')
+        az_logger.setLevel(logging.ERROR)
+        az_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+
+        azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
+        azure_handler.setLevel(level=logging.ERROR)
         console_handler = logging.StreamHandler()
 
-        logger = logging.getLogger()
+        logger = logging.getLogger('default_logger')
         logger.setLevel(logging.DEBUG)
         logger.propagate = False
         logger.addHandler(azure_handler)
         logger.addHandler(console_handler)
 
-        # disable uvicorn logs
-        # logging.getLogger("uvicorn.error").handlers = []
-        # logging.getLogger("uvicorn.error").propagate = False
-
-        # logging.getLogger("uvicorn.access").handlers = []
-        # logging.getLogger("uvicorn.access").propagate = False
-
-        # logging.getLogger("uvicorn.asgi").handlers = []
-        # logging.getLogger("uvicorn.asgi").propagate = True
-
-        # http client related logs level t
-        az_http_logging = logging.getLogger('azure.core.pipeline.policies.http_logging_policy')
-        az_http_logging.setLevel(logging.ERROR)
-
-        # all azure library log level error only
-        all_azure_logger = logger = logging.getLogger('azure')
-        all_azure_logger.setLevel(logging.ERROR)
 
 
 def debug(msg):

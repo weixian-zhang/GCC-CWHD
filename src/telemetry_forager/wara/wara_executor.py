@@ -103,11 +103,15 @@ class WARAExecutor:
             line = p.stdout.readline()
             if not line:
                break
-            Log.debug(f'WARA - {line.rstrip()}')
+            #Log.debug(f'WARA - {line.rstrip()}')
 
          p.wait(timeout=3)
+
+         Log.debug(f'WARA - finish executing collector.ps1')
+
       except subprocess.TimeoutExpired:
          p.kill(p.pid)
+         Log.debug(f'WARA - finish executing collector.ps1')
       
 
       for file in os.listdir(self.exec_root_dir):
@@ -140,17 +144,20 @@ class WARAExecutor:
                            stderr=subprocess.PIPE)
       
       
-
       try:
          while True:
             line = p.stdout.readline()
             if not line:
                break
-            Log.debug(f'WARA - {line.rstrip()}')
+            #Log.debug(f'WARA - {line.rstrip()}') #reduce logging
 
          p.wait(timeout=3)
+         
+         Log.debug(f'WARA - finish executing wara_data_analyzer.ps1')
+
       except subprocess.TimeoutExpired:
          p.kill(p.pid)
+         Log.debug(f'WARA - finish executing wara_data_analyzer.ps1')
 
       
       for file in os.listdir(self.exec_root_dir):
@@ -161,32 +168,18 @@ class WARAExecutor:
      
       Log.debug(f'WARA - wara_data_analyzer.ps1 failed execution, no Excel output file found')
 
-   def read_and_save_recommendations_json(self, file_path: str, execution_id, subscription_id) -> bool:
+   def read_and_save_recommendations_json(self, file_path: str, execution_id, subscription_id) -> list[bool, str]:
          try:
             
             # worksheet may not exist, catch and return True
             try:
                df = pd.read_excel(file_path, 'Recommendations')
             except Exception as e:
-               return True
+               return True, ''
 
+            jdf = df.to_json(orient='records')
 
-            # clean data before saving
-            newdf = pd.DataFrame()
-            # https://stackoverflow.com/questions/21608228/conditional-replace-pandas
-
-            newdf['Implemented'] = df.iloc[:,0]
-            newdf['Number_of_Impacted_Resources'] = df.iloc[:,1]
-            newdf['Service_Category'] = df.iloc[:,4]
-            newdf['Resiliency_Category'] = df.iloc[:,6]
-            newdf['Recommendation'] = df.iloc[:,7]
-            newdf['Impact'] = df.iloc[:,8]
-            newdf['Best_Practice_Guidance'] = df.iloc[:,9]
-            newdf['Read_More'] = df.iloc[:,10]
-
-            json = newdf.to_json(orient='records')
-
-            compressed = self.compress_string(json)
+            compressed = self.compress_string(jdf)
 
             entity = {
                'PartitionKey': subscription_id,
@@ -194,108 +187,23 @@ class WARAExecutor:
                'data': compressed
             }
 
-            self.db.insert(self.db.recommendation_table_name, entity)
+            self.db.insert(self.db.wara_recommendation_table_name, entity)
 
-            return True
+            return True, ''
             
          except Exception as e:
             Log.exception(e)
-            return False
+            return False, str(e)
+         
       
-   def read_impacted_resources_json(self,subscription_id, execution_id, file_path: str) -> str:
+   def read_impacted_resources_json(self,subscription_id, execution_id, file_path: str) -> list[bool, str]:
       try:
          # worksheet may not exist, catch and return True
          try:
             df = pd.read_excel(file_path, 'ImpactedResources')
          except:
-            return True
+            return True, ''
       
-
-         # clean data before saving
-         newdf = pd.DataFrame()
-
-         newdf['SubscriptionId'] = df.iloc[:,5]
-         newdf['ResourceGroup'] = df.iloc[:,6]
-         newdf['ResourceType'] = df.iloc[:,1]
-         newdf['Name'] = df.iloc[:,8]
-         newdf['Impact'] = df.iloc[:,4]
-         newdf['Recommendation'] = df.iloc[:,2]
-         newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
-
-         json = newdf.to_json(orient='records')
-
-         compressed = self.compress_string(json)
-
-         entity = {
-            'PartitionKey': subscription_id,
-            'RowKey': execution_id,
-            'data': compressed
-         }
-
-         self.db.insert(self.db.impacted_resources_table_name, entity)
-
-         return True
-      
-      except Exception as e:
-         Log.exception(e)
-         return False
-
-   def read_resource_types_json(self, subscription_id, execution_id, file_path: str) -> str:
-      try:
-         # worksheet may not exist, catch and return True
-         try:
-            df = pd.read_excel(file_path, 'ResourceTypes')
-         except:
-            return True
-      
-
-         # clean data before saving
-         newdf = pd.DataFrame()
-
-         newdf['ResourceType'] = df.iloc[:,0]
-         newdf['NumberOfResources'] = df.iloc[:,1]
-         
-         json = newdf.to_json(orient='records')
-
-         compressed = self.compress_string(json)
-
-         entity = {
-            'PartitionKey': subscription_id,
-            'RowKey': execution_id,
-            'data': compressed
-         }
-
-         self.db.insert(self.db.resource_type_table_name, entity)
-
-         return True
-      
-      except Exception as e:
-         Log.exception(e)
-         return False
-
-   def read_retirements_json(self, subscription_id, execution_id, file_path: str) -> str:
-      try:
-
-         # worksheet may not exist, catch and return True
-         try:
-            df = pd.read_excel(file_path, 'Retirements')
-         except:
-            return True
-         
-         # drop unused columns: 
-            # Tracking ID
-         # clean data before saving
-         newdf = pd.DataFrame()
-
-         newdf['SubscriptionId'] = df.iloc[:,0]
-         newdf['Status'] = df.iloc[:,1]
-         newdf['LastUpdateTime'] = df.iloc[:,3]
-         newdf['EndTime'] = df.iloc[:,4]
-         newdf['ImpactedService'] = df.iloc[:,5]
-         newdf['Title'] = df.iloc[:,6]
-         newdf['Summary'] = df.iloc[:,7]
-         newdf['Details'] = df.iloc[:,8]
-         newdf['RequiredAction'] = df.iloc[:,9]
 
          json = df.to_json(orient='records')
 
@@ -307,13 +215,68 @@ class WARAExecutor:
             'data': compressed
          }
 
-         self.db.insert(self.db.retirements_table_name, entity)
+         self.db.insert(self.db.wara_impacted_resources_table_name, entity)
 
-         return True
+         return True, ''
+      
+      except Exception as e:
+         Log.exception(e)
+         return False, str(e)
+
+   def read_resource_types_json(self, subscription_id, execution_id, file_path: str) -> list[bool, str]:
+      try:
+         # worksheet may not exist, catch and return True
+         try:
+            df = pd.read_excel(file_path, 'ResourceTypes')
+         except:
+            return True, ''
+      
+         
+         json = df.to_json(orient='records')
+
+         compressed = self.compress_string(json)
+
+         entity = {
+            'PartitionKey': subscription_id,
+            'RowKey': execution_id,
+            'data': compressed
+         }
+
+         self.db.insert(self.db.wara_resource_type_table_name, entity)
+
+         return True, ''
+      
+      except Exception as e:
+         Log.exception(e)
+         return False, str(e)
+
+   def read_retirements_json(self, subscription_id, execution_id, file_path: str) -> list[bool, str]:
+      try:
+
+         # worksheet may not exist, catch and return True
+         try:
+            df = pd.read_excel(file_path, 'Retirements')
+         except:
+            return True, ''
+
+         json = df.to_json(orient='records')
+
+         compressed = self.compress_string(json)
+
+         entity = {
+            'PartitionKey': subscription_id,
+            'RowKey': execution_id,
+            'data': compressed
+         }
+
+         self.db.insert(self.db.wara_retirements_table_name, entity)
+
+         return True, ''
 
       except Exception as e:
          Log.exception(e)
-         return False
+         return False, str(e)
+      
 
    # pandas read excel from Excel
    def read_and_save_analyzer_excel_result(self, excel_file_path, subscription_id: str, execution_id: str):
@@ -324,25 +287,27 @@ class WARAExecutor:
             Log.exception('WARA - cannot find analyzer.ps1 Excel file result')
             return False
          
-         r_ok = self.read_and_save_recommendations_json(excel_file_path, execution_id, subscription_id)
+         r_ok, r_err = self.read_and_save_recommendations_json(excel_file_path, execution_id, subscription_id)
 
          if not r_ok:
-            return False
+            Log.exception(f'WARA - error reading Excel Recommendation worksheet. {r_err}')
 
-         i_ok = self.read_impacted_resources_json(subscription_id, execution_id, excel_file_path)
+         i_ok, i_err = self.read_impacted_resources_json(subscription_id, execution_id, excel_file_path)
 
          if not i_ok:
-            return False
+            Log.exception(f'WARA - error reading Excel Impacted Resources worksheet. {i_err}')
 
-         rt_ok = self.read_resource_types_json(subscription_id, execution_id, excel_file_path)
+
+         rt_ok, rt_err = self.read_resource_types_json(subscription_id, execution_id, excel_file_path)
 
          if not rt_ok:
-            return False
+            Log.exception(f'WARA - error reading Excel Resource Type worksheet. {rt_err}')
 
-         ret_ok = self.read_retirements_json(subscription_id, execution_id, excel_file_path)
+         ret_ok, ret_err = self.read_retirements_json(subscription_id, execution_id, excel_file_path)
 
          if not ret_ok:
-            return False
+            Log.exception(f'WARA - error reading Excel Retirement worksheet. {ret_err}')
+      
 
       except Exception as e:
          return False
@@ -355,7 +320,7 @@ class WARAExecutor:
          "execution_start_time": execution_start_time
       }
 
-      self.db.insert(self.db.run_history_table_name, entity)
+      self.db.insert(self.db.wara_run_history_table_name, entity)
 
       js = json.dumps(subscriptions, default = lambda x: x.__dict__)
 
@@ -365,7 +330,7 @@ class WARAExecutor:
          'data': self.compress_string(js)
       }
 
-      self.db.insert(self.db.run_subscription_table_name, sub_entity)
+      self.db.insert(self.db.wara_run_subscription_table_name, sub_entity)
 
 
    def compress_string(self, data: str) -> str:
@@ -419,6 +384,8 @@ class WARAExecutor:
 
             if not excel_file_path:
                raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
+
+            excel_file_path='C:\\Weixian\\projects\\VBD\\GCC-CWHD\\src\\telemetry_forager\\wara\\temp_wara_exec\\WARA Action Plan 2025-02-14-15-15.xlsx'
 
             self.read_and_save_analyzer_excel_result(excel_file_path, sub.id, execution_id)
 

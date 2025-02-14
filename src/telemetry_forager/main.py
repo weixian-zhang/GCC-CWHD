@@ -147,13 +147,13 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 # WARA module
 
 @app.get("/api/wara/report/runhistory", status_code=200, response_model=None)
-def run_pwsh() -> list[WARAExecution]:
+def run_history() -> list[WARAExecution]:
     wr = WARAReport(config=appconfig)
     executions = wr.list_execution_history()
     return executions
 
 @app.get("/api/wara/report/subscriptions", status_code=200, response_model=None)
-def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
+def get_subscriptions(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
     params = request.query_params
     executionid = params.get('execid', '')
 
@@ -166,7 +166,7 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARA
     return result
 
 @app.get("/api/wara/report/recommendations", status_code=200, response_model=None)
-def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
+def get_recommendations(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
     params = request.query_params
     subid = params.get('subid', '')
     executionid = params.get('execid', '')
@@ -176,11 +176,13 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response)  -> list[WARA
         return 'subscription_id and executionid are required'
     
     wr = WARAReport(config=appconfig)
+    
     result = wr.get_recommendations(subid, executionid)
+
     return result
 
 @app.get("/api/wara/report/impactedresources", status_code=200, response_model=None)
-def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAImpactedResource]:
+def get_impacted_resources(request: fastapi.Request, response: fastapi.Response) -> list[WARAImpactedResource]:
     params = request.query_params
     subid = params.get('subid', '')
     executionid = params.get('execid', '')
@@ -194,7 +196,7 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAI
     return result
 
 @app.get("/api/wara/report/impactedresourcetypes", status_code=200, response_model=None)
-def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
+def get_resource_types(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
     params = request.query_params
     subid = params.get('subid', '')
     executionid = params.get('execid', '')
@@ -209,7 +211,7 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAR
 
 
 @app.get("/api/wara/report/retirements", status_code=200, response_model=None)
-def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARARetirement]:
+def get_retirements(request: fastapi.Request, response: fastapi.Response) -> list[WARARetirement]:
     params = request.query_params
     subid = params.get('subid', '')
     executionid = params.get('execid', '')
@@ -220,6 +222,36 @@ def run_pwsh(request: fastapi.Request, response: fastapi.Response) -> list[WARAR
     
     wr = WARAReport(config=appconfig)
     result = wr.get_retirements(subid, executionid)
+    return result
+
+
+@app.get("/api/wara/report/recommendations/service-type-by-impact", status_code=200, response_model=None)
+def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
+    params = request.query_params
+    subid = params.get('subid', '')
+    executionid = params.get('execid', '')
+
+    if not subid or not executionid:
+        response.status_code = 400
+        return 'subscription_id and executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_pivot_recommendation_service_by_impact(subid, executionid)
+    return result
+
+
+@app.get("/api/wara/report/recommendations/resiliency-by-impact", status_code=200, response_model=None)
+def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
+    params = request.query_params
+    subid = params.get('subid', '')
+    executionid = params.get('execid', '')
+
+    if not subid or not executionid:
+        response.status_code = 400
+        return 'subscription_id and executionid are required'
+    
+    wr = WARAReport(config=appconfig)
+    result = wr.get_pivot_recommendation_resiliency_by_impact(subid, executionid)
     return result
     
 

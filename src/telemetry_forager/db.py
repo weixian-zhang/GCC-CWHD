@@ -2,30 +2,31 @@ from azure.data.tables import TableServiceClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 from log import logger as Log
-
+import logging
 class DB:
 
     def __init__(self, config):
         self.config = config
 
-        self.run_history_table_name = 'RunHistory'
-        self.recommendation_table_name = 'Recommendation'
-        self.retirements_table_name = 'Retirements'
-        self.resource_type_table_name = 'ResourceType'
-        self.impacted_resources_table_name = 'ImpactedResources'
-        self.run_subscription_table_name = 'RunSubscription'
+        self.wara_run_history_table_name = 'WARARunHistory'
+        self.wara_recommendation_table_name = 'WARARecommendation'
+        self.wara_retirements_table_name = 'WARARetirements'
+        self.wara_resource_type_table_name = 'WARAResourceType'
+        self.wara_impacted_resources_table_name = 'WARAImpactedResources'
+        self.wara_run_subscription_table_name = 'WARARunSubscription'
 
-        self.table_service_client = TableServiceClient(endpoint=self.config.table_storage_url, credential=DefaultAzureCredential())
+        self.table_service_client = TableServiceClient(endpoint=self.config.table_storage_url, 
+                                                       credential=DefaultAzureCredential())
         
 
     def init(self):
         try:
-            self.table_service_client.create_table_if_not_exists(table_name=self.run_history_table_name)
-            self.table_service_client.create_table_if_not_exists(table_name=self.recommendation_table_name)
-            self.table_service_client.create_table_if_not_exists(table_name=self.retirements_table_name)
-            self.table_service_client.create_table_if_not_exists(table_name=self.resource_type_table_name)
-            self.table_service_client.create_table_if_not_exists(table_name=self.impacted_resources_table_name)
-            self.table_service_client.create_table_if_not_exists(table_name=self.run_subscription_table_name)
+            self.table_service_client.create_table_if_not_exists(table_name=self.wara_run_history_table_name)
+            self.table_service_client.create_table_if_not_exists(table_name=self.wara_recommendation_table_name)
+            self.table_service_client.create_table_if_not_exists(table_name=self.wara_retirements_table_name)
+            self.table_service_client.create_table_if_not_exists(table_name=self.wara_resource_type_table_name)
+            self.table_service_client.create_table_if_not_exists(table_name=self.wara_impacted_resources_table_name)
+            self.table_service_client.create_table_if_not_exists(table_name=self.wara_run_subscription_table_name)
         except Exception as e:
             Log.exception(f'error occured: {str(e)}')
     
