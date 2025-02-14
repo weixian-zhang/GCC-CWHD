@@ -385,8 +385,6 @@ class WARAExecutor:
             if not excel_file_path:
                raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
 
-            excel_file_path='C:\\Weixian\\projects\\VBD\\GCC-CWHD\\src\\telemetry_forager\\wara\\temp_wara_exec\\WARA Action Plan 2025-02-14-15-15.xlsx'
-
             self.read_and_save_analyzer_excel_result(excel_file_path, sub.id, execution_id)
 
             if os.path.exists(json_file_path):

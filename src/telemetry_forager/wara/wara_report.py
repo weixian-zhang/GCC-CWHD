@@ -60,19 +60,22 @@ class WARAReport:
             jd = json.loads(data)
 
             df = pd.DataFrame(jd)
-            df['Impact'] = df.iloc[:,8]
-            df['Implemented'] = df.iloc[:,0]
-            df['Number_of_Impacted_Resources'] = df.iloc[:,1]
-            df['ResourceProvider'] = df.iloc[:,4]
-            df['ServiceTopic'] = df.iloc[:,5]
-            df['Resiliency_Category'] = df.iloc[:,6]
-            df['Recommendation'] = df.iloc[:,7]
-            df['Best_Practice_Guidance'] = df.iloc[:,9]
-            df['Read_More'] = df.iloc[:,10]
 
-            return df.to_json()
+            newdf = pd.DataFrame()
+            newdf['Impact'] = df.iloc[:,8]
+            newdf['Implemented'] = df.iloc[:,0]
+            newdf['Number_of_Impacted_Resources'] = df.iloc[:,1]
+            newdf['ResourceProvider'] = df.iloc[:,4]
+            newdf['ServiceTopic'] = df.iloc[:,5]
+            newdf['Resiliency_Category'] = df.iloc[:,6]
+            newdf['Recommendation'] = df.iloc[:,7]
+            newdf['Best_Practice_Guidance'] = df.iloc[:,9]
+            newdf['Read_More'] = df.iloc[:,10]
+
+            return newdf.to_json()
         
         return []
+    
     
     def get_impacted_resources(self, subscription_id, execution_id):
         entity = self.db.query(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
@@ -82,15 +85,17 @@ class WARAReport:
             jd = json.loads(data)
 
             df = pd.DataFrame(jd)
-            df['SubscriptionId'] = df.iloc[:,5]
-            df['ResourceGroup'] = df.iloc[:,6]
-            df['ResourceType'] = df.iloc[:,1]
-            df['Name'] = df.iloc[:,8]
-            df['Impact'] = df.iloc[:,4]
-            df['Recommendation'] = df.iloc[:,2]
-            df['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
+
+            newdf = pd.DataFrame()
+            newdf['SubscriptionId'] = df.iloc[:,5]
+            newdf['ResourceGroup'] = df.iloc[:,6]
+            newdf['ResourceType'] = df.iloc[:,1]
+            newdf['Name'] = df.iloc[:,8]
+            newdf['Impact'] = df.iloc[:,4]
+            newdf['Recommendation'] = df.iloc[:,2]
+            newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
         
-            return df.to_json()
+            return newdf.to_json()
         
         return []
     
@@ -102,10 +107,12 @@ class WARAReport:
             jd = json.loads(data)
 
             df = pd.DataFrame(jd)
-            df['ResourceType'] = df.iloc[:,0]
-            df['NumberOfResources'] = df.iloc[:,1]
+
+            newdf = pd.DataFrame()
+            newdf['ResourceType'] = df.iloc[:,0]
+            newdf['NumberOfResources'] = df.iloc[:,1]
         
-            return df.to_json()
+            return newdf.to_json()
         
         return []
     
@@ -118,16 +125,18 @@ class WARAReport:
             jd = json.loads(data)
 
             df = pd.DataFrame(jd)
-            df['SubscriptionId'] = df.iloc[:,0]
-            df['Status'] = df.iloc[:,1]
-            df['LastUpdateTime'] = df.iloc[:,3]
-            df['EndTime'] = df.iloc[:,4]
-            df['ImpactedService'] = df.iloc[:,5]
-            df['Title'] = df.iloc[:,6]
-            df['Details'] = df.iloc[:,8]
-            df['RequiredAction'] = df.iloc[:,9]
+
+            newdf = pd.DataFrame()
+            newdf['SubscriptionId'] = df.iloc[:,0]
+            newdf['Status'] = df.iloc[:,1]
+            newdf['LastUpdateTime'] = df.iloc[:,3]
+            newdf['EndTime'] = df.iloc[:,4]
+            newdf['ImpactedService'] = df.iloc[:,5]
+            newdf['Title'] = df.iloc[:,6]
+            newdf['Details'] = df.iloc[:,8]
+            newdf['RequiredAction'] = df.iloc[:,9]
         
-            return df.to_json()
+            return newdf.to_json()
         
         return []
 
