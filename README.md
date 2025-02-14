@@ -156,8 +156,7 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
 <br /> 
 
 ## Roadmap
-* WARA on Grafana - WAF Reliability Assessment report on Grafana
-* ready-to-use Tier 2 Grafana dashboards
+Please see [Issues](https://github.com/weixian-zhang/GCC-CWHD/issues).
 
 ## Tech Stack  
 * Python 3.11
