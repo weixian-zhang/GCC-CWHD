@@ -225,7 +225,7 @@ def get_retirements(request: fastapi.Request, response: fastapi.Response) -> lis
     return result
 
 
-@app.get("/api/wara/report/recommendations/service-type-by-impact", status_code=200, response_model=None)
+@app.get("/api/wara/report/stats/service-by-impact", status_code=200, response_model=None)
 def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
     params = request.query_params
     subid = params.get('subid', '')
@@ -240,7 +240,7 @@ def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, re
     return result
 
 
-@app.get("/api/wara/report/recommendations/resiliency-by-impact", status_code=200, response_model=None)
+@app.get("/api/wara/report/stats/resiliency-by-impact", status_code=200, response_model=None)
 def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
     params = request.query_params
     subid = params.get('subid', '')

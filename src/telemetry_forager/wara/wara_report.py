@@ -31,19 +31,23 @@ class WARAReport:
         return []
     
     def get_pivot_recommendation_service_by_impact(self, subscription_id, execution_id):
-        recommendations = self.get_recommendations(subscription_id, execution_id)
 
-        df = pd.DataFrame(recommendations)
+        df = self.get_recommendations(subscription_id, execution_id, to_df=True)
 
+        if df is []:
+            return []
+        
         pivot_by_service_df = df.pivot_table(index='ServiceTopic', columns="Impact", aggfunc='size', fill_value=0)
 
         return pivot_by_service_df.to_json()
     
 
     def get_pivot_recommendation_resiliency_by_impact(self, subscription_id, execution_id):
-        recommendations = self.get_recommendations(subscription_id, execution_id)
+        
+        df = self.get_recommendations(subscription_id, execution_id, to_df=True)
 
-        df = pd.DataFrame(recommendations)
+        if df is []:
+            return []
 
         pivot_by_resiliency_cat_df = df.pivot_table(index='Resiliency_Category', columns="Impact", aggfunc='size', fill_value=0)
 
@@ -51,7 +55,13 @@ class WARAReport:
 
     
 
-    def get_recommendations(self, subscription_id, execution_id):
+    def get_recommendations(self, subscription_id, execution_id, to_df=False):
+        '''
+        Get recommendations for a given subscription and execution id
+        params:
+            to_df (bool): if True, return a pandas dataframe, else return a json string
+        '''
+
         entity = self.db.query(self.db.wara_recommendation_table_name, subscription_id, execution_id) 
         
         if entity and entity['data']:
@@ -72,13 +82,18 @@ class WARAReport:
             newdf['Best_Practice_Guidance'] = df.iloc[:,9]
             newdf['Read_More'] = df.iloc[:,10]
 
-            return newdf.to_json()
+            if not to_df:
+                return newdf.to_json()
+            else:
+                return newdf 
         
         return []
     
     
     def get_impacted_resources(self, subscription_id, execution_id):
+
         entity = self.db.query(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
+
         if entity and entity['data']:
             data = entity['data']
             data = self._decompress_string(data)
@@ -87,7 +102,7 @@ class WARAReport:
             df = pd.DataFrame(jd)
 
             newdf = pd.DataFrame()
-            newdf['SubscriptionId'] = df.iloc[:,5]
+            #newdf['SubscriptionId'] = df.iloc[:,5]
             newdf['ResourceGroup'] = df.iloc[:,6]
             newdf['ResourceType'] = df.iloc[:,1]
             newdf['Name'] = df.iloc[:,8]
@@ -100,7 +115,9 @@ class WARAReport:
         return []
     
     def get_impacted_resource_types(self, subscription_id, execution_id):
+
         entity = self.db.query(self.db.wara_resource_type_table_name, subscription_id, execution_id) 
+
         if entity and entity['data']:
             data = entity['data']
             data = self._decompress_string(data)
@@ -118,7 +135,9 @@ class WARAReport:
     
 
     def get_retirements(self, subscription_id, execution_id):
+
         entity = self.db.query(self.db.wara_retirements_table_name, subscription_id, execution_id) 
+
         if entity and entity['data']:
             data = entity['data']
             data = self._decompress_string(data)
@@ -127,7 +146,7 @@ class WARAReport:
             df = pd.DataFrame(jd)
 
             newdf = pd.DataFrame()
-            newdf['SubscriptionId'] = df.iloc[:,0]
+            #newdf['SubscriptionId'] = df.iloc[:,0]
             newdf['Status'] = df.iloc[:,1]
             newdf['LastUpdateTime'] = df.iloc[:,3]
             newdf['EndTime'] = df.iloc[:,4]
