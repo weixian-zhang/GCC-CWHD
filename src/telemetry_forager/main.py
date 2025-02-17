@@ -11,7 +11,6 @@ import log as Log
 from wara.wara_executor import WARAExecutor
 from wara.wara_report import WARAReport
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
-from opentelemetry.propagate import extract
 import threading
 import time
 from apscheduler.schedulers.background import BackgroundScheduler

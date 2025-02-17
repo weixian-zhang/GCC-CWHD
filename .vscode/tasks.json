@@ -9,7 +9,7 @@
 				"cwd": "${workspaceFolder}/src/telemetry_forager"
 			},
 			"dependsOn": ["pip freeze"]
-		},p
+		},
 		{
 			"label": "docker push",
 			"type": "shell",

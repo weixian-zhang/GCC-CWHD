@@ -37,9 +37,11 @@ class WARAReport:
         if df is []:
             return []
         
-        pivot_by_service_df = df.pivot_table(index='ServiceTopic', columns="Impact", aggfunc='size', fill_value=0)
+        pivot_Table = df.pivot_table(index='ServiceTopic', columns="Impact", aggfunc='size', fill_value=0)
 
-        return pivot_by_service_df.to_json()
+        pdf = pivot_Table.reset_index() # convert pivot to dataframe
+
+        return pdf.to_json(orient="records")
     
 
     def get_pivot_recommendation_resiliency_by_impact(self, subscription_id, execution_id):
@@ -49,10 +51,11 @@ class WARAReport:
         if df is []:
             return []
 
-        pivot_by_resiliency_cat_df = df.pivot_table(index='Resiliency_Category', columns="Impact", aggfunc='size', fill_value=0)
+        pivot_Table = df.pivot_table(index='Resiliency_Category', columns="Impact", aggfunc='size', fill_value=0)
 
-        return pivot_by_resiliency_cat_df.to_json()
+        pdf = pivot_Table.reset_index() # convert pivot to dataframe
 
+        return pdf.to_json(orient="records")
     
 
     def get_recommendations(self, subscription_id, execution_id, to_df=False):
@@ -83,7 +86,7 @@ class WARAReport:
             newdf['Read_More'] = df.iloc[:,10]
 
             if not to_df:
-                return newdf.to_json()
+                return newdf.to_json(orient='records')
             else:
                 return newdf 
         
@@ -110,7 +113,7 @@ class WARAReport:
             newdf['Recommendation'] = df.iloc[:,2]
             newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
         
-            return newdf.to_json()
+            return newdf.to_json(orient='records')
         
         return []
     
@@ -129,7 +132,7 @@ class WARAReport:
             newdf['ResourceType'] = df.iloc[:,0]
             newdf['NumberOfResources'] = df.iloc[:,1]
         
-            return newdf.to_json()
+            return newdf.to_json(orient='records')
         
         return []
     
@@ -155,7 +158,7 @@ class WARAReport:
             newdf['Details'] = df.iloc[:,8]
             newdf['RequiredAction'] = df.iloc[:,9]
         
-            return newdf.to_json()
+            return newdf.to_json(orient='records')
         
         return []
 
