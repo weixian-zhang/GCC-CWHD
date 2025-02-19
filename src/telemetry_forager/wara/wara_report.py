@@ -33,7 +33,7 @@ class WARAReport:
     
     def get_run_subscriptions(self, execution_id):
 
-        entity = self.db.query(self.db.wara_run_subscription_table_name, partition_key=execution_id, row_key=execution_id)
+        entity = self.db.get_row(self.db.wara_run_subscription_table_name, partition_key=execution_id, row_key=execution_id)
         
         if entity and entity['data']:
             data = entity['data']
@@ -77,7 +77,7 @@ class WARAReport:
             to_df (bool): if True, return a pandas dataframe, else return a json string
         '''
 
-        entity = self.db.query(self.db.wara_recommendation_table_name, subscription_id, execution_id) 
+        entity = self.db.get_row(self.db.wara_recommendation_table_name, subscription_id, execution_id) 
         
         if entity and entity['data']:
             data = entity['data']
@@ -107,7 +107,7 @@ class WARAReport:
     
     def get_impacted_resources(self, subscription_id, execution_id):
 
-        entity = self.db.query(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
+        entity = self.db.get_row(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
 
         if entity and entity['data']:
             data = entity['data']
@@ -133,7 +133,7 @@ class WARAReport:
     def get_impacted_resource_types(self, subscription_id, execution_id):
 
 
-        entity = self.db.query(self.db.wara_resource_type_table_name, subscription_id, execution_id) 
+        entity = self.db.get_row(self.db.wara_resource_type_table_name, subscription_id, execution_id) 
 
         if entity and entity['data']:
             data = entity['data']
@@ -153,7 +153,7 @@ class WARAReport:
 
     def get_retirements(self, subscription_id, execution_id):
 
-        entity = self.db.query(self.db.wara_retirements_table_name, subscription_id, execution_id) 
+        entity = self.db.get_row(self.db.wara_retirements_table_name, subscription_id, execution_id) 
 
         if entity and entity['data']:
             data = entity['data']

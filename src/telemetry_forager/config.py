@@ -35,9 +35,11 @@ class AppConfig:
         self.health_status_threshold = self.get_thresholds()
 
         self.wara_tenantId = os.environ.get('WARA_TenantId') if os.environ.get('WARA_TenantId') else ''
-        self.wara_subsciptionIds = self._get_wara_subscriptionIds()
 
         self.table_storage_url = os.environ.get('Table_Storage_URL') if os.environ.get('Table_Storage_URL') else ''
+
+        self.wara_days_to_keep_run_history= int(os.environ.get('WARA_Days_To_Keep_Run_History')) if os.environ.get('WARA_Days_To_Keep_Run_History') else 180
+
         self.loaded = True
 
     def get_thresholds(self) -> HealthStatusThreshold:
@@ -63,15 +65,6 @@ class AppConfig:
         except Exception as e:
             raise Exception(f'Error in parsing config HealthStatusThreshold {e}')
         
-
-    def _get_wara_subscriptionIds(self):
-        try:
-            subscriptionIds = os.environ.get('WARA_SubscriptionIds')
-            if not subscriptionIds:
-                return []
-            return subscriptionIds.split(',')
-        except Exception as e:
-            raise Exception(f'Error in parsing config SubscriptionIds {e}')
         
 
     

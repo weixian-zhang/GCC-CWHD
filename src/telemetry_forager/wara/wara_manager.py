@@ -20,7 +20,7 @@ class RunContext:
       self.run_start_time = datetime.datetime.now()
       
 
-class WARAExecutor:
+class WARAManager:
 
    def __init__(self, config: AppConfig):
       file_full_path = os.path.realpath(__file__)
@@ -412,3 +412,47 @@ class WARAExecutor:
          
       except Exception as e:
          Log.exception(e)
+
+
+   def delete_run_history(self, days_to_keep):
+      
+      exec_ids_to_del = []
+      datetime_to_start_del = datetime.datetime.now() - datetime.timedelta(days=days_to_keep)
+      datetime_to_start_del = datetime_to_start_del.strftime("%Y-%m-%dT%H:%M:%S")
+      filter = f"execution_start_time lt datetime'{str(datetime_to_start_del)}'"
+
+      run_history_to_del = self.db.query_entities(self.db.wara_run_history_table_name, filter)
+
+      for entity in run_history_to_del:
+         exec_ids_to_del.append(entity['PartitionKey'])
+
+      if not exec_ids_to_del:
+         Log.debug(f'WARA - no run history to delete. days to keep = {days_to_keep}. Date/time to start delete {datetime_to_start_del.strftime("%a %d %b %Y %H:%M:%S")}')
+         return
+      
+
+      for execid in exec_ids_to_del:
+
+
+         recommendations = self.db.query_entities(self.db.wara_recommendation_table_name, f"RowKey eq '{execid}'")
+         for rec in recommendations:
+            self.db.delete_row(self.db.wara_recommendation_table_name, rec)
+
+         impacted_resources = self.db.query_entities(self.db.wara_impacted_resources_table_name, f"RowKey eq '{execid}'")
+         for ir in impacted_resources:
+            self.db.delete_row(self.db.wara_impacted_resources_table_name, ir)
+
+         resource_types = self.db.query_entities(self.db.wara_resource_type_table_name, f"RowKey eq '{execid}'")
+         for rt in resource_types:
+            self.db.delete_row(self.db.wara_resource_type_table_name, rt)
+
+         retirements = self.db.query_entities(self.db.wara_retirements_table_name, f"RowKey eq '{execid}'")
+         for r in retirements:
+            self.db.delete_row(self.db.wara_retirements_table_name, r)
+
+         self.db.delete_row(self.db.wara_run_subscription_table_name, {'PartitionKey': execid, 'RowKey': execid})
+
+
+
+
+      

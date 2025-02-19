@@ -8,13 +8,9 @@ import jsons
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
-from wara.wara_executor import WARAExecutor
+from job import WARAEventLoop, WARAReportGenScheduledJob, WARAHistoryCleanUpScheduledJob
 from wara.wara_report import WARAReport
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
-import threading
-import time
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 from memory_queue import MemoryQueue
 
 
@@ -333,45 +329,11 @@ def run_pwsh(response: fastapi.Response):
         return str(e)
 
 
-# background task
-def always_running_job_generate_wara_report():
-    while True:
-        try:
-            task = mem_queue.dequeue()
-            if task:
-                Log.debug('always_running_job receive task wara-report-generation')
-                wap = WARAExecutor(config=appconfig)
-                wap.run()
-            time.sleep(5)
-        except Exception as e:
-            Log.exception(f'error occured at always_running_job_generate_wara_report: {str(e)}')
-        
+# run background jobs
+WARAEventLoop().start()
+WARAReportGenScheduledJob().init_wara_report_gen_scheduled_job()
+WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
 
-def scheduled_job_generate_wara_report():
-     Log.debug('scheduled_job enqueue task wara-report-generation')
-     mem_queue.enqueue('run_wara')
-
-# cron schedule default to 3 hours
-def setup_scheduled_job():
-    scheduler = BackgroundScheduler()
-    scheduler.start()
-    trigger = CronTrigger(
-        year="*", month="*", day="*", hour="*/6", minute="0", second="0"
-    )
-    scheduler.add_job(
-        scheduled_job_generate_wara_report,
-        trigger=trigger,
-        name="Background_Task_WARA_Report_Generation",
-    )
-
-    Log.debug('scheduled_job is setup successfully')
-
-# setup background tasks
-# Create and start a new thread
-thread = threading.Thread(target=always_running_job_generate_wara_report)
-thread.start()
-
-setup_scheduled_job()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, log_config=None)

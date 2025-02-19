@@ -3,6 +3,7 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 import log as Log
 import logging
+from typing import overload
 class DB:
 
     def __init__(self, config):
@@ -39,16 +40,35 @@ class DB:
             Log.exception(f'DB: error occured: {str(e)}')
         
 
-    def query(self, table_name, partition_key, row_key):
+    def get_row(self, table_name, partition_key, row_key):
         try:
             self.table_client = self.table_service_client.get_table_client(table_name=table_name)
             return self.table_client.get_entity(partition_key, row_key)
         except ResourceNotFoundError as e:
             return None
         
+    
+        
+    def query_entities(self, table_name, query_filter) -> list:
+        try:
+            self.table_client = self.table_service_client.get_table_client(table_name=table_name)
+            return self.table_client.query_entities(query_filter=query_filter)
+        except Exception as e:
+            Log.exception(f'DB: error occured: {str(e)}')
+            return []
+        
 
     def get_all_rows(self, table_name):
 
         self.table_client = self.table_service_client.get_table_client(table_name=table_name)
         return self.table_client.list_entities()
+    
+
+    def delete_row(self, table_name, entity):
+        self.table_client = self.table_service_client.get_table_client(table_name=table_name)
+        self.table_client.delete_entity(entity)
+
+    def delete_row(self, table_name, partitionkey, rowkey):
+        self.table_client = self.table_service_client.get_table_client(table_name=table_name)
+        self.table_client.delete_entity(partition_key=partitionkey, row_key=rowkey)
         
