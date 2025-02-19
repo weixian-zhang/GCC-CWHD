@@ -50,7 +50,7 @@ class WARAExecutor:
 
    def generate_execution_id(self) -> list[datetime.datetime, str]:
       now = datetime.datetime.now()
-      execution_start_time =  now.strftime("%a %d %b %Y %H:%M:%S")
+      execution_start_time =  now
       execution_id = str(now.timestamp())
       return execution_start_time, execution_id
    
@@ -176,6 +176,7 @@ class WARAExecutor:
                df = pd.read_excel(file_path, 'Recommendations')
             except Exception as e:
                return True, ''
+               
 
             jdf = df.to_json(orient='records')
 
@@ -314,10 +315,19 @@ class WARAExecutor:
 
    
    def save_execution_context(self, execution_start_time, execution_id: str, subscriptions: list[Subscription]):
+
+      def row_key(dt):
+         t = (datetime.datetime(9999, 12, 31, 23, 59, 59, 999999) - dt).total_seconds() * 10000000
+         return f'{t:.0f}'
+
+      # Store the entities using a RowKey that naturally sorts in reverse date/time order by using
+      # the most recent entry is always the first one in the table.
+      # https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
       entity = {
          'PartitionKey': execution_id,
-         'RowKey': execution_id,
-         "execution_start_time": execution_start_time
+         'RowKey': row_key(execution_start_time),
+         'execution_start_time': execution_start_time,
+         'display_execution_start_time': execution_start_time.strftime("%a %d %b %Y %H:%M:%S")
       }
 
       self.db.insert(self.db.wara_run_history_table_name, entity)

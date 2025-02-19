@@ -33,7 +33,7 @@ def init(appconfig: AppConfig) -> None:
         az_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
         azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        azure_handler.setLevel(level=logging.ERROR)
+        #azure_handler.setLevel(level=logging.ERROR)
         console_handler = logging.StreamHandler()
 
         logger = logging.getLogger('default_logger')

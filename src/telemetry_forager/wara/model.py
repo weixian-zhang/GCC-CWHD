@@ -5,12 +5,16 @@ class Subscription:
         self.id = id
         self.name = name
 class WARAExecution:
+    rowkey = int
     execution_id: str
     execution_start_time: datetime
+    display_start_time: str
     
-    def __init__(self, execution_id, execution_start_time,):
+    def __init__(self, rowkey, execution_id, execution_start_time, display_start_time):
+        self.rowkey = rowkey
         self.execution_id = execution_id if execution_id else ''
         self.execution_start_time = execution_start_time
+        self.display_start_time = display_start_time
 
 
 class WARARecommendation:

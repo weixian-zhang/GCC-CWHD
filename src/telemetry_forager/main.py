@@ -143,121 +143,194 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
         response.status_code = 500
         return str(e)
     
+    
 # WARA module
 
 @app.get("/api/wara/report/runhistory", status_code=200, response_model=None)
-def run_history() -> list[WARAExecution]:
-    wr = WARAReport(config=appconfig)
-    executions = wr.list_execution_history()
-    return executions
+def run_history(response: fastapi.Response) -> list[WARAExecution]:
+
+    try:
+        wr = WARAReport(config=appconfig)
+        executions = wr.list_execution_history()
+        return executions
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 @app.get("/api/wara/report/subscriptions", status_code=200, response_model=None)
 def get_subscriptions(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
-    params = request.query_params
-    executionid = params.get('execid', '')
 
-    if not executionid:
-        response.status_code = 400
-        return 'executionid are required'
+    try:
+
+        params = request.query_params
+        executionid = params.get('execid', '')
+
+        if not executionid:
+            response.status_code = 400
+            return 'executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        result = wr.get_run_subscriptions(executionid)
+        return result
     
-    wr = WARAReport(config=appconfig)
-    result = wr.get_run_subscriptions(executionid)
-    return result
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 @app.get("/api/wara/report/recommendations", status_code=200, response_model=None)
 def get_recommendations(request: fastapi.Request, response: fastapi.Response)  -> list[WARARecommendation]:
-    params = request.query_params
-    subid = params.get('subid', '')
-    executionid = params.get('execid', '')
 
-    if not subid or not executionid:
-        response.status_code = 400
-        return 'subscription_id and executionid are required'
-    
-    wr = WARAReport(config=appconfig)
-    
-    result = wr.get_recommendations(subid, executionid)
+    try:
 
-    return result
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        
+        result = wr.get_recommendations(subid, executionid)
+
+        return result
+    
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 @app.get("/api/wara/report/impactedresources", status_code=200, response_model=None)
 def get_impacted_resources(request: fastapi.Request, response: fastapi.Response) -> list[WARAImpactedResource]:
-    params = request.query_params
-    subid = params.get('subid', '')
-    executionid = params.get('execid', '')
 
-    if not subid or not executionid:
-        response.status_code = 400
-        return 'subscription_id and executionid are required'
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        result = wr.get_impacted_resources(subid, executionid)
+        return result
     
-    wr = WARAReport(config=appconfig)
-    result = wr.get_impacted_resources(subid, executionid)
-    return result
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 @app.get("/api/wara/report/impactedresourcetypes", status_code=200, response_model=None)
 def get_resource_types(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
-    params = request.query_params
-    subid = params.get('subid', '')
-    executionid = params.get('execid', '')
 
-    if not subid or not executionid:
-        response.status_code = 400
-        return 'subscription_id and executionid are required'
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        result = wr.get_impacted_resource_types(subid, executionid)
+        return result
     
-    wr = WARAReport(config=appconfig)
-    result = wr.get_impacted_resource_types(subid, executionid)
-    return result
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 
 @app.get("/api/wara/report/retirements", status_code=200, response_model=None)
 def get_retirements(request: fastapi.Request, response: fastapi.Response) -> list[WARARetirement]:
-    params = request.query_params
-    subid = params.get('subid', '')
-    executionid = params.get('execid', '')
 
-    if not subid or not executionid:
-        response.status_code = 400
-        return 'subscription_id and executionid are required'
+    try:
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        result = wr.get_retirements(subid, executionid)
+        return result
     
-    wr = WARAReport(config=appconfig)
-    result = wr.get_retirements(subid, executionid)
-    return result
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 
 @app.get("/api/wara/report/stats/service-by-impact", status_code=200, response_model=None)
 def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
-    params = request.query_params
-    subid = params.get('subid', '')
-    executionid = params.get('execid', '')
 
-    if not subid or not executionid:
-        response.status_code = 400
-        return 'subscription_id and executionid are required'
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        result = wr.get_pivot_recommendation_service_by_impact(subid, executionid)
+        return result
     
-    wr = WARAReport(config=appconfig)
-    result = wr.get_pivot_recommendation_service_by_impact(subid, executionid)
-    return result
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 
 @app.get("/api/wara/report/stats/resiliency-by-impact", status_code=200, response_model=None)
 def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
-    params = request.query_params
-    subid = params.get('subid', '')
-    executionid = params.get('execid', '')
 
-    if not subid or not executionid:
-        response.status_code = 400
-        return 'subscription_id and executionid are required'
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        wr = WARAReport(config=appconfig)
+        result = wr.get_pivot_recommendation_resiliency_by_impact(subid, executionid)
+        return result
     
-    wr = WARAReport(config=appconfig)
-    result = wr.get_pivot_recommendation_resiliency_by_impact(subid, executionid)
-    return result
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
     
 
 @app.post("/api/wara/runonce", status_code=202)
-def run_pwsh():
-    mem_queue.enqueue('run_wara')
-    return json.dumps({'status': 'success'})
+def run_pwsh(response: fastapi.Response):
+    '''
+    current logic is to accept only 1 task in the queue to prevent spamming
+    '''
+    
+    try:
+
+        mem_queue.enqueue('run_wara')
+        return json.dumps({'status': 'success', 'queue_len': f'{len(mem_queue)}'})
+    
+    except Exception as e:
+        Log.exception(f'WARAReport: error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
 
 
 # background task

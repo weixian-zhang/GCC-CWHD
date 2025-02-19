@@ -5,6 +5,7 @@ import zlib
 import json
 import pandas as pd
 import sys
+import log as Log
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
 
@@ -13,22 +14,33 @@ class WARAReport:
         self.db = DB(config)
 
     def list_execution_history(self):
+
+     
         entities = self.db.get_all_rows(self.db.wara_run_history_table_name)
         executions = []
         for entity in entities:
+            rowkey = entity['RowKey']
             execution_id = entity['PartitionKey']
             execution_start_time = entity['execution_start_time']
-            executions.append(WARAExecution(execution_id, execution_start_time))
+            display_execution_start_time = entity['display_execution_start_time']
+            executions.append(WARAExecution(rowkey, execution_id, execution_start_time, display_execution_start_time))
+
+        executions = sorted(executions, key=lambda x: x.rowkey)
         
         return executions
+        
+        
     
     def get_run_subscriptions(self, execution_id):
+
         entity = self.db.query(self.db.wara_run_subscription_table_name, partition_key=execution_id, row_key=execution_id)
+        
         if entity and entity['data']:
             data = entity['data']
             data = self._decompress_string(data)
             return json.loads(data)
         return []
+        
     
     def get_pivot_recommendation_service_by_impact(self, subscription_id, execution_id):
 
@@ -42,8 +54,8 @@ class WARAReport:
         pdf = pivot_Table.reset_index() # convert pivot to dataframe
 
         return pdf.to_json(orient="records")
+        
     
-
     def get_pivot_recommendation_resiliency_by_impact(self, subscription_id, execution_id):
         
         df = self.get_recommendations(subscription_id, execution_id, to_df=True)
@@ -116,8 +128,10 @@ class WARAReport:
             return newdf.to_json(orient='records')
         
         return []
+        
     
     def get_impacted_resource_types(self, subscription_id, execution_id):
+
 
         entity = self.db.query(self.db.wara_resource_type_table_name, subscription_id, execution_id) 
 

@@ -10,8 +10,14 @@ class MemoryQueue(object):
     def __init__(self):
         self.q = deque([])
 
+    def __len__(self):
+        return len(self.q)
+
     def enqueue(self, message: str ):
+        if len(self.q) > 0:
+            return False, 'queue has task already'
         self.q.appendleft(message)
+        return True, ''
 
     def dequeue(self) -> str:
         if len(self.q) == 0:
