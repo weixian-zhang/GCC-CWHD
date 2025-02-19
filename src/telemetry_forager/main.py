@@ -356,7 +356,7 @@ def setup_scheduled_job():
     scheduler = BackgroundScheduler()
     scheduler.start()
     trigger = CronTrigger(
-        year="*", month="*", day="*", hour="*/3", minute="0", second="0"
+        year="*", month="*", day="*", hour="*/6", minute="0", second="0"
     )
     scheduler.add_job(
         scheduled_job_generate_wara_report,

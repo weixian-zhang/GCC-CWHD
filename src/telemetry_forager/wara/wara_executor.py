@@ -412,5 +412,3 @@ class WARAExecutor:
          
       except Exception as e:
          Log.exception(e)
-         # if os.path.exists(self.exec_root_dir):
-         #       os.remove(self.exec_root_dir)
