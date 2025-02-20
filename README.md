@@ -161,7 +161,7 @@ Please see [Issues](https://github.com/weixian-zhang/GCC-CWHD/issues).
 ## Tech Stack  
 * Python 3.11
 * Azure Managed Grafana Standard - Grafana 10.4.11
-* [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
+* [Docker image](https://hub.docker.com/r/wxzd/cwhd/tags)
 
 ## Logs Required
 <table>
