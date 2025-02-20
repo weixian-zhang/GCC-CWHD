@@ -15,7 +15,7 @@ from memory_queue import MemoryQueue
 
 
 # init global queue
-mem_queue = MemoryQueue()
+wara_report_gen_queue = MemoryQueue()
 
 # load environment variables
 appconfig = AppConfig()
@@ -320,8 +320,8 @@ def run_pwsh(response: fastapi.Response):
     
     try:
 
-        mem_queue.enqueue('run_wara')
-        return json.dumps({'status': 'success', 'queue_len': f'{len(mem_queue)}'})
+        wara_report_gen_queue.enqueue('run_wara')
+        return json.dumps({'status': 'success', 'queue_len': f'{len(wara_report_gen_queue)}'})
     
     except Exception as e:
         Log.exception(f'WARAReport: error occured: {str(e)}')
@@ -333,6 +333,9 @@ def run_pwsh(response: fastapi.Response):
 WARAEventLoop().start()
 WARAReportGenScheduledJob().init_wara_report_gen_scheduled_job()
 WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
+
+# execute wara 1 time upon startup
+wara_report_gen_queue.enqueue('run_wara')
 
 
 if __name__ == "__main__":

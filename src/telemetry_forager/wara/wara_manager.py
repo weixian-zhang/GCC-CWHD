@@ -75,7 +75,7 @@ class WARAManager:
       for sub in subscription_list:
          result.append(Subscription(sub.subscription_id, sub.display_name))
 
-      Log.debug(f'WARA - subscription fetched successfully {result}')
+      Log.debug(f'WARA/run - subscription fetched successfully {result}')
 
       return result
 
@@ -285,29 +285,29 @@ class WARAManager:
       try:
 
          if not excel_file_path:
-            Log.exception('WARA - cannot find analyzer.ps1 Excel file result')
+            Log.exception('WARA/run - cannot find analyzer.ps1 Excel file result')
             return False
          
          r_ok, r_err = self.read_and_save_recommendations_json(excel_file_path, execution_id, subscription_id)
 
          if not r_ok:
-            Log.exception(f'WARA - error reading Excel Recommendation worksheet. {r_err}')
+            Log.exception(f'WARA/run - error reading Excel Recommendation worksheet. {r_err}')
 
          i_ok, i_err = self.read_impacted_resources_json(subscription_id, execution_id, excel_file_path)
 
          if not i_ok:
-            Log.exception(f'WARA - error reading Excel Impacted Resources worksheet. {i_err}')
+            Log.exception(f'WARA/run - error reading Excel Impacted Resources worksheet. {i_err}')
 
 
          rt_ok, rt_err = self.read_resource_types_json(subscription_id, execution_id, excel_file_path)
 
          if not rt_ok:
-            Log.exception(f'WARA - error reading Excel Resource Type worksheet. {rt_err}')
+            Log.exception(f'WARA/run - error reading Excel Resource Type worksheet. {rt_err}')
 
          ret_ok, ret_err = self.read_retirements_json(subscription_id, execution_id, excel_file_path)
 
          if not ret_ok:
-            Log.exception(f'WARA - error reading Excel Retirement worksheet. {ret_err}')
+            Log.exception(f'WARA/run - error reading Excel Retirement worksheet. {ret_err}')
       
 
       except Exception as e:
@@ -353,13 +353,13 @@ class WARAManager:
       try:
 
          if not self.config.wara_tenantId:
-            Log.debug('WARA_TenantId is not set, WARA will not ignored')
+            Log.debug('WARA/run - TenantId is not set, WARA will not ignored')
             return
          
          try:
             # delete root dir
             if os.path.exists(self.exec_root_dir):
-               Log.debug('WARA - deleting root folder from previous run')
+               Log.debug('WARA/run - deleting root folder from previous run')
                os.remove(self.exec_root_dir)
          except:
             pass
@@ -367,13 +367,13 @@ class WARAManager:
          subscriptions = self.get_subscriptions()
 
          if not subscriptions:
-            Log.debug(f'WARA - not subscriptions found, execution ended')
+            Log.debug(f'WARA/run - not subscriptions found, execution ended')
             return
         
          
          execution_start_time, execution_id = self.generate_execution_id()
 
-         Log.debug(f'WARA - executing with execution id: {execution_id}')
+         Log.debug(f'WARA/run - executing with execution id: {execution_id}')
          
          self.db.init()
 
@@ -381,19 +381,19 @@ class WARAManager:
 
          self._download_scripts()
 
-         Log.debug(f'WARA - preparing execution for subscription ids: {",".join([sub.name for sub in subscriptions])}')
+         Log.debug(f'WARA/run - preparing execution for subscription ids: {",".join([sub.name for sub in subscriptions])}')
 
          for sub in subscriptions:
 
             json_file_path = self._exec_collector_ps1(sub.id)
 
             if not json_file_path:
-               raise Exception('WARA - collector.ps1 failed execution')
+               raise Exception('WARA/run - collector.ps1 failed execution')
 
             excel_file_path = self.exec_analyzer_ps1(json_file_path)
 
             if not excel_file_path:
-               raise Exception('WARA - wara_data_analyzer.ps1 failed execution')
+               raise Exception('WARA/run - wara_data_analyzer.ps1 failed execution')
 
             self.read_and_save_analyzer_excel_result(excel_file_path, sub.id, execution_id)
 
@@ -403,55 +403,64 @@ class WARAManager:
             if os.path.exists(excel_file_path):
                os.remove(excel_file_path)
 
-            Log.debug(f'WARA - execution completed for subscription id: {sub.id}')
+            Log.debug(f'WARA/run - execution completed for subscription id: {sub.id}')
 
          self.save_execution_context(execution_start_time, execution_id, subscriptions)
 
-         Log.debug('WARA - entire execution completed successfully')
+         Log.debug('WARA/run - entire execution completed successfully')
 
          
       except Exception as e:
-         Log.exception(e)
+         Log.exception(f'WARA/run - {str(e)}')
 
 
    def delete_run_history(self, days_to_keep):
       
-      exec_ids_to_del = []
-      datetime_to_start_del = datetime.datetime.now() - datetime.timedelta(days=days_to_keep)
-      datetime_to_start_del = datetime_to_start_del.strftime("%Y-%m-%dT%H:%M:%S")
-      filter = f"execution_start_time lt datetime'{str(datetime_to_start_del)}'"
+      try:
 
-      run_history_to_del = self.db.query_entities(self.db.wara_run_history_table_name, filter)
+         exec_ids_to_del = []
+         datetime_to_start_del = datetime.datetime.now() - datetime.timedelta(days=days_to_keep)
+         datetime_to_start_del = datetime_to_start_del.strftime("%Y-%m-%dT%H:%M:%S")
 
-      for entity in run_history_to_del:
-         exec_ids_to_del.append(entity['PartitionKey'])
+         filter = f"execution_start_time lt datetime'{str(datetime_to_start_del)}'"
+         
+         run_history_to_del = self.db.query_entities(self.db.wara_run_history_table_name, filter)
 
-      if not exec_ids_to_del:
-         Log.debug(f'WARA - no run history to delete. days to keep = {days_to_keep}. Date/time to start delete {datetime_to_start_del.strftime("%a %d %b %Y %H:%M:%S")}')
-         return
-      
+         for entity in run_history_to_del:
+            exec_ids_to_del.append((entity['PartitionKey'], entity['RowKey']))
 
-      for execid in exec_ids_to_del:
+         if not exec_ids_to_del:
+            Log.debug(f'WARA/delete_run_history - no run history to delete. days to keep = {days_to_keep}. Date/time to start delete {datetime_to_start_del.strftime("%a %d %b %Y %H:%M:%S")}')
+            return
+         
+
+         for partitionkey, rowkey in exec_ids_to_del:
+
+            execid = partitionkey
+
+            recommendations = self.db.query_entities(self.db.wara_recommendation_table_name, f"RowKey eq '{execid}'")
+            for rec in recommendations:
+               self.db.delete_by_entity(self.db.wara_recommendation_table_name, rec)
+
+            impacted_resources = self.db.query_entities(self.db.wara_impacted_resources_table_name, f"RowKey eq '{execid}'")
+            for ir in impacted_resources:
+               self.db.delete_by_entity(self.db.wara_impacted_resources_table_name, ir)
+
+            resource_types = self.db.query_entities(self.db.wara_resource_type_table_name, f"RowKey eq '{execid}'")
+            for rt in resource_types:
+               self.db.delete_by_entity(self.db.wara_resource_type_table_name, rt)
+
+            retirements = self.db.query_entities(self.db.wara_retirements_table_name, f"RowKey eq '{execid}'")
+            for r in retirements:
+               self.db.delete_by_entity(self.db.wara_retirements_table_name, r)
 
 
-         recommendations = self.db.query_entities(self.db.wara_recommendation_table_name, f"RowKey eq '{execid}'")
-         for rec in recommendations:
-            self.db.delete_row(self.db.wara_recommendation_table_name, rec)
+            self.db.delete_row(self.db.wara_run_subscription_table_name, execid, execid)
 
-         impacted_resources = self.db.query_entities(self.db.wara_impacted_resources_table_name, f"RowKey eq '{execid}'")
-         for ir in impacted_resources:
-            self.db.delete_row(self.db.wara_impacted_resources_table_name, ir)
+            self.db.delete_row(self.db.wara_run_history_table_name, execid, rowkey)
 
-         resource_types = self.db.query_entities(self.db.wara_resource_type_table_name, f"RowKey eq '{execid}'")
-         for rt in resource_types:
-            self.db.delete_row(self.db.wara_resource_type_table_name, rt)
-
-         retirements = self.db.query_entities(self.db.wara_retirements_table_name, f"RowKey eq '{execid}'")
-         for r in retirements:
-            self.db.delete_row(self.db.wara_retirements_table_name, r)
-
-         self.db.delete_row(self.db.wara_run_subscription_table_name, {'PartitionKey': execid, 'RowKey': execid})
-
+      except Exception as e:
+         Log.exception(f'WARA/delete_run_history - {str(e)}')
 
 
 

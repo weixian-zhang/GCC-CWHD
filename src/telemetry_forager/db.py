@@ -59,12 +59,11 @@ class DB:
         
 
     def get_all_rows(self, table_name):
-
         self.table_client = self.table_service_client.get_table_client(table_name=table_name)
         return self.table_client.list_entities()
     
 
-    def delete_row(self, table_name, entity):
+    def delete_by_entity(self, table_name, entity):
         self.table_client = self.table_service_client.get_table_client(table_name=table_name)
         self.table_client.delete_entity(entity)
 

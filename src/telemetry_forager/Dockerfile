@@ -24,12 +24,12 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies in a temporary directory
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-#RUN pip install --no-cache-dir -r requirements.txt 
+#RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
 
 # install powershell core
-RUN choco install powershell-core --version=7.4.2 -y
+RUN choco install powershell-core --version=7.4.5 -y
 
 # install WARA required Powershell modules
 RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck

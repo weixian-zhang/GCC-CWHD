@@ -7,15 +7,15 @@ from apscheduler.triggers.cron import CronTrigger
 
 class WARAEventLoop:
     '''
-    listens to an in-memory queue mem_queue for tasks to generate WARA report
+    listens to an in-memory queue wara_report_gen_queue for tasks to generate WARA report
     '''
 
     def event_loop_wara_run_listener(self):
-        from main import appconfig, mem_queue # overcome circular import on partially init main.py
+        from main import appconfig, wara_report_gen_queue # overcome circular import on partially init main.py
 
         while True:
             try:
-                task = mem_queue.dequeue()
+                task = wara_report_gen_queue.dequeue()
                 if task:
                     Log.debug('always_running_job receive task wara-report-generation')
                     wap = WARAManager(config=appconfig)
@@ -28,7 +28,7 @@ class WARAEventLoop:
         # run event loop on new thread
         thread = threading.Thread(target=self.event_loop_wara_run_listener)
         thread.start()
-        Log.debug('WARA: event loop wara run listener started successfully')
+        Log.debug('WARA: wara_run event loop is setup successfully')
 
 
 
@@ -36,10 +36,10 @@ class WARAReportGenScheduledJob:
 
     # enqueue task to generate wara report
     def enqueue_task_to_generate_wara_report(self):
-        from main import mem_queue
+        from main import wara_report_gen_queue
 
         Log.debug('WARA_Report_Generation_Job  enqueue task wara-report-generation')
-        mem_queue.enqueue('run_wara')
+        wara_report_gen_queue.enqueue('run_wara')
 
 
     # WARA report gen job schedule default to 6 hours
@@ -47,7 +47,7 @@ class WARAReportGenScheduledJob:
         scheduler = BackgroundScheduler()
         scheduler.start()
         trigger = CronTrigger(
-            year="*", month="*", day="*", hour="*/6", minute="0", second="0"
+            year="*", month="*", day="*", hour="*/12", minute="0", second="0"
         )
         scheduler.add_job(
             self.enqueue_task_to_generate_wara_report,
@@ -78,7 +78,7 @@ class WARAHistoryCleanUpScheduledJob:
         scheduler = BackgroundScheduler()
         scheduler.start()
         trigger = CronTrigger(
-            year="*", month="*", day="*", hour="*", minute="*", second="*/10"
+            year="*", month="*", day="*", hour="*/12", minute="0", second="0"
         )
         scheduler.add_job(
             self.clean_run_history,
