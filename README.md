@@ -1,6 +1,6 @@
 <h2>
  <p>Azure Monitoring with Grafana</p>
- <p><sup>powered by</sup> Central Workload Health Dashboard Solution (CWHD)</p>
+ <p><sup>powered by</sup> Central Workload Health Dashboard (CWHD)</p>
 </h2>
 </h2>
 
