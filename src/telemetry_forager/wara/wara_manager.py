@@ -11,6 +11,8 @@ import pandas as pd
 import zlib
 import sys
 from wara.model import Subscription
+import win32com.client as win32
+import pythoncom
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
 from db import DB
@@ -40,7 +42,7 @@ class WARAManager:
 
    # create temp folder for execution. All execution files will be stored here.
    def _create_root_exec_dir(self):
-      Log.debug('WARA - create root exec dir')
+      Log.debug('WARA/run - create root exec dir')
       if not os.path.exists(self.exec_root_dir):
          os.makedirs(self.exec_root_dir)
 
@@ -89,7 +91,7 @@ class WARAManager:
       #cmd = f'pwsh -c Connect-AzAccount -Identity -TenantId {self.config.wara_tenantId} && ./1_wara_collector.ps1 -tenantid {self.config.wara_tenantId} -subscriptionids {subscription_ids}'
       cmd = f'pwsh {self.collector_script_wrapper_path} -tenantid {self.config.wara_tenantId} -subscriptionids {subscription_id}'
 
-      Log.debug(f'WARA - executing collector.ps1 with cmd: {cmd}')
+      Log.debug(f'WARA/run - executing collector.ps1 with cmd: {cmd}')
 
       p = subprocess.Popen(cmd, 
                            shell=True,
@@ -103,24 +105,24 @@ class WARAManager:
             line = p.stdout.readline()
             if not line:
                break
-            #Log.debug(f'WARA - {line.rstrip()}')
+            #Log.debug(f'WARA/run - {line.rstrip()}')
 
          p.wait(timeout=3)
 
-         Log.debug(f'WARA - finish executing collector.ps1')
+         Log.debug(f'WARA/run - finish executing collector.ps1')
 
       except subprocess.TimeoutExpired:
          p.kill(p.pid)
-         Log.debug(f'WARA - finish executing collector.ps1')
+         Log.debug(f'WARA/run - finish executing collector.ps1')
       
 
       for file in os.listdir(self.exec_root_dir):
             if file.endswith(".json"):
                fp = os.path.join(self.exec_root_dir, file)
-               Log.debug(f'WARA - executed collector.ps1 sucessfully, output json file {fp}')
+               Log.debug(f'WARA/run - executed collector.ps1 sucessfully, output json file {fp}')
                return fp
       
-      Log.debug(f'WARA - collector.ps1 failed execution, no json output file found')
+      Log.debug(f'WARA/run - collector.ps1 failed execution, no json output file found')
 
    # run analyzer script
    def exec_analyzer_ps1(self, json_file_path) -> str:
@@ -129,12 +131,12 @@ class WARAManager:
       '''
 
       if not json_file_path:
-         Log.exception('WARA - cannot find collector.ps1 json file result')
+         Log.exception('WARA/run - cannot find collector.ps1 json file result')
          return
 
       cmd = f'pwsh {self.analyzer_ps1_file_path} -JSONFile {json_file_path}'
 
-      Log.debug(f'WARA - executing wara_data_analyzer.ps1 with cmd: {cmd}')
+      Log.debug(f'WARA/run - executing wara_data_analyzer.ps1 with cmd: {cmd}')
 
       p = subprocess.Popen(cmd, 
                            shell=True,
@@ -149,24 +151,38 @@ class WARAManager:
             line = p.stdout.readline()
             if not line:
                break
-            #Log.debug(f'WARA - {line.rstrip()}') #reduce logging
+            #Log.debug(f'WARA/run - {line.rstrip()}') #reduce logging
 
          p.wait(timeout=3)
          
-         Log.debug(f'WARA - finish executing wara_data_analyzer.ps1')
+         Log.debug(f'WARA/run - finish executing wara_data_analyzer.ps1')
 
       except subprocess.TimeoutExpired:
          p.kill(p.pid)
-         Log.debug(f'WARA - finish executing wara_data_analyzer.ps1')
+         Log.debug(f'WARA/run - finish executing wara_data_analyzer.ps1')
 
       
+      xlsx_file_path = None
       for file in os.listdir(self.exec_root_dir):
             if file.endswith(".xlsx"):
-               fp = os.path.join(self.exec_root_dir, file)
-               Log.debug(f'WARA - executed wara_data_analyzer.ps1 sucessfully, output Excel file. {fp}')
-               return fp
-     
-      Log.debug(f'WARA - wara_data_analyzer.ps1 failed execution, no Excel output file found')
+               xlsx_file_path = os.path.join(self.exec_root_dir, file)
+               break
+               # refresh Excel to fix Pandas read cell with formula null
+               # https://stackoverflow.com/questions/40893870/refresh-excel-external-data-with-python
+               # https://stackoverflow.com/questions/36116162/python-openpyxl-data-only-true-returning-none
+               
+      
+      if not xlsx_file_path:
+         Log.debug(f'WARA/run - wara_data_analyzer.ps1 failed execution, no Excel output file found')
+         return
+
+
+      self.refresh_xlsx(xlsx_file_path)
+      
+      Log.debug(f'WARA/run - executed wara_data_analyzer.ps1 sucessfully, output Excel file. {xlsx_file_path}')
+
+      return xlsx_file_path
+      
 
    def read_and_save_recommendations_json(self, file_path: str, execution_id, subscription_id) -> list[bool, str]:
          try:
@@ -343,6 +359,29 @@ class WARAManager:
       self.db.insert(self.db.wara_run_subscription_table_name, sub_entity)
 
 
+   def save_subscriptions(self, subscriptions: list[Subscription]):
+      pass
+
+   def save_run_history(self, execution_start_time: datetime.datetime, execution_id: str):
+
+      def row_key(dt):
+         t = (datetime.datetime(9999, 12, 31, 23, 59, 59, 999999) - dt).total_seconds() * 10000000
+         return f'{t:.0f}'
+
+      # Store the entities using a RowKey that naturally sorts in reverse date/time order by using
+      # the most recent entry is always the first one in the table.
+      # https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
+      entity = {
+         'PartitionKey': execution_id,
+         'RowKey': row_key(execution_start_time),
+         'execution_start_time': execution_start_time,
+         'display_execution_start_time': execution_start_time.strftime("%a %d %b %Y %H:%M:%S")
+      }
+
+      self.db.insert(self.db.wara_run_history_table_name, entity)
+
+
+
    def compress_string(self, data: str) -> str:
       data = zlib.compress(data.encode())
       return data
@@ -461,6 +500,23 @@ class WARAManager:
 
       except Exception as e:
          Log.exception(f'WARA/delete_run_history - {str(e)}')
+
+
+   def refresh_xlsx(self, xlsx_file_path):
+      Log.debug(f'WARA/run - refresh xlsx file {xlsx_file_path}')
+
+      pythoncom.CoInitialize()
+      xlapp = win32.DispatchEx("Excel.Application")
+      wb = xlapp.Workbooks.Open(xlsx_file_path)
+      wb.RefreshAll()
+      wb.Save()
+      wb.Close(SaveChanges=True)
+      xlapp.Quit()
+      pythoncom.CoUninitialize()
+      wb = None
+      xlapp = None
+
+      Log.debug(f'WARA/run - refresh xlsx file successfully')
 
 
 

@@ -5,11 +5,26 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2022
 # Set shell to PowerShell
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-# install chocolatey
+# install and configure chocolatey
+#RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+ENV chocolateyUseWindowsCompression=false
 RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+RUN choco config set cachelocation C:\chococache
+RUN choco feature enable --name allowGlobalConfirmation
+
+# install powershell core
+RUN choco install powershell-core --version 7.4.5 --force
+
+# install WARA required Powershell modules
+RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name powershell-yaml -Force -SkipPublisherCheck
+
 
 #install git
-# RUN choco install git -y
+RUN choco install git -y
 RUN choco install git.install -y
 RUN git config --global core.autocrlf true
 
@@ -26,16 +41,6 @@ COPY . .
 # Install dependencies in a temporary directory
 #RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt 
-
-
-# install powershell core
-RUN choco install powershell-core --version=7.4.5 -y
-
-# install WARA required Powershell modules
-RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
-RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
-RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
-RUN pwsh -c Install-Module -Name powershell-yaml -Force -SkipPublisherCheck
 
 
 # Expose the port FastAPI will run on
