@@ -11,8 +11,9 @@ import pandas as pd
 import zlib
 import sys
 from wara.model import Subscription
-import win32com.client as win32
-import pythoncom
+# import win32com.client as win32
+# import pythoncom
+import openpyxl
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
 from db import DB
@@ -176,7 +177,7 @@ class WARAManager:
          Log.debug(f'WARA/run - wara_data_analyzer.ps1 failed execution, no Excel output file found')
          return
 
-
+      # requires Excel installed on Windows container, exploring.
       self.refresh_xlsx(xlsx_file_path)
       
       Log.debug(f'WARA/run - executed wara_data_analyzer.ps1 sucessfully, output Excel file. {xlsx_file_path}')
@@ -509,16 +510,20 @@ class WARAManager:
    def refresh_xlsx(self, xlsx_file_path):
       Log.debug(f'WARA/run - refresh xlsx file {xlsx_file_path}')
 
-      pythoncom.CoInitialize()
-      xlapp = win32.DispatchEx("Excel.Application")
-      wb = xlapp.Workbooks.Open(xlsx_file_path)
-      wb.RefreshAll()
-      wb.Save()
-      wb.Close(SaveChanges=True)
-      xlapp.Quit()
-      pythoncom.CoUninitialize()
-      wb = None
-      xlapp = None
+      # pythoncom.CoInitialize()
+      # xlapp = win32.DispatchEx("Excel.Application")
+      # wb = xlapp.Workbooks.Open(xlsx_file_path)
+      # wb.RefreshAll()
+      # wb.Save()
+      # wb.Close(SaveChanges=True)
+      # xlapp.Quit()
+      # pythoncom.CoUninitialize()
+      # wb = None
+      # xlapp = None
+
+      wb = openpyxl.load_workbook(xlsx_file_path)
+      wb.save(xlsx_file_path)
+      wb.close()
 
       Log.debug(f'WARA/run - refresh xlsx file successfully')
 
