@@ -434,7 +434,11 @@ class WARAManager:
             if not excel_file_path:
                raise Exception('WARA/run - wara_data_analyzer.ps1 failed execution')
 
+            Log.debug(f'WARA/run - processing data of Excel file {excel_file_path}')
+
             self.read_and_save_analyzer_excel_result(excel_file_path, sub.id, execution_id)
+
+            Log.debug(f'WARA/run - process data of Excel file completed successfully')
 
             if os.path.exists(json_file_path):
                os.remove(json_file_path)

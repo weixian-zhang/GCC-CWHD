@@ -135,7 +135,7 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
         return jsons.dumps(rhState)
         
     except Exception as e:
-        Log.exception(f'error occured: {str(e)}')
+        Log.exception(f'Health/resource - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
     
@@ -150,7 +150,7 @@ def run_history(response: fastapi.Response) -> list[WARAExecution]:
         executions = wr.list_execution_history()
         return executions
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -171,7 +171,7 @@ def get_subscriptions(request: fastapi.Request, response: fastapi.Response)  -> 
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -195,7 +195,7 @@ def get_recommendations(request: fastapi.Request, response: fastapi.Response)  -
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -217,7 +217,7 @@ def get_impacted_resources(request: fastapi.Request, response: fastapi.Response)
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -239,7 +239,7 @@ def get_resource_types(request: fastapi.Request, response: fastapi.Response) -> 
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -261,7 +261,7 @@ def get_retirements(request: fastapi.Request, response: fastapi.Response) -> lis
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -284,7 +284,7 @@ def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, re
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
@@ -307,7 +307,7 @@ def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.R
         return result
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
     
@@ -324,7 +324,7 @@ def run_pwsh(response: fastapi.Response):
         return json.dumps({'status': 'success', 'queue_len': f'{len(wara_report_gen_queue)}'})
     
     except Exception as e:
-        Log.exception(f'WARAReport: error occured: {str(e)}')
+        Log.exception(f'WARA/report - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
 
