@@ -78,8 +78,8 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 <div>For this reason, Tier 0 and 1 dashboards is the core delivery work I will do for my customers, in addition to other custom request for e.g: IIS App Pool start/stop</div>
 
 <br />
-<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
-<img width="876" alt="image" src="https://github.com/user-attachments/assets/91270009-931a-41e4-805b-75914e1f5b01">
+<img width="876" alt="image" src="https://github.com/user-attachments/assets/1a66114c-87d5-4239-8ef5-5cb13bc7390d">
+<img width="876" alt="image" src="https://github.com/user-attachments/assets/145e7c37-ea00-4a75-8633-d9c963b6a066">
 
 <br />  
 
