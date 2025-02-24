@@ -85,12 +85,11 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 ### Tier 2 Dashboards 
 
-* [Activity Audit Dashboard](activity-audit-dashboard)
-* [Applcation Gateway Dashboard](activity-audit-dashboard)
-* [Firewall Dashboard](activity-audit-dashboard)
-* [API Management Dashboard](activity-audit-dashboard)
-* [Key Vault Dashboard ](activity-audit-dashboard)
-* [Activity Audit Dashboard](activity-audit-dashboard)
+* [Activity Audit Dashboard](#activity-audit-dashboard)
+* [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
+* [Firewall Dashboard](#firewall-dashboard)
+* [API Management Dashboard](#api-management-dashboard)
+* [Key Vault Dashboard ](#key-vault-dashboard)
 
 #### Activity Audit Dashboard
   <p>Shows you who made changes to Firewall rules, NSG, Key Vaults and all other services</p>  
