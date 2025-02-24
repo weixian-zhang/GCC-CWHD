@@ -79,7 +79,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />
 <img width="876" alt="image" src="https://github.com/user-attachments/assets/1a66114c-87d5-4239-8ef5-5cb13bc7390d">
-<img width="876" alt="image" src="https://github.com/user-attachments/assets/145e7c37-ea00-4a75-8633-d9c963b6a066">
+<img width="876" alt="image" src="https://github.com/user-attachments/assets/1cc9baa2-27a8-464a-ba0f-8300f23bf5f1">
 
 <br />  
 
