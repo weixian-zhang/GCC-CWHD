@@ -13,6 +13,7 @@ import sys
 from wara.model import Subscription
 # import win32com.client as win32
 # import pythoncom
+import xlwings as xw
 import openpyxl
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
@@ -521,9 +522,13 @@ class WARAManager:
       # wb = None
       # xlapp = None
 
-      wb = openpyxl.load_workbook(xlsx_file_path)
-      wb.save(xlsx_file_path)
-      wb.close()
+      b = xw.Book(xlsx_file_path)
+
+      b.api.RefreshAll()
+      
+      # Save the updated workbook
+      b.save(xlsx_file_path)
+      b.close()
 
       Log.debug(f'WARA/run - refresh xlsx file successfully')
 
