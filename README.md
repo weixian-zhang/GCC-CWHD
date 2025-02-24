@@ -1,6 +1,15 @@
-# CWHD - Azure Monitoring with Central Workload Health Dashboard (used by agencies on [GCC Azure](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/)) 
- 
-CWHD uses Grafana dashboards to monitor Azure resources, providing color-coded health signals summarized by a bespoke web backend.  
+<h2>
+ <p>Azure Monitoring with Grafana</p>
+ <p><sup>powered by</sup> Central Workload Health Dashboard (CWHD)</p>
+</h2>
+</h2>
+
+ <mark>Warning: Important information for customers using Central Workload Health Dashboard</b> <br />
+ This solution, offered by the Open-Source community, does not receive contributions nor support by Microsoft.</mark>
+
+<br />
+
+CWHD uses Grafana dashboards to visualize performance and health signals of Azure resources and is used by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/).
 
 <br />
 
@@ -69,22 +78,47 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 <div>For this reason, Tier 0 and 1 dashboards is the core delivery work I will do for my customers, in addition to other custom request for e.g: IIS App Pool start/stop</div>
 
 <br />
-<img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/8c23c138-cdde-4cf6-b16b-05466122cd4c">
-<img width="876" alt="image" src="https://github.com/user-attachments/assets/91270009-931a-41e4-805b-75914e1f5b01">
+<img width="876" alt="image" src="https://github.com/user-attachments/assets/1a66114c-87d5-4239-8ef5-5cb13bc7390d">
+<img width="876" alt="image" src="https://github.com/user-attachments/assets/1cc9baa2-27a8-464a-ba0f-8300f23bf5f1">
 
 <br />  
 
-### Tier 2 Dashboard  
+### Tier 2 Dashboards 
 
-There are 5 Tier 2 dashboards today ready to use without further configuration
+* [Activity Audit Dashboard](activity-audit-dashboard)
+* [Applcation Gateway Dashbaord](activity-audit-dashboard)
+* [Firewall Dashbaord](activity-audit-dashboard)
+* [API Management Dashboard](activity-audit-dashboard)
+* [Key Vault Dashboard ](activity-audit-dashboard)
+* [Activity Audit](activity-audit-dashboard)
 
-* Activity Audit dashboard
-* Applcation Gateway dashbaord (a modifed version from Azure Monitor)
-* Firewall dashbaord
-* Applcation Gateway dashbaord (a modifed version from Azure Monitor)
-* API Management dashboard (a modified version from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/))
-* Key Vault dashboard (a modifed version from Azure Monitor)
-* Storage dashbaord (a modifed version from Azure Monitor)
+#### Activity Audit Dashboard
+  <p>Shows you who made changes to Firewall rules, NSG, Key Vaults and all other services</p>  
+  
+  ![image](https://github.com/user-attachments/assets/ef0ca381-bcf6-4d1d-84c1-7fd61d301283)
+
+#### Applcation Gateway Dashbaord 
+  <p>Shows you App Gateway metrics, Access and WAF Logs. (a modifed version from Azure Monitor)</p>  
+
+  ![image](https://github.com/user-attachments/assets/384e4cc3-347b-4b8d-95f5-b40a990ba914)
+  ![image](https://github.com/user-attachments/assets/6d65191c-cb76-4d06-a7f9-7b0b6e37c022)
+
+
+#### Firewall Dashbaord
+  ![image](https://github.com/user-attachments/assets/9ee45a31-dd07-4527-a038-dcff0f897983)
+
+#### API Management Dashboard
+<p>Shows you API Management metrics, requests and operations logs. (a modified version from <a href="https://grafana.com/grafana/dashboards/16604-azure-api-management">Vikram Bala</a>)</p>
+
+![image](https://github.com/user-attachments/assets/1b71439d-47c2-40e2-a767-ad4b37ace87e)
+
+#### Key Vault Dashboard 
+<p>Shows you Key Vault metrics and operation logs. (a modifed version from Azure Monitor) </p>  
+
+![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
+
+
+#### Storage dashbaord (a modifed version from Azure Monitor)
 
 <br />  
 
@@ -122,13 +156,12 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
 <br /> 
 
 ## Roadmap
-* WARA on Grafana - WAF Reliability Assessment report on Grafana
-* ready-to-use Tier 2 Grafana dashboards
+Please see [Issues](https://github.com/weixian-zhang/GCC-CWHD/issues).
 
 ## Tech Stack  
 * Python 3.11
 * Azure Managed Grafana Standard - Grafana 10.4.11
-* [Docker](https://github.com/weixian-zhang/GCC-CWHD/blob/main/src/telemetry_forager/Dockerfile)
+* [Docker image](https://hub.docker.com/r/wxzd/cwhd/tags)
 
 ## Logs Required
 <table>
