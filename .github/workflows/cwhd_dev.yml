@@ -30,13 +30,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PAT }}
 
-      - name: Docker build
-        shell: powershell
-        run: |
-          docker build . -t ${{ vars.DOCKER_IMAGE_TAG }}
 
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags:  ${{ vars.DOCKER_IMAGE_TAG }}
 
-      - name: Docker push
-        shell: powershell
-        run: |
-          docker push ${{ env.DOCKER_IMAGE_TAG }}
