@@ -33,7 +33,7 @@ jobs:
       - name: Docker build
         shell: powershell
         run: |
-          docker build . -t ${{ env.DOCKER_IMAGE_TAG }}
+          docker build . -t ${{ vars.DOCKER_IMAGE_TAG }}
 
 
       - name: Docker push
