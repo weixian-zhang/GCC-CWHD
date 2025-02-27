@@ -17,7 +17,7 @@
 			"options": {
 				"cwd": "${workspaceFolder}/src/telemetry_forager"
 			},
-			"dependsOn": ["docker build"]
+			//"dependsOn": ["docker build"]
 		},
 		{
 			"label": "zip and deploy func app",
@@ -36,4 +36,4 @@
 			}
 		}
 	]
-}
+} 

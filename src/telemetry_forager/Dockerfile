@@ -1,6 +1,6 @@
 # Build stage
 # FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
-FROM mcr.microsoft.com/windows/servercore:ltsc2025
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 # Set shell to PowerShell
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'Continue'; $verbosePreference='Continue';"]
@@ -9,7 +9,7 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 # install and configure chocolatey
 #RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 #RUN [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-ENV chocolateyUseWindowsCompression=false
+#ENV chocolateyUseWindowsCompression=false
 RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 #RUN choco config set cachelocation C:\chococache
 RUN choco feature enable --name allowGlobalConfirmation

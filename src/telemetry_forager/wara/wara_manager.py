@@ -11,9 +11,6 @@ import pandas as pd
 import zlib
 import sys
 from wara.model import Subscription
-# import win32com.client as win32
-# import pythoncom
-import xlwings as xw
 import openpyxl
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
@@ -475,7 +472,7 @@ class WARAManager:
             exec_ids_to_del.append((entity['PartitionKey'], entity['RowKey']))
 
          if not exec_ids_to_del:
-            Log.debug(f'WARA/delete_run_history - no run history to delete. days to keep = {days_to_keep}. Date/time to start delete {datetime_to_start_del.strftime("%a %d %b %Y %H:%M:%S")}')
+            Log.debug(f'WARA/delete_run_history - no run history to delete. days to keep = {days_to_keep}. Date/time to start delete {datetime_to_start_del}')
             return
          
 
@@ -511,20 +508,7 @@ class WARAManager:
    def refresh_xlsx(self, xlsx_file_path):
       Log.debug(f'WARA/run - refresh xlsx file {xlsx_file_path}')
 
-      # pythoncom.CoInitialize()
-      # xlapp = win32.DispatchEx("Excel.Application")
-      # wb = xlapp.Workbooks.Open(xlsx_file_path)
-      # wb.RefreshAll()
-      # wb.Save()
-      # wb.Close(SaveChanges=True)
-      # xlapp.Quit()
-      # pythoncom.CoUninitialize()
-      # wb = None
-      # xlapp = None
-
-      b = xw.Book(xlsx_file_path)
-
-      b.api.RefreshAll()
+      b = openpyxl.load_workbook(xlsx_file_path)
       
       # Save the updated workbook
       b.save(xlsx_file_path)
