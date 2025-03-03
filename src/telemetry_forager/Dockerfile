@@ -23,6 +23,8 @@ WORKDIR /
 RUN rmdir /s /q C:\\odtsetup
 
 # Create the Desktop directory required for Office 365 to function
+# https://stackoverflow.com/questions/75105136/win32com-open-method-of-workbooks-class-failed
+RUN mkdir C:\\Windows\\System32\config\\systemprofile\\Desktop
 RUN mkdir C:\\Windows\\SysWOW64\\config\\systemprofile\\Desktop
 
 VOLUME C:\\data
