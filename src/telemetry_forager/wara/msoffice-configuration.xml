@@ -1,6 +1,6 @@
-<Configuration ID="25642a1c-3a84-4a62-9284-2dc07a72d54c">
-  <Add OfficeClientEdition="64" Channel="PerpetualVL2019">
-    <Product ID="ProPlus2019Volume" PIDKEY="NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP">
+<Configuration ID="7d7cfd78-660d-4e6a-918c-eeac8d37e224">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2019" Version="16.0.10416.20058">
+    <Product ID="ProPlus2019Volume" PIDKEY="NJ2YM-97VVD-QDFJ2-D3837-BDX62">
       <Language ID="en-us" />
       <ExcludeApp ID="Access" />
       <ExcludeApp ID="Groove" />
@@ -14,7 +14,7 @@
     </Product>
   </Add>
   <Property Name="SharedComputerLicensing" Value="0" />
-  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
   <Property Name="DeviceBasedLicensing" Value="0" />
   <Property Name="SCLCacheOverride" Value="0" />
   <Property Name="AUTOACTIVATE" Value="1" />
