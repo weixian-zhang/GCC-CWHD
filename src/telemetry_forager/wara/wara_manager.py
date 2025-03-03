@@ -12,6 +12,7 @@ import zlib
 import sys
 from wara.model import Subscription
 import openpyxl
+import xlwings as xw
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
 from db import DB
@@ -506,13 +507,19 @@ class WARAManager:
 
 
    def refresh_xlsx(self, xlsx_file_path):
+      
       Log.debug(f'WARA/run - refresh xlsx file {xlsx_file_path}')
 
-      b = openpyxl.load_workbook(xlsx_file_path)
-      
-      # Save the updated workbook
-      b.save(xlsx_file_path)
-      b.close()
+      app_excel = xw.App(visible = False)
+
+      wbk = xw.Book(xlsx_file_path)
+      wbk.api.RefreshAll()
+
+      # two options to save
+      wbk.save(xlsx_file_path) # this will overwrite the file
+
+      app_excel.kill()
+      del app_excel
 
       Log.debug(f'WARA/run - refresh xlsx file successfully')
 

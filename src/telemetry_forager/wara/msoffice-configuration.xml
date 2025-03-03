@@ -1,8 +1,9 @@
-<Configuration ID="16d52fd5-b6c1-48b5-b968-f9736ee3a5c7">
-  <Add OfficeClientEdition="64" Channel="PerpetualVL2024">
-    <Product ID="ProPlus2024Volume" PIDKEY="XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB">
+<Configuration ID="25642a1c-3a84-4a62-9284-2dc07a72d54c">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2019">
+    <Product ID="ProPlus2019Volume" PIDKEY="NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP">
       <Language ID="en-us" />
       <ExcludeApp ID="Access" />
+      <ExcludeApp ID="Groove" />
       <ExcludeApp ID="Lync" />
       <ExcludeApp ID="OneDrive" />
       <ExcludeApp ID="OneNote" />
@@ -13,10 +14,11 @@
     </Product>
   </Add>
   <Property Name="SharedComputerLicensing" Value="0" />
-  <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
   <Property Name="DeviceBasedLicensing" Value="0" />
   <Property Name="SCLCacheOverride" Value="0" />
   <Property Name="AUTOACTIVATE" Value="1" />
   <Updates Enabled="TRUE" />
   <RemoveMSI />
+  <Display Level="Full" AcceptEULA="TRUE" />
 </Configuration>

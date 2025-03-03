@@ -1,6 +1,7 @@
 # Build stage
 # FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS builder
-FROM mcr.microsoft.com/windows/servercore:ltsc2022
+# FROM mcr.microsoft.com/windows/servercore:ltsc2022
+FROM mcr.microsoft.com/windows/server:ltsc2022
 
 # office setup
 WORKDIR C:\\odtsetup
@@ -27,51 +28,43 @@ RUN mkdir C:\\Windows\\SysWOW64\\config\\systemprofile\\Desktop
 VOLUME C:\\data
 
 
-
-
 # # Set shell to PowerShell
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'Continue'; $verbosePreference='Continue';"]
 
-RUN $excel = New-Object -ComObject excel.application
-RUN $excel.visible = $True
 
-# # install and configure chocolatey
-# #RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-# #RUN [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-# #ENV chocolateyUseWindowsCompression=false
-# RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-# #RUN choco config set cachelocation C:\chococache
-# RUN choco feature enable --name allowGlobalConfirmation
+# install and configure chocolatey
+RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+RUN choco feature enable --name allowGlobalConfirmation
 
-# # install powershell core
-# RUN choco install powershell-core --version 7.4.5 --force
+# install powershell core
+RUN choco install powershell-core --version 7.4.5 --force
 
 
-# # install WARA required Powershell modules
-# RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
-# RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
-# RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
-# RUN pwsh -c Install-Module -Name powershell-yaml -Force -SkipPublisherCheck
+# install WARA required Powershell modules
+RUN pwsh -c Install-Module -Name ImportExcel -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name Az.ResourceGraph -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name Az.Accounts -Force -SkipPublisherCheck
+RUN pwsh -c Install-Module -Name powershell-yaml -Force -SkipPublisherCheck
 
 
-# #install git
-# RUN choco install git -y
-# RUN choco install git.install -y
-# RUN git config --global core.autocrlf true
+#install git
+RUN choco install git -y
+RUN choco install git.install -y
+RUN git config --global core.autocrlf true
 
-# # install python 3.11
-# RUN choco install python311 -y
-# RUN python.exe -m pip install --upgrade pip
+# install python 3.11
+RUN choco install python311 -y
+RUN python.exe -m pip install --upgrade pip
 
-# # Set working directory
-# WORKDIR /app
+# Set working directory
+WORKDIR /app
 
-# # Copy application code
-# COPY . .
+# Copy application code
+COPY . .
 
-# # Install dependencies in a temporary directory
-# #RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-# RUN pip install --no-cache-dir -r requirements.txt 
+# Install dependencies in a temporary directory
+#RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
 
 # Expose the port FastAPI will run on
