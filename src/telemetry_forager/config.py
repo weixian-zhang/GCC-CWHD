@@ -40,6 +40,8 @@ class AppConfig:
 
         self.wara_days_to_keep_run_history= int(os.environ.get('WARA_Days_To_Keep_Run_History')) if os.environ.get('WARA_Days_To_Keep_Run_History') else 180
 
+        self.timezone = os.environ.get('Timezone') if os.environ.get('Timezone') else 'Asia/Singapore'
+        
         self.loaded = True
 
     def get_thresholds(self) -> HealthStatusThreshold:

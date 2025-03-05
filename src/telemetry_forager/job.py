@@ -1,7 +1,7 @@
 import log as Log
 import threading
 import time
-from wara.wara_manager import WARAManager
+from wara.wara_executor import WARAExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
@@ -18,7 +18,7 @@ class WARAEventLoop:
                 task = wara_report_gen_queue.dequeue()
                 if task:
                     Log.debug('always_running_job receive task wara-report-generation')
-                    wap = WARAManager(config=appconfig)
+                    wap = WARAExecutor(config=appconfig)
                     wap.run()
                 time.sleep(5)
             except Exception as e:
@@ -32,7 +32,7 @@ class WARAEventLoop:
 
 
 
-class WARAReportGenScheduledJob:
+class WARAApiGenScheduledJob:
 
     # enqueue task to generate wara report
     def enqueue_task_to_generate_wara_report(self):
@@ -47,7 +47,7 @@ class WARAReportGenScheduledJob:
         scheduler = BackgroundScheduler()
         scheduler.start()
         trigger = CronTrigger(
-            year="*", month="*", day="*", hour="*/12", minute="0", second="0"
+            year="*", month="*", day="*", hour="*/6", minute="0", second="0"
         )
         scheduler.add_job(
             self.enqueue_task_to_generate_wara_report,
@@ -67,7 +67,7 @@ class WARAHistoryCleanUpScheduledJob:
         
         Log.debug('WARA: WARA_Clean_Run_History_Job is running')
 
-        wm = WARAManager(appconfig)
+        wm = WARAExecutor(appconfig)
         wm.delete_run_history(appconfig.wara_days_to_keep_run_history)
 
         Log.debug('WARA: WARA_Clean_Run_History_Job is completed')
@@ -78,7 +78,7 @@ class WARAHistoryCleanUpScheduledJob:
         scheduler = BackgroundScheduler()
         scheduler.start()
         trigger = CronTrigger(
-            year="*", month="*", day="*", hour="*/12", minute="0", second="0"
+            year="*", month="*", day="*", hour="*", minute="*", second="*/30"
         )
         scheduler.add_job(
             self.clean_run_history,

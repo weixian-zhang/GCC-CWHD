@@ -23,7 +23,7 @@ class RunContext:
       self.run_start_time = datetime.datetime.now()
       
 
-class WARAManager:
+class WARAExecutor:
 
    def __init__(self, config: AppConfig):
       file_full_path = os.path.realpath(__file__)
@@ -365,22 +365,21 @@ class WARAManager:
 
    def save_run_history(self, execution_start_time: datetime.datetime, execution_id: str):
 
+      # Store the entities using a RowKey that naturally sorts in reverse date/time order by using
+      # the most recent entry is always the first one in the table.
+      # https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
       def row_key(dt):
          t = (datetime.datetime(9999, 12, 31, 23, 59, 59, 999999) - dt).total_seconds() * 10000000
          return f'{t:.0f}'
 
-      # Store the entities using a RowKey that naturally sorts in reverse date/time order by using
-      # the most recent entry is always the first one in the table.
-      # https://learn.microsoft.com/en-us/azure/storage/tables/table-storage-design-patterns#log-tail-pattern
+      
       entity = {
          'PartitionKey': execution_id,
          'RowKey': row_key(execution_start_time),
-         'execution_start_time': execution_start_time,
-         'display_execution_start_time': execution_start_time.strftime("%a %d %b %Y %H:%M:%S")
+         'execution_start_time': execution_start_time
       }
 
       self.db.insert(self.db.wara_run_history_table_name, entity)
-
 
 
    def compress_string(self, data: str) -> str:

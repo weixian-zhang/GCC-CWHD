@@ -8,8 +8,8 @@ import jsons
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
-from job import WARAEventLoop, WARAReportGenScheduledJob, WARAHistoryCleanUpScheduledJob
-from wara.wara_report import WARAReport
+from job import WARAEventLoop, WARAApiGenScheduledJob, WARAHistoryCleanUpScheduledJob
+from telemetry_forager.wara.wara_api import WARAApi
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
 from memory_queue import MemoryQueue
 
@@ -25,6 +25,8 @@ appconfig.load_from_envar()
 Log.init(appconfig)
 
 app = fastapi.FastAPI()
+
+_waraapi = WARAApi(config=appconfig)
 
 class RequestResourceListParam(BaseModel):
     resourceId: str
@@ -146,8 +148,7 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 def run_history(response: fastapi.Response) -> list[WARAExecution]:
 
     try:
-        wr = WARAReport(config=appconfig)
-        executions = wr.list_execution_history()
+        executions = _waraapi.list_execution_history()
         return executions
     except Exception as e:
         Log.exception(f'WARA/report - error occured: {str(e)}')
@@ -166,8 +167,7 @@ def get_subscriptions(request: fastapi.Request, response: fastapi.Response)  -> 
             response.status_code = 400
             return 'executionid are required'
         
-        wr = WARAReport(config=appconfig)
-        result = wr.get_run_subscriptions(executionid)
+        result = _waraapi.get_run_subscriptions(executionid)
         return result
     
     except Exception as e:
@@ -188,9 +188,8 @@ def get_recommendations(request: fastapi.Request, response: fastapi.Response)  -
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        wr = WARAReport(config=appconfig)
         
-        result = wr.get_recommendations(subid, executionid)
+        result = _waraapi.get_recommendations(subid, executionid)
 
         return result
     
@@ -212,8 +211,7 @@ def get_impacted_resources(request: fastapi.Request, response: fastapi.Response)
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        wr = WARAReport(config=appconfig)
-        result = wr.get_impacted_resources(subid, executionid)
+        result = _waraapi.get_impacted_resources(subid, executionid)
         return result
     
     except Exception as e:
@@ -234,8 +232,7 @@ def get_resource_types(request: fastapi.Request, response: fastapi.Response) -> 
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        wr = WARAReport(config=appconfig)
-        result = wr.get_impacted_resource_types(subid, executionid)
+        result = _waraapi.get_impacted_resource_types(subid, executionid)
         return result
     
     except Exception as e:
@@ -256,8 +253,7 @@ def get_retirements(request: fastapi.Request, response: fastapi.Response) -> lis
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        wr = WARAReport(config=appconfig)
-        result = wr.get_retirements(subid, executionid)
+        result = _waraapi.get_retirements(subid, executionid)
         return result
     
     except Exception as e:
@@ -279,8 +275,7 @@ def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, re
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        wr = WARAReport(config=appconfig)
-        result = wr.get_pivot_recommendation_service_by_impact(subid, executionid)
+        result = _waraapi.get_pivot_recommendation_service_by_impact(subid, executionid)
         return result
     
     except Exception as e:
@@ -302,8 +297,7 @@ def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.R
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        wr = WARAReport(config=appconfig)
-        result = wr.get_pivot_recommendation_resiliency_by_impact(subid, executionid)
+        result = _waraapi.get_pivot_recommendation_resiliency_by_impact(subid, executionid)
         return result
     
     except Exception as e:
@@ -331,7 +325,7 @@ def run_pwsh(response: fastapi.Response):
 
 # run background jobs
 WARAEventLoop().start()
-WARAReportGenScheduledJob().init_wara_report_gen_scheduled_job()
+WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
 WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
 
 # execute wara 1 time upon startup

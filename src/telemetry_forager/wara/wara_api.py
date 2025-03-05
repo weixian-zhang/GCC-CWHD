@@ -9,7 +9,9 @@ import log as Log
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent))
 
-class WARAReport:
+from util import DatetimeUtil
+
+class WARAApi:
     def __init__(self, config: AppConfig):
         self.db = DB(config)
 
@@ -22,7 +24,7 @@ class WARAReport:
             rowkey = entity['RowKey']
             execution_id = entity['PartitionKey']
             execution_start_time = entity['execution_start_time']
-            display_execution_start_time = entity['display_execution_start_time']
+            display_execution_start_time = DatetimeUtil.to_friendly_datetime(execution_start_time) #entity['display_execution_start_time']
             executions.append(WARAExecution(rowkey, execution_id, execution_start_time, display_execution_start_time))
 
         executions = sorted(executions, key=lambda x: x.rowkey)
