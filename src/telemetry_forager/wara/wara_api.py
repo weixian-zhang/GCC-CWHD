@@ -7,6 +7,7 @@ import pandas as pd
 import sys
 import log as Log
 from pathlib import Path
+from datetime import datetime
 sys.path.append(str(Path(__file__).absolute().parent))
 
 from util import DatetimeUtil
@@ -23,7 +24,8 @@ class WARAApi:
         for entity in entities:
             rowkey = entity['RowKey']
             execution_id = entity['PartitionKey']
-            execution_start_time = entity['execution_start_time']
+            edt = entity['execution_start_time'] # TablesEntityDatetime type need to convert to datetime
+            execution_start_time = datetime(edt.year, edt.month, edt.day, edt.hour, edt.minute, edt.second, tzinfo=edt.tzinfo)
             display_execution_start_time = DatetimeUtil.to_friendly_datetime(execution_start_time) #entity['display_execution_start_time']
             executions.append(WARAExecution(rowkey, execution_id, execution_start_time, display_execution_start_time))
 

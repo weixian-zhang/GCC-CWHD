@@ -9,7 +9,7 @@ from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
 import log as Log
 from job import WARAEventLoop, WARAApiGenScheduledJob, WARAHistoryCleanUpScheduledJob
-from telemetry_forager.wara.wara_api import WARAApi
+from wara.wara_api import WARAApi
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
 from memory_queue import MemoryQueue
 

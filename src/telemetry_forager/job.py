@@ -78,7 +78,7 @@ class WARAHistoryCleanUpScheduledJob:
         scheduler = BackgroundScheduler()
         scheduler.start()
         trigger = CronTrigger(
-            year="*", month="*", day="*", hour="*", minute="*", second="*/30"
+            year="*", month="*", day="*", hour="*/6", minute="0", second="0"
         )
         scheduler.add_job(
             self.clean_run_history,
