@@ -46,6 +46,9 @@ class DB:
             return self.table_client.get_entity(partition_key, row_key)
         except ResourceNotFoundError as e:
             return None
+        except Exception as e:
+            Log.exception(f'DB: error occured: {str(e)}')
+            return None
         
     
         
