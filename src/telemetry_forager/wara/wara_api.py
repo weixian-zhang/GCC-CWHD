@@ -46,21 +46,21 @@ class WARAApi:
         return []
         
     
-    def get_pivot_recommendation_service_by_impact(self, subscription_id, execution_id):
+    def get_pivot_resources_by_impact(self, subscription_id, execution_id):
 
-        df = self.get_recommendations(subscription_id, execution_id, to_df=True)
+        df = self.get_impacted_resources(subscription_id, execution_id, to_df=True)
 
         if df is []:
             return []
         
-        pivot_Table = df.pivot_table(index='ServiceTopic', columns="Impact", aggfunc='size', fill_value=0)
+        pivot_Table = df.pivot_table(index='ResourceType', columns="Impact", aggfunc='size', fill_value=0)
 
         pdf = pivot_Table.reset_index() # convert pivot to dataframe
 
         return pdf.to_json(orient="records")
         
     
-    def get_pivot_recommendation_resiliency_by_impact(self, subscription_id, execution_id):
+    def get_pivot_resiliency_by_impact(self, subscription_id, execution_id):
         
         df = self.get_recommendations(subscription_id, execution_id, to_df=True)
 
@@ -109,7 +109,7 @@ class WARAApi:
         return []
     
     
-    def get_impacted_resources(self, subscription_id, execution_id):
+    def get_impacted_resources(self, subscription_id, execution_id, to_df=False):
 
         entity = self.db.get_row(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
 
@@ -128,8 +128,11 @@ class WARAApi:
             newdf['Impact'] = df.iloc[:,4]
             newdf['Recommendation'] = df.iloc[:,2]
             newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
-        
-            return newdf.to_json(orient='records')
+
+            if not to_df:
+                return newdf.to_json(orient='records')
+            else:
+                return newdf 
         
         return []
         

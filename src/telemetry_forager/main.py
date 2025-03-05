@@ -275,7 +275,7 @@ def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, re
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_pivot_recommendation_service_by_impact(subid, executionid)
+        result = _waraapi.get_pivot_resources_by_impact(subid, executionid)
         return result
     
     except Exception as e:
@@ -297,7 +297,7 @@ def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.R
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_pivot_recommendation_resiliency_by_impact(subid, executionid)
+        result = _waraapi.get_pivot_resiliency_by_impact(subid, executionid)
         return result
     
     except Exception as e:
