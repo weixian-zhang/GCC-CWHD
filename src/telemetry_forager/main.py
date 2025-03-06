@@ -183,13 +183,15 @@ def get_recommendations(request: fastapi.Request, response: fastapi.Response)  -
         params = request.query_params
         subid = params.get('subid', '')
         executionid = params.get('execid', '')
+        implemented = params.get('implemented', 'All')
+        impact = params.get('impact', 'All')
 
         if not subid or not executionid:
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
         
-        result = _waraapi.get_recommendations(subid, executionid)
+        result = _waraapi.get_recommendations(subscription_id=subid, execution_id=executionid, implemented=implemented, impact=impact, to_df=False)
 
         return result
     
@@ -206,12 +208,13 @@ def get_impacted_resources(request: fastapi.Request, response: fastapi.Response)
         params = request.query_params
         subid = params.get('subid', '')
         executionid = params.get('execid', '')
+        impact = params.get('impact', 'All')
 
         if not subid or not executionid:
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_impacted_resources(subid, executionid)
+        result = _waraapi.get_impacted_resources(subscription_id=subid, execution_id=executionid, impact=impact)
         return result
     
     except Exception as e:
@@ -220,19 +223,20 @@ def get_impacted_resources(request: fastapi.Request, response: fastapi.Response)
         return str(e)
 
 @app.get("/api/wara/report/impactedresourcetypes", status_code=200, response_model=None)
-def get_resource_types(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
+def get_impacted_resource_count(request: fastapi.Request, response: fastapi.Response) -> list[WARAResourceType]:
 
     try:
 
         params = request.query_params
         subid = params.get('subid', '')
         executionid = params.get('execid', '')
+        impact = params.get('impact', 'All')
 
         if not subid or not executionid:
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_impacted_resource_types(subid, executionid)
+        result = _waraapi.get_impacted_resource_count(subscription_id=subid, execution_id= executionid, impact=impact)
         return result
     
     except Exception as e:
@@ -263,7 +267,7 @@ def get_retirements(request: fastapi.Request, response: fastapi.Response) -> lis
 
 
 @app.get("/api/wara/report/stats/service-by-impact", status_code=200, response_model=None)
-def get_recommendation_service_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
+def get_resource_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
 
     try:
 
@@ -324,9 +328,9 @@ def run_pwsh(response: fastapi.Response):
 
 
 # run background jobs
-WARAEventLoop().start()
-WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
-WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
+# WARAEventLoop().start()
+# WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
+# WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
 
 # execute wara 1 time upon startup
 wara_report_gen_queue.enqueue('run_wara')

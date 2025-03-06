@@ -53,6 +53,7 @@ class WARAApi:
         if df is []:
             return []
         
+        
         pivot_Table = df.pivot_table(index='ResourceType', columns="Impact", aggfunc='size', fill_value=0)
 
         pdf = pivot_Table.reset_index() # convert pivot to dataframe
@@ -74,7 +75,7 @@ class WARAApi:
         return pdf.to_json(orient="records")
     
 
-    def get_recommendations(self, subscription_id, execution_id, to_df=False):
+    def get_recommendations(self, subscription_id, execution_id, implemented='All', impact='All', to_df=False):
         '''
         Get recommendations for a given subscription and execution id
         params:
@@ -94,12 +95,17 @@ class WARAApi:
             newdf['Impact'] = df.iloc[:,8]
             newdf['Implemented'] = df.iloc[:,0]
             newdf['Number_of_Impacted_Resources'] = df.iloc[:,1]
-            newdf['ResourceProvider'] = df.iloc[:,4]
-            newdf['ServiceTopic'] = df.iloc[:,5]
+            newdf['ResourceProviderCategory'] = df.iloc[:,4]
+            newdf['ResourceProvideType'] = df.iloc[:,5]
+            newdf['ResourceProvider'] = newdf['ResourceProviderCategory'] + '/' + newdf['ResourceProvideType']
             newdf['Resiliency_Category'] = df.iloc[:,6]
             newdf['Recommendation'] = df.iloc[:,7]
             newdf['Best_Practice_Guidance'] = df.iloc[:,9]
             newdf['Read_More'] = df.iloc[:,10]
+
+            # filter after column rename
+            newdf = newdf[newdf['Implemented'].str.lower() == implemented.lower()] if implemented != 'All' else newdf
+            newdf = newdf[newdf['Impact'].str.lower() == impact.lower()] if impact != 'All' else newdf
 
             if not to_df:
                 return newdf.to_json(orient='records')
@@ -109,7 +115,7 @@ class WARAApi:
         return []
     
     
-    def get_impacted_resources(self, subscription_id, execution_id, to_df=False):
+    def get_impacted_resources(self, subscription_id, execution_id, impact='All', to_df=False):
 
         entity = self.db.get_row(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
 
@@ -123,11 +129,13 @@ class WARAApi:
             newdf = pd.DataFrame()
             #newdf['SubscriptionId'] = df.iloc[:,5]
             newdf['ResourceGroup'] = df.iloc[:,6]
-            newdf['ResourceType'] = df.iloc[:,1]
+            newdf['ResourceProvider'] = df.iloc[:,1]
             newdf['Name'] = df.iloc[:,8]
             newdf['Impact'] = df.iloc[:,4]
             newdf['Recommendation'] = df.iloc[:,2]
             newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
+
+            newdf = newdf[newdf['Impact'].str.lower() == impact.lower()] if impact != 'All' else newdf
 
             if not to_df:
                 return newdf.to_json(orient='records')
@@ -137,25 +145,15 @@ class WARAApi:
         return []
         
     
-    def get_impacted_resource_types(self, subscription_id, execution_id):
+    def get_impacted_resource_count(self, subscription_id, execution_id, impact='All'):
 
+        df = self.get_impacted_resources(subscription_id, execution_id, impact, to_df=True)
 
-        entity = self.db.get_row(self.db.wara_resource_type_table_name, subscription_id, execution_id) 
+        df = df[df['Impact'].str.lower() == impact.lower()] if impact != 'All' else df
 
-        if entity and entity['data']:
-            data = entity['data']
-            data = self._decompress_string(data)
-            jd = json.loads(data)
-
-            df = pd.DataFrame(jd)
-
-            newdf = pd.DataFrame()
-            newdf['ResourceType'] = df.iloc[:,0]
-            newdf['NumberOfResources'] = df.iloc[:,1]
+        df = df.groupby(['ResourceProvider']).size().reset_index(name='counts')
         
-            return newdf.to_json(orient='records')
-        
-        return []
+        return df.to_json(orient='records')
     
 
     def get_retirements(self, subscription_id, execution_id):
