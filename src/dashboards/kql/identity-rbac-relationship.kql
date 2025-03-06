@@ -1,0 +1,32 @@
+AuthorizationResources
+| where type =~ 'microsoft.authorization/roleassignments'
+| extend prop = parse_json(properties)
+| extend roledefid = tostring(prop['roleDefinitionId'])
+| extend principalType = prop['principalType']
+| extend principalId = prop['principalId']
+| extend scope = prop['scope']
+| extend subscriptionId=subscriptionId
+| join kind=leftouter  (
+    resourcecontainers
+        | where type == 'microsoft.resources/subscriptions'
+        | extend subid = tostring(split(id,'/')[-1])
+        | project subid, subscriptionName = name
+) on $left.subscriptionId == $right.subid
+| join (
+    AuthorizationResources
+    | where type == "microsoft.authorization/roledefinitions"
+    | extend prop = parse_json(properties)
+    | extend rolename = prop['roleName']
+    | extend roleType = prop['type']
+    | extend permissions = parse_json(properties)['permissions']
+    | project id, roleType,rolename, permissions
+) on $left.roledefid == $right.id
+| project 
+    SubscriptionId=subscriptionId,
+    SubscriptionName = subscriptionName,
+    ResourceGroup=resourceGroup,
+    PrincipalType = principalType,
+    PrincipalId=principalId,
+    RoleType=roleType,
+    Rolename = rolename,
+    Permissions = permissions
