@@ -185,13 +185,15 @@ def get_recommendations(request: fastapi.Request, response: fastapi.Response)  -
         executionid = params.get('execid', '')
         implemented = params.get('implemented', 'All')
         impact = params.get('impact', 'All')
+        resource_provider = params.get('rp', 'All')
 
         if not subid or not executionid:
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
         
-        result = _waraapi.get_recommendations(subscription_id=subid, execution_id=executionid, implemented=implemented, impact=impact, to_df=False)
+        result = _waraapi.get_recommendations(subscription_id=subid, execution_id=executionid, implemented=implemented, 
+                                              impact=impact, resource_provider=resource_provider, to_df=False)
 
         return result
     
@@ -209,12 +211,14 @@ def get_impacted_resources(request: fastapi.Request, response: fastapi.Response)
         subid = params.get('subid', '')
         executionid = params.get('execid', '')
         impact = params.get('impact', 'All')
+        resource_provider = params.get('rp', 'All')
 
         if not subid or not executionid:
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_impacted_resources(subscription_id=subid, execution_id=executionid, impact=impact)
+        result = _waraapi.get_impacted_resources(subscription_id=subid, execution_id=executionid, 
+                                                 impact=impact,resource_provider=resource_provider)
         return result
     
     except Exception as e:
@@ -231,12 +235,14 @@ def get_impacted_resource_count(request: fastapi.Request, response: fastapi.Resp
         subid = params.get('subid', '')
         executionid = params.get('execid', '')
         impact = params.get('impact', 'All')
+        resource_provider = params.get('rp', 'All')
 
         if not subid or not executionid:
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_impacted_resource_count(subscription_id=subid, execution_id= executionid, impact=impact)
+        result = _waraapi.get_impacted_resource_count(subscription_id=subid, execution_id= executionid, 
+                                                      impact=impact, resource_provider=resource_provider)
         return result
     
     except Exception as e:

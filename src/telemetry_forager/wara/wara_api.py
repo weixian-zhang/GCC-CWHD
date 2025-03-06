@@ -75,7 +75,7 @@ class WARAApi:
         return pdf.to_json(orient="records")
     
 
-    def get_recommendations(self, subscription_id, execution_id, implemented='All', impact='All', to_df=False):
+    def get_recommendations(self, subscription_id, execution_id, implemented='All', impact='All', resource_provider='All', to_df=False):
         '''
         Get recommendations for a given subscription and execution id
         params:
@@ -106,6 +106,7 @@ class WARAApi:
             # filter after column rename
             newdf = newdf[newdf['Implemented'].str.lower() == implemented.lower()] if implemented != 'All' else newdf
             newdf = newdf[newdf['Impact'].str.lower() == impact.lower()] if impact != 'All' else newdf
+            newdf = newdf[newdf['ResourceProvider'].str.lower() == resource_provider.lower()] if resource_provider != 'All' else newdf
 
             if not to_df:
                 return newdf.to_json(orient='records')
@@ -115,7 +116,7 @@ class WARAApi:
         return []
     
     
-    def get_impacted_resources(self, subscription_id, execution_id, impact='All', to_df=False):
+    def get_impacted_resources(self, subscription_id, execution_id, impact='All',resource_provider='All', to_df=False):
 
         entity = self.db.get_row(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
 
@@ -136,6 +137,7 @@ class WARAApi:
             newdf['Params'] = df.iloc[:,10].astype(str) + ', ' + df.iloc[:,11].astype(str) + ', ' + df.iloc[:,12].astype(str) + ', ' + df.iloc[:,13].astype(str) + ', ' + df.iloc[:,14].astype(str)
 
             newdf = newdf[newdf['Impact'].str.lower() == impact.lower()] if impact != 'All' else newdf
+            newdf = newdf[newdf['ResourceProvider'].str.lower() == resource_provider.lower()] if resource_provider != 'All' else newdf
 
             if not to_df:
                 return newdf.to_json(orient='records')
@@ -145,9 +147,9 @@ class WARAApi:
         return []
         
     
-    def get_impacted_resource_count(self, subscription_id, execution_id, impact='All'):
+    def get_impacted_resource_count(self, subscription_id, execution_id, impact='All', resource_provider='All'):
 
-        df = self.get_impacted_resources(subscription_id, execution_id, impact, to_df=True)
+        df = self.get_impacted_resources(subscription_id, execution_id, impact, resource_provider, to_df=True)
 
         df = df[df['Impact'].str.lower() == impact.lower()] if impact != 'All' else df
 
