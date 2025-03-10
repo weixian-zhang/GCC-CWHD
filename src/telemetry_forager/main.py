@@ -272,7 +272,7 @@ def get_retirements(request: fastapi.Request, response: fastapi.Response) -> lis
         return str(e)
 
 
-@app.get("/api/wara/report/stats/service-by-impact", status_code=200, response_model=None)
+@app.get("/api/wara/report/stats/resource-by-impact", status_code=200, response_model=None)
 def get_resource_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
 
     try:
@@ -315,6 +315,28 @@ def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.R
         response.status_code = 500
         return str(e)
     
+@app.get("/api/wara/report/stats/total-impact-count-by-rsc", status_code=200, response_model=None)
+def get_total_impact_count_by_resource_provider(request: fastapi.Request, response: fastapi.Response):
+
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+        impact = params.get('impact', 'All')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        result = _waraapi.get_total_impact_count_by_resource_provider(subid, executionid, impact=impact)
+        return {'total_impact_count': result}
+    
+    except Exception as e:
+        Log.exception(f'WARA/report - error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
+    
 
 @app.post("/api/wara/runonce", status_code=202)
 def run_pwsh(response: fastapi.Response):
@@ -334,9 +356,9 @@ def run_pwsh(response: fastapi.Response):
 
 
 # run background jobs
-# WARAEventLoop().start()
-# WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
-# WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
+WARAEventLoop().start()
+WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
+WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
 
 # execute wara 1 time upon startup
 wara_report_gen_queue.enqueue('run_wara')

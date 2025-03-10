@@ -45,20 +45,34 @@ class WARAApi:
             return json.loads(data)
         return []
         
-    
-    def get_pivot_resources_by_impact(self, subscription_id, execution_id):
+    def get_total_impact_count_by_resource_provider(self,subscription_id, execution_id, impact='High'):
+        df = self.get_pivot_resources_by_impact(subscription_id, execution_id, to_df=True)
+
+        if 'High' in df.columns and impact.lower() == 'high':
+            return df['High'].sum().item()
+        elif 'Medium' in df.columns and impact.lower() == 'medium':
+            return df['Medium'].sum().item()
+        elif 'Low' in df.columns:
+            return df['Low'].sum().item()
+        else:
+            return 0
+
+
+    def get_pivot_resources_by_impact(self, subscription_id, execution_id, to_df=False):
 
         df = self.get_impacted_resources(subscription_id, execution_id, to_df=True)
 
         if df is []:
             return []
         
-        
-        pivot_Table = df.pivot_table(index='ResourceType', columns="Impact", aggfunc='size', fill_value=0)
+        pivot_Table = df.pivot_table(index='ResourceProvider', columns="Impact", aggfunc='size', fill_value=0)
 
         pdf = pivot_Table.reset_index() # convert pivot to dataframe
 
-        return pdf.to_json(orient="records")
+        if not to_df:
+            return pdf.to_json(orient="records")
+        else:
+            return pdf
         
     
     def get_pivot_resiliency_by_impact(self, subscription_id, execution_id):
@@ -154,8 +168,9 @@ class WARAApi:
         df = df[df['Impact'].str.lower() == impact.lower()] if impact != 'All' else df
 
         df = df.groupby(['ResourceProvider']).size().reset_index(name='counts')
-        
+
         return df.to_json(orient='records')
+
     
 
     def get_retirements(self, subscription_id, execution_id):
