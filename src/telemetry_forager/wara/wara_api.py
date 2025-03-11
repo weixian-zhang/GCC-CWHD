@@ -47,7 +47,10 @@ class WARAApi:
 
 
     def get_total_impact_count(self,subscription_id, execution_id, impact='High'):
-        df = self.get_pivot_resources_by_impact(subscription_id, execution_id, to_df=True)
+        df = self.get_resources_by_impact(subscription_id, execution_id, to_df=True)
+
+        if len(df) == 0 or df is []:
+            return 0
 
         if 'High' in df.columns and impact.lower() == 'high':
             return df['High'].sum().item()
@@ -64,7 +67,7 @@ class WARAApi:
         df = self.get_impacted_resources(subscription_id=subscription_id, execution_id=execution_id, 
                                          resource_provider=resource_provider, to_df=True)
 
-        if df is []:
+        if len(df) == 0 or df is []:
             return []
         
         pivot_Table = df.pivot_table(index='ResourceProvider', columns="Impact", aggfunc='size', fill_value=0)
