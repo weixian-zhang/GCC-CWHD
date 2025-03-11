@@ -33,10 +33,10 @@ jobs:
       - name: Docker build
         shell: powershell
         run: |
-          docker build . -t ${{ env.DOCKER_IMAGE_TAG }}
+          docker build . -t docker.io/wxzd/cwhd:v0.1.1-wara
 
 
       - name: Docker push
         shell: powershell
         run: |
-          docker push ${{ env.DOCKER_IMAGE_TAG }}
+          docker push docker.io/wxzd/cwhd:v0.1.1-wara
