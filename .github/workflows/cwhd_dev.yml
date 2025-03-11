@@ -1,42 +1,42 @@
-# name: Build Windows Docker Image
+name: Build Windows Docker Image
 
-# on:
-#   push:
-#     branches: [ feat/wara ]
-#   pull_request:
-#     branches: [ feat/wara ]
+on:
+  push:
+    branches: [ feat/wara ]
+  pull_request:
+    branches: [ feat/wara ]
 
-#   workflow_dispatch:
+  workflow_dispatch:
 
-# jobs:
-#   build:
-#     runs-on: windows-latest
-#     environment: dev
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
+jobs:
+  build:
+    runs-on: windows-latest
+    environment: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#       # github actions pip freeze
-#       - name: Set up Python
-#         uses: actions/setup-python@v5
-#         with:
-#           python-version: 3.11
+      # github actions pip freeze
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
       
-#       - run: pip freeze > requirements.txt
+      - run: pip freeze > requirements.txt
 
-#       - name: Login to Docker Hub
-#         uses: docker/login-action@v3
-#         with:
-#           username: ${{ secrets.DOCKERHUB_USERNAME }}
-#           password: ${{ secrets.DOCKERHUB_PAT }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
 
-#       - name: Docker build
-#         shell: powershell
-#         run: |
-#           docker build . -t ${{ env.DOCKER_IMAGE_TAG }}
+      - name: Docker build
+        shell: powershell
+        run: |
+          docker build . -t ${{ env.DOCKER_IMAGE_TAG }}
 
 
-#       - name: Docker push
-#         shell: powershell
-#         run: |
-#           docker push ${{ env.DOCKER_IMAGE_TAG }}
+      - name: Docker push
+        shell: powershell
+        run: |
+          docker push ${{ env.DOCKER_IMAGE_TAG }}
