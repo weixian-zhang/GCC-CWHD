@@ -126,6 +126,8 @@ class WARAApi:
             newdf = newdf[newdf['Impact'].str.lower() == impact.lower()] if impact != 'All' else newdf
             newdf = newdf[newdf['ResourceProvider'].str.lower() == resource_provider.lower()] if resource_provider != 'All' else newdf
 
+            newdf = self._sort_by_impact(newdf)
+
             if not to_df:
                 return newdf.to_json(orient='records')
             else:
@@ -156,6 +158,8 @@ class WARAApi:
 
             newdf = newdf[newdf['Impact'].str.lower() == impact.lower()] if impact != 'All' else newdf
             newdf = newdf[newdf['ResourceProvider'].str.lower() == resource_provider.lower()] if resource_provider != 'All' else newdf
+
+            newdf = self._sort_by_impact(newdf)
 
             if not to_df:
                 return newdf.to_json(orient='records')
@@ -217,7 +221,15 @@ class WARAApi:
 
         return []
 
-
+    def _sort_by_impact(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Sort the dataframe by impact in ascending order.
+        """
+        impact_order = {'High': 1, 'Medium': 2, 'Low': 3}
+        df['ImpactOrder'] = df['Impact'].map(impact_order)
+        return df.sort_values(by='ImpactOrder', ascending=True).drop(columns=['ImpactOrder'])
+    
+    
     def _decompress_string(self, data: str) -> str:
       data = zlib.decompress(data).decode()
       return data
