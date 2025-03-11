@@ -44,8 +44,9 @@ class WARAApi:
             data = self._decompress_string(data)
             return json.loads(data)
         return []
-        
-    def get_total_impact_count_by_resource_provider(self,subscription_id, execution_id, impact='High'):
+
+
+    def get_total_impact_count(self,subscription_id, execution_id, impact='High'):
         df = self.get_pivot_resources_by_impact(subscription_id, execution_id, to_df=True)
 
         if 'High' in df.columns and impact.lower() == 'high':
@@ -58,9 +59,10 @@ class WARAApi:
             return 0
 
 
-    def get_pivot_resources_by_impact(self, subscription_id, execution_id, to_df=False):
+    def get_resources_by_impact(self, subscription_id, execution_id, resource_provider='All', to_df=False):
 
-        df = self.get_impacted_resources(subscription_id, execution_id, to_df=True)
+        df = self.get_impacted_resources(subscription_id=subscription_id, execution_id=execution_id, 
+                                         resource_provider=resource_provider, to_df=True)
 
         if df is []:
             return []
@@ -69,17 +71,19 @@ class WARAApi:
 
         pdf = pivot_Table.reset_index() # convert pivot to dataframe
 
+        #pdf = pdf[[pdf['ResourceProvider'].str.lower() == resource_provider.lower()]] if resource_provider != 'All' else pdf
+
         if not to_df:
             return pdf.to_json(orient="records")
         else:
             return pdf
         
     
-    def get_pivot_resiliency_by_impact(self, subscription_id, execution_id):
+    def get_resiliency_by_impact(self, subscription_id, execution_id):
         
         df = self.get_recommendations(subscription_id, execution_id, to_df=True)
 
-        if df is []:
+        if len(df) == 0:
             return []
 
         pivot_Table = df.pivot_table(index='Resiliency_Category', columns="Impact", aggfunc='size', fill_value=0)
@@ -129,7 +133,7 @@ class WARAApi:
         
         return []
     
-    
+
     def get_impacted_resources(self, subscription_id, execution_id, impact='All',resource_provider='All', to_df=False):
 
         entity = self.db.get_row(self.db.wara_impacted_resources_table_name, subscription_id, execution_id) 
@@ -165,13 +169,15 @@ class WARAApi:
 
         df = self.get_impacted_resources(subscription_id, execution_id, impact, resource_provider, to_df=True)
 
+        if len(df) == 0:
+            return []
+
         df = df[df['Impact'].str.lower() == impact.lower()] if impact != 'All' else df
 
         df = df.groupby(['ResourceProvider']).size().reset_index(name='counts')
 
         return df.to_json(orient='records')
 
-    
 
     def get_retirements(self, subscription_id, execution_id):
 
@@ -196,6 +202,19 @@ class WARAApi:
         
             return newdf.to_json(orient='records')
         
+        return []
+
+
+    def get_resource_provider(self, subscription_id, execution_id):
+        ir = self.get_impacted_resources(subscription_id, execution_id, to_df=True)
+        if len(ir) == 0:
+            return []
+        
+        if 'ResourceProvider' in ir.columns:
+            rp = ir['ResourceProvider'].unique().tolist()
+            rp.sort()
+            return rp
+
         return []
 
 

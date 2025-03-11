@@ -104,20 +104,12 @@ def root(response: fastapi.Response):
     response.headers["cwhd-version"] = appconfig.version
     return "alive"
 
+# health status
 @app.post("/RHRetriever", status_code=200)
 def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 
     """
-    azure.identity.DefaultAzureCredential in Azure uses managed identity.
-    on local machine, requires 4 environment variables:
-        AZURE_SUBSCRIPTION_ID,
-        AZURE_CLIENT_ID,
-        AZURE_CLIENT_SECRET,
-        AZURE_TENANT_ID,
-
-    environment variables:
-        WorkspaceID
-        AppServiceAppInsightStandardTestMap
+    returns overall health status that powers colored tiles on Grafana
     """
     
     try:
@@ -140,7 +132,6 @@ def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
         Log.exception(f'Health/resource - error occured: {str(e)}')
         response.status_code = 500
         return str(e)
-    
     
 # WARA module
 
@@ -250,7 +241,6 @@ def get_impacted_resource_count(request: fastapi.Request, response: fastapi.Resp
         response.status_code = 500
         return str(e)
 
-
 @app.get("/api/wara/report/retirements", status_code=200, response_model=None)
 def get_retirements(request: fastapi.Request, response: fastapi.Response) -> list[WARARetirement]:
 
@@ -272,29 +262,7 @@ def get_retirements(request: fastapi.Request, response: fastapi.Response) -> lis
         return str(e)
 
 
-@app.get("/api/wara/report/stats/resource-by-impact", status_code=200, response_model=None)
-def get_resource_type_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
-
-    try:
-
-        params = request.query_params
-        subid = params.get('subid', '')
-        executionid = params.get('execid', '')
-
-        if not subid or not executionid:
-            response.status_code = 400
-            return 'subscription_id and executionid are required'
-        
-        result = _waraapi.get_pivot_resources_by_impact(subid, executionid)
-        return result
-    
-    except Exception as e:
-        Log.exception(f'WARA/report - error occured: {str(e)}')
-        response.status_code = 500
-        return str(e)
-
-
-@app.get("/api/wara/report/stats/resiliency-by-impact", status_code=200, response_model=None)
+@app.get("/api/wara/report/resiliency-by-impact", status_code=200, response_model=None)
 def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.Response):
 
     try:
@@ -307,7 +275,7 @@ def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.R
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_pivot_resiliency_by_impact(subid, executionid)
+        result = _waraapi.get_resiliency_by_impact(subid, executionid)
         return result
     
     except Exception as e:
@@ -315,8 +283,31 @@ def get_resiliency_by_impact_stats(request: fastapi.Request, response: fastapi.R
         response.status_code = 500
         return str(e)
     
-@app.get("/api/wara/report/stats/total-impact-count-by-rsc", status_code=200, response_model=None)
-def get_total_impact_count_by_resource_provider(request: fastapi.Request, response: fastapi.Response):
+@app.get("/api/wara/report/resource-by-impact", status_code=200, response_model=None)
+def get_resources_by_impact(request: fastapi.Request, response: fastapi.Response):
+
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+        resource_provider = params.get('rp', 'All')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        result = _waraapi.get_resources_by_impact(subid, executionid, resource_provider)
+        return result
+    
+    except Exception as e:
+        Log.exception(f'WARA/report - error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
+
+    
+@app.get("/api/wara/report/total-impact-count", status_code=200, response_model=None)
+def get_total_impact_count(request: fastapi.Request, response: fastapi.Response):
 
     try:
 
@@ -329,7 +320,32 @@ def get_total_impact_count_by_resource_provider(request: fastapi.Request, respon
             response.status_code = 400
             return 'subscription_id and executionid are required'
         
-        result = _waraapi.get_total_impact_count_by_resource_provider(subid, executionid, impact=impact)
+        result = _waraapi.get_total_impact_count(subid, executionid, impact=impact)
+        return {'total_impact_count': result}
+    
+    except Exception as e:
+        Log.exception(f'WARA/report - error occured: {str(e)}')
+        response.status_code = 500
+        return str(e)
+    
+
+@app.get("/api/wara/report/rp", status_code=200, response_model=None)
+def get_resource_provider(request: fastapi.Request, response: fastapi.Response):
+    '''
+    returns unique list of resource providers
+    '''
+
+    try:
+
+        params = request.query_params
+        subid = params.get('subid', '')
+        executionid = params.get('execid', '')
+
+        if not subid or not executionid:
+            response.status_code = 400
+            return 'subscription_id and executionid are required'
+        
+        result = _waraapi.get_resource_provider(subid, executionid)
         return {'total_impact_count': result}
     
     except Exception as e:
@@ -356,9 +372,9 @@ def run_pwsh(response: fastapi.Response):
 
 
 # run background jobs
-WARAEventLoop().start()
-WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
-WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
+# WARAEventLoop().start()
+# WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
+# WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
 
 # execute wara 1 time upon startup
 wara_report_gen_queue.enqueue('run_wara')
