@@ -372,9 +372,9 @@ def run_pwsh(response: fastapi.Response):
 
 
 # run background jobs
-# WARAEventLoop().start()
-# WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
-# WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
+WARAEventLoop().start()
+WARAApiGenScheduledJob().init_wara_report_gen_scheduled_job()
+WARAHistoryCleanUpScheduledJob().init_clean_history_scheduled_job()
 
 # execute wara 1 time upon startup
 wara_report_gen_queue.enqueue('run_wara')
