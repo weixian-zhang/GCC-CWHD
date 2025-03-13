@@ -15,7 +15,7 @@ CWHD uses Grafana dashboards to visualize performance and health signals of Azur
 
 * [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
 * [What is a Color-coded tile?](#what-is-a-color-coded-tile)
-* [Roadmap](#roadmap)
+* [New! Well Architected Reliability Assessment Dashboard](#well-architected-reliability-assessment-dashboard)
 * [Tech Stack](#tech-stack)
 * [Logs Required](#logs-required)
 * [Deployment & Configuration ](#deployment--configuration)
@@ -154,8 +154,19 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
     
 <br /> 
 
-## Roadmap
-Please see [Issues](https://github.com/weixian-zhang/GCC-CWHD/issues).
+## Well Architected Reliability Assessment Dashboard  
+
+CWHD runs the [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability state of your Azure environment. Under the hood, on every WARA run, CWHD downloads the latest copy of [collector.ps1](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/)) and [analyzer.ps1](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/analyzer/) and executes these 2 scripts that produces reliability assessment data.
+
+![image](https://github.com/user-attachments/assets/fc8254b2-faeb-4509-9ed6-e4bfb43f7196)
+
+![image](https://github.com/user-attachments/assets/2c50ea6f-27bf-427a-999d-5540baf26423)
+
+Able to select by past and latest reports and filter by subscription  
+
+![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)
+
+
 
 ## Tech Stack  
 * Python 3.11
