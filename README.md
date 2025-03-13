@@ -14,7 +14,7 @@ CWHD uses Grafana dashboards to visualize performance and health signals of Azur
 <br />
 
 * [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
-* [New! Well Architected Reliability Assessment Dashboard](#well-architected-reliability-assessment-dashboard)
+* [New! Well Architected Reliability Assessment Dashboard (Preview)](#well-architected-reliability-assessment-dashboard-preview)
 * [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 * [Tech Stack](#tech-stack)
 * [Logs Required](#logs-required)
@@ -121,7 +121,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />  
 
-## Well Architected Reliability Assessment Dashboard  
+## Well Architected Reliability Assessment Dashboard (Preview)
 
 With version [0.2-wara-preview](https://github.com/weixian-zhang/GCC-CWHD/tree/cwhd-wara.v0.2-preview_130325) (docker pull wxzd/cwhd:v0.2.0-wara-preview_130325),  
 CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability state of your Azure environment.
