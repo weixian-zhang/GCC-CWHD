@@ -14,8 +14,8 @@ CWHD uses Grafana dashboards to visualize performance and health signals of Azur
 <br />
 
 * [What are Tier 0, 1 & 2 dashboards](#what-are-tier-0-1--2-dashboards)
-* [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 * [New! Well Architected Reliability Assessment Dashboard](#well-architected-reliability-assessment-dashboard)
+* [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 * [Tech Stack](#tech-stack)
 * [Logs Required](#logs-required)
 * [Deployment & Configuration ](#deployment--configuration)
@@ -117,9 +117,26 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 ![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
 
 
-#### Storage dashbaord (a modifed version from Azure Monitor)
+#### Storage dashboard (a modifed version from Azure Monitor)
 
 <br />  
+
+## Well Architected Reliability Assessment Dashboard  
+
+With version [0.2-wara-preview](https://github.com/weixian-zhang/GCC-CWHD/tree/cwhd-wara.v0.2-preview_130325) (docker pull wxzd/cwhd:v0.2.0-wara-preview_130325),  
+CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability state of your Azure environment.
+<p>Under the hood, on every WARA run, CWHD downloads the latest copy of [collector.ps1](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/)) and [analyzer.ps1](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/analyzer/) and executes these 2 scripts that produces reliability assessment data.</p>
+
+ * dashboard requires Grafana 11 due to [Business Table](https://grafana.com/grafana/plugins/volkovlabs-table-panel/)
+ * runs on Windows Container
+
+![image](https://github.com/user-attachments/assets/fc8254b2-faeb-4509-9ed6-e4bfb43f7196)
+
+![image](https://github.com/user-attachments/assets/2c50ea6f-27bf-427a-999d-5540baf26423)
+
+Able to select by past and latest reports and filter by subscription  
+
+![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)
 
 ## What is a Color-coded tile?
 
@@ -153,20 +170,6 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
     <img src="https://github.com/user-attachments/assets/98540059-8286-4c4b-8795-aeb23c0dc991" height="300px" width="650px" />
     
 <br /> 
-
-## Well Architected Reliability Assessment Dashboard  
-
-CWHD runs the [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability state of your Azure environment. Under the hood, on every WARA run, CWHD downloads the latest copy of [collector.ps1](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/)) and [analyzer.ps1](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/analyzer/) and executes these 2 scripts that produces reliability assessment data.
-
-![image](https://github.com/user-attachments/assets/fc8254b2-faeb-4509-9ed6-e4bfb43f7196)
-
-![image](https://github.com/user-attachments/assets/2c50ea6f-27bf-427a-999d-5540baf26423)
-
-Able to select by past and latest reports and filter by subscription  
-
-![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)
-
-
 
 ## Tech Stack  
 * Python 3.11
