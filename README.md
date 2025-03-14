@@ -124,11 +124,14 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 ## Well Architected Reliability Assessment Dashboard (Preview)
 
 With version [0.2-wara-preview](https://github.com/weixian-zhang/GCC-CWHD/tree/cwhd-wara.v0.2-preview_130325) (docker pull wxzd/cwhd:v0.2.0-wara-preview_130325),  
-CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability state of your Azure environment.
-<p>Under the hood, on every WARA run, CWHD downloads the latest copy of <a href="https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector">collector.ps1</a> and <a href="https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/analyzer">analyzer.ps1</a> and executes these 2 scripts that produces reliability assessment data.</p>
+CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability states of your Azure environment.
+<p>
+ Under the hood, on every WARA run, CWHD downloads the latest copy of <a href="https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector">collector.ps1</a> and <a href="https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/analyzer">analyzer.ps1</a> and executes these 2 scripts to produce assessment result.  
+ Result is then formatted and publish via CWHD-Backend REST APIs to be consumed by Grafana.
+</p>
 
  * dashboard requires Grafana 11 due to [Business Table](https://grafana.com/grafana/plugins/volkovlabs-table-panel/)
- * runs on Windows Container
+ * CWHD backend runs on Windows Container
 
 ![image](https://github.com/user-attachments/assets/fc8254b2-faeb-4509-9ed6-e4bfb43f7196)
 
