@@ -42,13 +42,13 @@ You aim to to cohesively group up all dependent Azure resources into a Tier 1 da
    <p></p>For example if you have 2 systems Cloud Crafty and Pocket Geek, you will have two Tier 1 dashboards.</p>
    
    <div>
-   Tier 1 / Cloud Crafty
+   <b>Tier 1 / Cloud Crafty</b>
    <img alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
    </div>
    </div>
   
    <div>
-   Tier 1 / Pocket Geek
+   <b>Tier 1 / Pocket Geek</b>
    <img alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">
    <img alt="image" src="https://github.com/user-attachments/assets/44d31b51-106e-49a7-a3a6-24e73fa01c69">
    </div>
@@ -93,12 +93,11 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 * [Key Vault Dashboard ](#key-vault-dashboard)
 
 #### Activity Audit Dashboard
-  <p>Shows you who made changes to Firewall rules, NSG, Key Vaults and all other services</p>  
+  <p>Shows you who made changes to Firewall rules, NSG rules, Key Vaults opearations and oerations of all other Azure services</p>  
   
   ![image](https://github.com/user-attachments/assets/ef0ca381-bcf6-4d1d-84c1-7fd61d301283)
 
 #### Applcation Gateway Dashboard 
-  <p>Shows you App Gateway metrics, Access and WAF Logs. (a modifed version from Azure Monitor)</p>  
 
   ![image](https://github.com/user-attachments/assets/ac881731-6c2f-4cbf-a1e7-a7b1fc44daf1)
 
@@ -111,15 +110,13 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
   ![image](https://github.com/user-attachments/assets/7aa1993c-c590-494a-9bc0-e2dd500bde83)
 
 
-
 #### API Management Dashboard
-<p>Shows you API Management metrics, requests and operations logs. (a modified version from <a href="https://grafana.com/grafana/dashboards/16604-azure-api-management">Vikram Bala</a>)</p>
 
 ![image](https://github.com/user-attachments/assets/7ae11525-03ad-4e9d-b1a9-ef5195ffd8d2)
 
 
 #### Key Vault Dashboard 
-<p>Shows you Key Vault metrics and operation logs. (a modifed version from Azure Monitor) </p>  
+<p>Shows you Key Vault metrics and operations (a modifed version from Azure Monitor) </p>  
 
 ![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
 
