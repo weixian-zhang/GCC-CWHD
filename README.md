@@ -14,7 +14,7 @@ CWHD uses Grafana dashboards to visualize performance and health signals of Azur
 <br />
 
 * [What are Tier 0, 1, & 2 Dashboards](#what-are-tier-0-1--2-dashboards)
-* [Specialized Dashboards](#specialized-dashboards)
+* [Specialized Dashboards](#specialized-dashboards-ready-to-use)
   * [WARA Dashboard](#wara-dashboard) 
 * [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 * [Tech Stack](#tech-stack)
@@ -27,7 +27,7 @@ CWHD uses Grafana dashboards to visualize performance and health signals of Azur
 
 ## What are Tier 0, 1 & 2 dashboards?
 
-### Tier 1 Dashboard  
+### Tier 1 Dashboard (tailor-made)
 
 You aim to to cohesively group up all dependent Azure resources into a Tier 1 dashboard. How do you want to group resources is entirely up to you, below is a general guideline:
 <ul>
@@ -72,7 +72,7 @@ You aim to to cohesively group up all dependent Azure resources into a Tier 1 da
 
 <br />  
 
-### Tier 0 Dashboard  
+### Tier 0 Dashboard (tailor-made)
 
 This dashboard is a summary view of all Tier 1 dashboards.  
 Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 and 1 are fully customized and adapted to your specific grouping of resources.
@@ -84,7 +84,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />  
 
-### Tier 2 Dashboards 
+### Tier 2 Dashboards (ready-to-use)
 
 * [Activity Audit Dashboard](#activity-audit-dashboard)
 * [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
@@ -122,7 +122,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />  
 
-## Specialized Dashboards
+## Specialized Dashboards (ready-to-use)
 
 ### Wara Dashboard
 
