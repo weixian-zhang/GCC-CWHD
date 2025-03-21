@@ -43,14 +43,14 @@ You aim to to cohesively group up all dependent Azure resources into a Tier 1 da
    
    <div>
    Tier 1 / Cloud Crafty
-   <img width="876" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
+   <img alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/2d395168-3729-4982-8915-9eb11e44ca78">
    </div>
    </div>
   
    <div>
    Tier 1 / Pocket Geek
-   <img width="879" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">  
-   <img width="877" alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/18096f20-abb4-424e-8fde-3e8fcd42f5a0">
+   <img alt="image" src="https://github.com/weixian-zhang/GCC-CWHD/assets/43234101/c3729a68-295e-41e5-a03a-49e67e2c4ec0">
+   <img alt="image" src="https://github.com/user-attachments/assets/44d31b51-106e-49a7-a3a6-24e73fa01c69">
    </div>
  </li>
  
@@ -79,8 +79,8 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 <div>For this reason, Tier 0 and 1 dashboards is the core delivery work I will do for my customers, in addition to other custom request for e.g: IIS App Pool start/stop</div>
 
 <br />
-<img width="876" alt="image" src="https://github.com/user-attachments/assets/1a66114c-87d5-4239-8ef5-5cb13bc7390d">
-<img width="876" alt="image" src="https://github.com/user-attachments/assets/1cc9baa2-27a8-464a-ba0f-8300f23bf5f1">
+<img alt="image" src="https://github.com/user-attachments/assets/1a66114c-87d5-4239-8ef5-5cb13bc7390d">
+<img alt="image" src="https://github.com/user-attachments/assets/1cc9baa2-27a8-464a-ba0f-8300f23bf5f1">
 
 <br />  
 
@@ -100,17 +100,23 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 #### Applcation Gateway Dashboard 
   <p>Shows you App Gateway metrics, Access and WAF Logs. (a modifed version from Azure Monitor)</p>  
 
-  ![image](https://github.com/user-attachments/assets/384e4cc3-347b-4b8d-95f5-b40a990ba914)
-  ![image](https://github.com/user-attachments/assets/6d65191c-cb76-4d06-a7f9-7b0b6e37c022)
+  ![image](https://github.com/user-attachments/assets/ac881731-6c2f-4cbf-a1e7-a7b1fc44daf1)
+
+  ![image](https://github.com/user-attachments/assets/915a4916-3263-425e-aac0-036f8ed8c4e8)
+
 
 
 #### Firewall Dashboard
-  ![image](https://github.com/user-attachments/assets/9ee45a31-dd07-4527-a038-dcff0f897983)
+  ![image](https://github.com/user-attachments/assets/413d5f54-760f-4ac6-8423-7190860835d3)
+  ![image](https://github.com/user-attachments/assets/7aa1993c-c590-494a-9bc0-e2dd500bde83)
+
+
 
 #### API Management Dashboard
 <p>Shows you API Management metrics, requests and operations logs. (a modified version from <a href="https://grafana.com/grafana/dashboards/16604-azure-api-management">Vikram Bala</a>)</p>
 
-![image](https://github.com/user-attachments/assets/1b71439d-47c2-40e2-a767-ad4b37ace87e)
+![image](https://github.com/user-attachments/assets/7ae11525-03ad-4e9d-b1a9-ef5195ffd8d2)
+
 
 #### Key Vault Dashboard 
 <p>Shows you Key Vault metrics and operation logs. (a modifed version from Azure Monitor) </p>  
