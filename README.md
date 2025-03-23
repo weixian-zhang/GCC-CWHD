@@ -398,9 +398,9 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
 
 ### Architecture  
 
-<img width="600px" height="700px" src ="https://github.com/user-attachments/assets/f22978ca-c3d6-41f6-a7af-ffa459b9b745" />
+![image](https://github.com/user-attachments/assets/1de23f9a-ace6-4649-96e3-2702d5527617)
 
-  
+
 <br />
 <br />
 
