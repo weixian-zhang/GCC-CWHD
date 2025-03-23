@@ -398,12 +398,13 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
 
 ### Architecture  
 
-<img width="550" height="700" alt="image" src="https://github.com/user-attachments/assets/06104765-6dff-482a-b48c-fe6b321939f0">  
+<img width="600px" height="700px" src ="https://github.com/user-attachments/assets/f22978ca-c3d6-41f6-a7af-ffa459b9b745" />
 
+  
 <br />
 <br />
 
-Telemetry Forager is the backend service that curates telemetry from different data sources including:
+CWHD BAckend is a web app that curates telemetry from different data sources including:
 
  * Azure Monitor REST API
    * App Service health status determine by any one of the following result:
