@@ -7,9 +7,8 @@
  <mark>Warning: Important information for customers using Central Workload Health Dashboard</b> <br />
  This solution, offered by the Open-Source community, does not receive contributions nor support by Microsoft.</mark>
 
-<br />
 
-CWHD uses Grafana dashboards to visualize performance and health signals of Azure resources and is used by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/).
+#### Used by gov agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/), CWHD uses Grafana to visualize performance and health of Azure resources
 
 <br />
 
