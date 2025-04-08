@@ -15,12 +15,12 @@
 * [What are Tier 0, 1, & 2 Dashboards](#what-are-tier-0-1--2-dashboards)
 * [Specialized Dashboards](#specialized-dashboards-ready-to-use)
   * [WARA Dashboard](#wara-dashboard) 
-* [What is a Color-coded tile?](#what-is-a-color-coded-tile)
+* [What is a Health Tile?](#what-is-a-health-tile)
+* [Architecture](#architecture)
 * [Tech Stack](#tech-stack)
 * [Logs Required](#logs-required)
 * [Deployment & Configuration ](#deployment--configuration)
-* [Telemetry Forager (cwhd backend) REST API Spec](#telemetry-forager-rest-api-spec)
-* [Architecture](#architecture)
+* [CWHD Backend REST API Spec](#cwhd-backend-rest-api-spec)
 
 <br />  
 
@@ -28,7 +28,11 @@
 
 ### Tier 1 Dashboard (tailor-made)
 
-You aim to to cohesively group up all dependent Azure resources into a Tier 1 dashboard. How do you want to group resources is entirely up to you, below is a general guideline:
+In below examples, Cloud Craft and Pocket Geek systems depend on various Azure services and each dependent service is represented by one [Health Tile](#what-is-a-health-tile).  
+<br />
+You aim to to cohesively group up all dependent Azure resources into a Tier 1 dashboard.  
+How do you want to group resources is entirely up to you, below is a general guideline:
+<br />
 <ul>
  <li>
   <b>Group by system</b>
@@ -146,10 +150,10 @@ Able to select by past and latest reports and filter by subscription
 
 ![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)
 
-## What is a Color-coded tile?
+## What is a Health Tile?
 
-Color-coded tiles exist in Tier 0 and 1 dashboards only and each Azure resource is represented by a color-coded tile.  
-Each color-coded tile displays one of the 3 colors at any one time: Green, Amber and Red which represents the different health status.   
+Health tiles or colored tiles exist in Tier 0 and 1 dashboards only and each Azure resource is represented by a color-coded tile.  
+Each tile displays one of the 3 colors at any one time: Green, Amber and Red which represents the different health status.   
 <img src ="https://github.com/user-attachments/assets/2ec6e7b4-0f75-49a3-9894-82f3701eeb46" height="150px" width="500px" />
 
 
@@ -177,11 +181,34 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
   
     <img src="https://github.com/user-attachments/assets/98540059-8286-4c4b-8795-aeb23c0dc991" height="300px" width="650px" />
     
-<br /> 
+<br />  
+
+### Architecture  
+
+CWHD Backend is a bespoke web app that curates telemetry from different data sources to support following features:
+* Colored Health tiles
+* WARA dashboard
+
+![image](https://github.com/user-attachments/assets/b6b88bbb-135d-4ff7-b371-e613cd4077bd)
+
+ <!---
+ * Azure Monitor REST API
+   * App Service health status determine by any one of the following result:
+     * Kusto query - Application Insights Availability Test result (AppAvailabilityResults table)
+     * Kusto query - Network Watcher Connection Monitor (NWConnectionMonitorTestResult table)
+     * Resource Health API as last option to determine health status if above options are not available
+   * VM: health status is determine by 2 factors
+     * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
+     * If resource health status is Available/Green, Log Analytics Workspace ID is provided,
+       additional 3 metrics of CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
+       In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
+ * [Azure Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01) - get resource health for all resource types except App Service, which gets health status from App Insight Standard Test
+ --->
+ <br />
 
 ## Tech Stack  
 * Python 3.11
-* Azure Managed Grafana Standard - Grafana 10.4.11
+* Azure Managed Grafana Standard - Grafana 11
 * [Docker image](https://hub.docker.com/r/wxzd/cwhd/tags)
 
 ## Logs Required
@@ -292,7 +319,7 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
     </td>
   </tr>
   
-</table>
+</table>  
 
  
 ## Deployment & Configuration 
@@ -353,7 +380,7 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
  
 <br />
 
-### Telemetry Forager REST API Spec  
+### CWHD Backend REST API Spec  
 
 <table>
   <tr>
@@ -392,28 +419,3 @@ Each color-coded tile displays one of the 3 colors at any one time: Green, Amber
     </td>
   </tr>
 </table>
-
-<br />
-
-### Architecture  
-
-![image](https://github.com/user-attachments/assets/b6b88bbb-135d-4ff7-b371-e613cd4077bd)
-
-<br />
-<br />
-
-CWHD BAckend is a web app that curates telemetry from different data sources including:
-
- * Azure Monitor REST API
-   * App Service health status determine by any one of the following result:
-     * Kusto query - Application Insights Availability Test result (AppAvailabilityResults table)
-     * Kusto query - Network Watcher Connection Monitor (NWConnectionMonitorTestResult table)
-     * Resource Health API as last option to determine health status if above options are not available
-   * VM: health status is determine by 2 factors
-     * [Resource Health](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) availability status determines if VM is available or not depicting the Green or Red status.
-     * If resource health status is Available/Green, Log Analytics Workspace ID is provided,
-       additional 3 metrics of CPU, Memory and Disk usage percentage will be monitored according to a set of configurable thresholds.
-       In Grafana, VM Stat visualization  will show Amber status if one or more of the 3 metrics reaches the threshold.
- * [Azure Resource Health API](https://learn.microsoft.com/en-us/rest/api/resourcehealth/availability-statuses?view=rest-resourcehealth-2022-10-01) - get resource health for all resource types except App Service, which gets health status from App Insight Standard Test
-
-
