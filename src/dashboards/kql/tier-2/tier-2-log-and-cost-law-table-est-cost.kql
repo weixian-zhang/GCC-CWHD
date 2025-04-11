@@ -13,36 +13,3 @@ Usage
     | extend EstimatedCostDollars = IngestedGB * 2.3
     | sort by IngestedGB desc
     | project Solution, DataType, LastIngestionDate, IngestedGB, EstimatedCostDollars
-
-
-// get only app insights log size
-let TotalIngestion=toscalar(
-    Usage
-    | where TimeGenerated > ago(30d)
-    | where DataType in ('AppAvailabilityResults','AppBrowserTimings','AppDependencies','AppExceptions',
-    'AppEvents','AppMetrics','AppPageViews','AppPerformanceCounters','AppRequests','AppTraces')
-    | summarize IngestionVolume=sum(Quantity));
-Usage
-| where TimeGenerated > ago(30d)
-| project DataType, Solution, Quantity, IsBillable
-| where DataType in ('AppAvailabilityResults','AppBrowserTimings','AppDependencies','AppExceptions',
-    'AppEvents','AppMetrics','AppPageViews','AppPerformanceCounters','AppRequests','AppTraces')
-| summarize
-    IngestionVolume=sum(Quantity),
-    IngestionPercent=(sum(Quantity)) / TotalIngestion,
-    Billable=any(IsBillable)
-    by Solution, DataType
-| sort by Solution asc, DataType asc
-
-
-
-
-// try to filter App Insights table by account name
-// estimate 5KB per row
-let appiname = tostring('appinsighyts-clamblob');
-AppTraces  
-| where TimeGenerated > ago(30d)
-| extend appinsights_name = split(_ResourceId, '/')[-1]
-| where appinsights_name == appiname
-| summarize Count=count()
-| project VolumeMB = (Count * 3000) / 1000000
