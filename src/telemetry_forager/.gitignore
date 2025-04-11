@@ -5,6 +5,8 @@ csx
 edge
 Publish
 
+__pycache__
+
 *.user
 *.suo
 *.cscfg
