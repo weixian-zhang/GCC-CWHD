@@ -1,47 +1,33 @@
 class KQL:
-    # * Standard Test Names have to be "Unique" across all App Insight instances
+
     @staticmethod
     def app_availability_result_query(standardTestName):
-        return f"""
-        AppAvailabilityResults 
+        return f"""AppAvailabilityResults 
         | where Name == '{standardTestName}' 
-        //| where TimeGenerated >= ago(2h) 
+        | where TimeGenerated >= ago(2h) 
         | extend availabilityState = iif(Success == true, 1, 0) 
         | order by TimeGenerated desc 
         | take 1 
-        | project ['reportedTime']=TimeGenerated,  ['availabilityState']=availabilityState
-        """
-    
-    def network_watcher_intranet_connection_monitor_http_test_query(test_group_name):
-        return f"""
-        NWConnectionMonitorTestResult 
-        | where TestGroupName == "{test_group_name}"
-        | extend availabilityState = iif(TestResult == 'Pass', 1, 0) 
-        | order by TimeGenerated desc
-        | project ['reportedTime']=TimeGenerated, availabilityState
-        | take 1
-        """
+        | project ['reportedTime']=TimeGenerated,  ['availabilityState']=availabilityState"""
     
     @staticmethod
     def cpu_usage_percentage_query(resourceId):
         # cpu suage percentage
-        return f"""
-            InsightsMetrics
+        return f"""InsightsMetrics
             | where Namespace == "Processor" and Name == "UtilizationPercentage"
-            //| where TimeGenerated >= ago(2h)
+            | where TimeGenerated >= ago(2h)
             | where _ResourceId == tolower("{resourceId}")
             | extend CPUPercent = round(Val,1)
             | order by TimeGenerated desc
             | take 1
-            | project TimeGenerated, CPUPercent
-            """
+            | project TimeGenerated, CPUPercent"""
 
     @staticmethod
     def memory_usage_percentage_query(resourceId):
         # memory usage percentage
         return f"""InsightsMetrics
         | where Namespace == "Memory" and Name == "AvailableMB"
-        //| where TimeGenerated >= ago(2h)
+        | where TimeGenerated >= ago(2h)
         | where _ResourceId == tolower("{resourceId}")
         | extend AvailableGB = round(Val/1000,1)
         | extend TotalMemoryGB = round(todecimal(tostring(parse_json(Tags)["vm.azm.ms/memorySizeMB"])) / 1000,1)
@@ -57,7 +43,7 @@ class KQL:
         
         return f"""InsightsMetrics
         | where Origin == "vm.azm.ms" and Namespace == "LogicalDisk" and Name == "FreeSpacePercentage"
-        //| where TimeGenerated >= ago(2h)
+        | where TimeGenerated >= ago(2h)
         | where _ResourceId == tolower("{resourceId}")
         | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])
         | extend FreeSpacePercentage = Val
@@ -69,7 +55,7 @@ class KQL:
             (
                 InsightsMetrics
                 | where Namespace == "LogicalDisk" and Name == "FreeSpaceMB"
-                //| where TimeGenerated >= ago(2h)
+                | where TimeGenerated >= ago(2h)
                 | where _ResourceId == tolower("{resourceId}")
                 | extend FreeSpaceGB = Val /1000
                 | extend Disk=tostring(todynamic(Tags)["vm.azm.ms/mountId"])

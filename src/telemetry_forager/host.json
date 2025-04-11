@@ -1,0 +1,34 @@
+{
+    "version": "2.0",
+    "aggregator": {
+      "batchSize": 1000,
+      "flushTimeout": "00:00:15"
+    },
+    "logging": {
+      "applicationInsights": {
+        "logLevel": {
+          "Default": "Warning"
+        },
+        "samplingSettings": {
+          "isEnabled": true,
+          "enableDependencyTracking":false,
+          "excludedTypes":"Request; Dependency"
+        }
+      },
+      "logLevel": {
+        "default": "Warning",
+        "Host": "Error",
+        "Host.Aggregator": "None",
+        "Host.Results": "None",
+        "Function": "Warning",
+        "Function.RHRetriever": "Warning",
+        "Function.RHRetriever.User": "Warning",
+        "Microsoft": "None",
+        "Worker": "None"
+      }
+    },
+    "extensionBundle": {
+      "id": "Microsoft.Azure.Functions.ExtensionBundle",
+      "version": "[4.*, 5.0.0)"
+    }
+  }
