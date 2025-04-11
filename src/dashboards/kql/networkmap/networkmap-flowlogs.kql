@@ -1,0 +1,97 @@
+NTANetAnalytics
+| where FlowType != '' and SubType == 'FlowLog'
+| extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
+| extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
+
+//check "location" of src node
+| extend SrcNodeInOrOutVNet = iif(SrcIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
+                            iif(FlowType == 'AzurePublic' and SrcPublicIps != '', 'NodeOutsideVNet_PaaS', 
+                                iif(FlowType == 'ExternalPublic' and SrcPublicIps != '', 'NodeOutsideAzure',
+                                  //adversary from outside of Azure 
+                                  iif (FlowType =='MaliciousFlow' and FlowDirection == 'Inbound' and SrcIp != '', 'NodeMalicious',
+                                     //adversary from inside of Azure 
+                                    iif(FlowType =='MaliciousFlow' and FlowDirection == 'Outbound', 'NodeInsideVNet', 'NodeUnknown')
+                                )
+                              )
+                            )
+                          )
+| extend SrcSubnetSplitted =  split(SrcSubnet, '/')
+| extend SrcRG = tostring(SrcSubnetSplitted[0])
+| extend SrcVNet = tostring(SrcSubnetSplitted[1])
+| extend SrcSubnetName = tostring(SrcSubnetSplitted[2])
+
+//check "location" of dest node
+| extend DestNodeInOrOutVNet = iif(DestIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
+                            iif(FlowType in ('AzurePublic') and DestPublicIps != '', 'NodeOutsideVNet_PaaS', 
+                                iif(FlowType == 'ExternalPublic' and DestPublicIps != '', 'NodeOutsideAzure',
+                                    //adversary from outside of Azure 
+                                    iif(FlowType == 'MaliciousFlow' and FlowDirection== 'Inbound' and DestIp != '', 'NodeInsideVNet',
+                                        //adversary from inside of Azure 
+                                        iif(FlowType == 'MaliciousFlow' and FlowDirection== 'Outbound', 'NodeMalicious', 'NodeUnknown')
+                                )
+                              )
+                            )
+                          )
+| extend DestSubnetSplitted =  split(DestSubnet, '/')
+| extend DestRG = tostring(DestSubnetSplitted[0])
+| extend DestVNet = tostring(DestSubnetSplitted[1])
+| extend DestSubnetName = tostring(DestSubnetSplitted[2])
+
+| join kind=leftouter 
+(NTAIpDetails 
+| project ['SrcPIP_Ip']=Ip, ['SrcPIP_PublicIpDetails']=PublicIpDetails, ['SrcPIP_ThreatType']=ThreatType, ['SrcPIP_Location']=Location, ['SrcPIP_Url']=Url)
+on $left.SrcPIP == $right.SrcPIP_Ip
+
+| join kind=leftouter
+    (
+        NTAIpDetails 
+        | project ['DestPIP_Ip']=Ip, ['DestPIP_PublicIpDetails']=PublicIpDetails, ['DestPIP_ThreatType']=ThreatType, ['DestPIP_Location']=Location, ['DestPIP_Url']=Url
+    )
+on $left.DestPIP == $right.DestPIP_Ip
+
+// set SrcPIP_Ip if exist
+| extend SrcIp = iif(SrcPIP_Ip != '', SrcPIP_Ip, SrcIp)
+
+| extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway, 
+                     iif(SrcLoadBalancer != '', SrcLoadBalancer, 
+                        iif(SrcPIP_PublicIpDetails != '', SrcPIP_PublicIpDetails, 
+                            iif(SrcVm != '' and SrcVm !startswith 'unknown',SrcVm, '' ))))
+
+| extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
+
+// set DestPIP_Ip if exist
+| extend DestIp = strcat(iif(DestPIP_Ip != '', DestPIP_Ip, DestIp), ':', DestPort)
+
+| extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway, 
+                        iif(DestLoadBalancer != '', DestLoadBalancer,
+                            iif(DestPIP_PublicIpDetails != '', DestPIP_PublicIpDetails, 
+                                iif(DestVm != '' and DestVm !startswith 'unknown',DestVm, '' ))))
+
+| extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
+
+| extend protocol = tolower(strcat(L4Protocol,  iif(L7Protocol != 'Unknown', strcat(':', L7Protocol), '')))
+
+| extend SrcToDestDataMB = BytesSrcToDest / 1000
+| extend DestToSrcDataMB = BytesDestToSrc / 1000
+
+| where FlowType == 'ExternalPublic' and FlowDirection == 'Inbound'
+
+
+//SrcName and DestName can be 
+    // VM
+    // App Gateway
+    // Load Balancer
+    // Private Endpoint
+    // PaaS services
+    // external endpoints which has no name and is empty
+    // on-premise which has no name and is empty
+| distinct Time=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'), FlowType, FlowDirection, ConnectionType, protocol,
+           SrcNodeInOrOutVNet, SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName, SrcToDestDataMB,
+           DestNodeInOrOutVNet, DestSubscription, DestRG, DestVNet, DestSubnetName, DestName, DestToSrcDataMB,
+           SrcPIP_ThreatType, SrcPIP_Location, SrcPIP_Url,
+           DestIp, DestPIP_ThreatType, DestPIP_Location, DestPIP_Url
+
+
+// SrcPIP_PublicIpDetails , DestPIP_PublicIpDetails
+
+
