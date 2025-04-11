@@ -1,34 +1,21 @@
 import logging
+#from loguru import logger
 from config import AppConfig
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry import trace
-from opentelemetry.trace import (
-    SpanKind,
-    get_tracer_provider,
-    set_tracer_provider,
-)
-from azure.monitor.opentelemetry import configure_azure_monitor
-from opentelemetry.propagate import extract
-from azure.core.settings import settings
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
-settings.tracing_implementation = OpenTelemetrySpan
+# from azure.monitor.opentelemetry import configure_azure_monitor
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+import sys  
 
-
-tracer = None
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-stream = logging.StreamHandler()
-logger.addHandler(stream)
-
-
+#logger.remove()
+# logger.add(sys.stdout, format="{time} | {level} - {message}", level="DEBUG")
 loaded = False
+logger = None
+
 
 def init(appconfig: AppConfig) -> None:
-        global loaded, tracer, logger
-        
+        #global loaded, tracer, logger
+
+        global loaded, logger
+
         if not appconfig:
             raise('Error initializing logger as appconfig is None')
         
@@ -36,48 +23,37 @@ def init(appconfig: AppConfig) -> None:
              loaded = True
         else:
              return
-        
 
-        azmon_exporter = AzureMonitorTraceExporter.from_connection_string(appconfig.appinsightsConnString)
+        # http client related logs level t
+        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
-        # Set up OpenTelemetry tracer
-        exporter = ConsoleSpanExporter()
-        trace.set_tracer_provider(TracerProvider())
-        trace.get_tracer_provider().add_span_processor(
-            SimpleSpanProcessor(exporter)
-        )
-        trace.get_tracer_provider().add_span_processor(
-            SimpleSpanProcessor(azmon_exporter)
-        )
+        # all azure library log level error only
+        az_logger = logging.getLogger('azure.storage')
+        az_logger.setLevel(logging.ERROR)
+        az_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
-        configure_azure_monitor(
+        azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
+        #azure_handler.setLevel(level=logging.ERROR)
+        console_handler = logging.StreamHandler()
 
-            connection_string=appconfig.appinsightsConnString
-        )
-
-        tracer = trace.get_tracer(__name__)
-
-        
-
-        
-
-        
+        logger = logging.getLogger('default_logger')
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = False
+        logger.addHandler(azure_handler)
+        logger.addHandler(console_handler)
 
 
 
 def debug(msg):
     logger.debug(msg)
 
-
 def exception(msg):
-    logger.exception(msg)
+    logger.error(msg)
 
 def exception(msg, **kwargs):
-    logger.exception(msg,stack_info=True, exc_info=True)
+    logger.error(msg,stack_info=True, exc_info=True)
 
 def warn(msg, **kwargs):
     logger.warning(msg)
 
-def get_tracer():
-     return tracer
 

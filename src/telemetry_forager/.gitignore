@@ -1,11 +1,31 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+bin
+obj
+csx
+.vs
+edge
+Publish
 
-# C extensions
-*.so
+*.user
+*.suo
+*.cscfg
+*.Cache
+project.lock.json
 
+temp_wara_exec
+
+func-app.zip
+
+/wara/temp_wara_exec
+
+/packages
+/TestResults
+
+/tools/NuGet.exe
+/App_Data
+/secrets
+/data
+.secrets
+appsettings.json
 local.settings.json
 
 # Distribution / packaging
