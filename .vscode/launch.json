@@ -2,11 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Python Functions",
-            "type": "python",
-            "request": "attach",
-            "port": 9091,
-            "preLaunchTask": "func: host start"
-         }
+            "name": "debug forager",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "main:app",
+                "--reload"
+            ],
+            "jinja": true,
+            "cwd": "${workspaceFolder}/src/telemetry_forager",
+            "preLaunchTask": "pip freeze"
+        }
     ]
 }
