@@ -41,6 +41,9 @@ class AppConfig:
         self.wara_days_to_keep_run_history= int(os.environ.get('WARA_Days_To_Keep_Run_History')) if os.environ.get('WARA_Days_To_Keep_Run_History') else 180
 
         self.timezone = os.environ.get('Timezone') if os.environ.get('Timezone') else 'Asia/Singapore'
+
+        enable_wara = os.environ.get('Enable_WARA')
+        self.enable_wara = True if enable_wara and enable_wara.lower() == 'true' else False
         
         self.loaded = True
 
