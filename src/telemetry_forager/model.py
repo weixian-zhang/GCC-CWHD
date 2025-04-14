@@ -1,4 +1,4 @@
-
+from json import JSONEncoder
 
 # standardTestName applies to App Service resource type only
 class ResourceParameter:
@@ -50,37 +50,9 @@ class HealthReport:
         return f'health status log or metric result not found'
     
 
-# class ResourceHealthAPIResult:
-
-#     # availabilityState
-#     # Available = 1, Unavailable = 0 or Unknown = 2
-#     # converting into number is easier to style by Grafana "threshold" 
-
-#     def __init__(self, 
-#                  location='', 
-#                  availabilityState='', 
-#                  summary='', 
-#                  reportedTime=None, 
-#                  stateLastChangeTime=None) -> None:
-
-#         self.location = location
-#         self.availabilityState = availabilityState
-#         self.summary = summary
-#         self.reportedTime = (reportedTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
-#         self.stateLastChangeTime = (stateLastChangeTime if not None else datetime.now()).strftime("%B %d, %Y %H:%M:%S")
-#         self.displayText = ''
-
-#         if availabilityState == 'Available':
-#             self.availabilityState = 1
-#             self.displayText = 'Available'
-#         elif availabilityState == 'Unavailable':
-#             self.availabilityState = 0
-#             self.displayText = 'Unavailable'
-#         else:
-#             self.availabilityState = 2
-#             self.displayText = 'Unknown'
 
 class ResourceHealthResult:
+
     def __init__(self, states: list[HealthReport]) -> None: #list[ResourceHealthAPIResult]) -> None:
 
         # overallHealth

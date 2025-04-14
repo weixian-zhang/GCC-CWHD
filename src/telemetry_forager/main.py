@@ -1,137 +1,139 @@
+from init import appconfig
 import json
 from typing import List
 import fastapi #import FastAPI, Response
 import uvicorn
 from pydantic import BaseModel
 from health import HealthClient
-import jsons
 from config import AppConfig
 from model import ResourceParameter, ResourceHealthResult
-import log as Log
 from job import WARAEventLoop, WARAApiGenScheduledJob, WARAHistoryCleanUpScheduledJob
 from wara.wara_api import WARAApi
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
 from memory_queue import MemoryQueue
+from routers import health
+import log as Log
 
-
-# init global queue
+# # init global queue
 wara_report_gen_queue = MemoryQueue()
 
-# load environment variables
-appconfig = AppConfig()
-# load env vars
-appconfig.load_from_envar()
+# # load environment variables
+# appconfig = AppConfig()
+# # load env vars
+# appconfig.load_from_envar()
 
-Log.init(appconfig)
+# Log.init(appconfig)
 
 app = fastapi.FastAPI()
 
+app.include_router(health.router)
+
 _waraapi = WARAApi(config=appconfig)
 
-class RequestResourceListParam(BaseModel):
-    resourceId: str
-    workspaceId: str | None = None
-    standardTestName: str | None = None
-    network_watcher_conn_mon_test_group_name: str | None = None
+# class RequestResourceListParam(BaseModel):
+#     resourceId: str
+#     workspaceId: str | None = None
+#     standardTestName: str | None = None
+#     network_watcher_conn_mon_test_group_name: str | None = None
 
-class RequestBodyParam(BaseModel):
-    resources: List[RequestResourceListParam]
+# class RequestBodyParam(BaseModel):
+#     resources: List[RequestResourceListParam]
 
 
-def _get_subscription_id(resourceId: str) -> str:
-    if not resourceId:
-        return ''
-    if resourceId[0] == '/':
-        resourceId = resourceId[1:]
-    return resourceId.split('/')[1]
+# def _get_subscription_id(resourceId: str) -> str:
+#     if not resourceId:
+#         return ''
+#     if resourceId[0] == '/':
+#         resourceId = resourceId[1:]
+#     return resourceId.split('/')[1]
 
     
-def get_resource_params(rbp: RequestBodyParam) -> list[bool, list[ResourceParameter]]:
-    if not rbp or not rbp.resources:
-        return []
+# def get_resource_params(rbp: RequestBodyParam) -> list[bool, list[ResourceParameter]]:
+#     if not rbp or not rbp.resources:
+#         return []
     
-    resource_params = rbp.resources
+#     resource_params = rbp.resources
 
-    exist = set()
-    result = []
+#     exist = set()
+#     result = []
 
-    for r in resource_params:
-        resourceId = r.resourceId.lower() if r.resourceId else ''
+#     for r in resource_params:
+#         resourceId = r.resourceId.lower() if r.resourceId else ''
 
-        if resourceId == '':
-            return [False, []]
+#         if resourceId == '':
+#             return [False, []]
 
-        if resourceId in exist:
-            continue
+#         if resourceId in exist:
+#             continue
         
-        exist.add(resourceId)
+#         exist.add(resourceId)
 
-        subscriptionId = _get_subscription_id(resourceId)
-        standardTestName = r.standardTestName if r.standardTestName else ''
-        network_watcher_conn_mon_test_group_name = r.network_watcher_conn_mon_test_group_name if r.network_watcher_conn_mon_test_group_name else ''
-        workspaceId = r.workspaceId if r.workspaceId else ''
+#         subscriptionId = _get_subscription_id(resourceId)
+#         standardTestName = r.standardTestName if r.standardTestName else ''
+#         network_watcher_conn_mon_test_group_name = r.network_watcher_conn_mon_test_group_name if r.network_watcher_conn_mon_test_group_name else ''
+#         workspaceId = r.workspaceId if r.workspaceId else ''
 
-        result.append(ResourceParameter(
-            resourceId=resourceId,
-            subscriptionId=subscriptionId,
-            standardTestName=standardTestName,
-            workspaceId=workspaceId,
-            network_watcher_conn_mon_test_group_name=network_watcher_conn_mon_test_group_name
-        ))
+#         result.append(ResourceParameter(
+#             resourceId=resourceId,
+#             subscriptionId=subscriptionId,
+#             standardTestName=standardTestName,
+#             workspaceId=workspaceId,
+#             network_watcher_conn_mon_test_group_name=network_watcher_conn_mon_test_group_name
+#         ))
         
-    return [True, result]
+#     return [True, result]
 
-def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHealthResult:
+# def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHealthResult:
 
-    if not resources:
-        return []
+#     if not resources:
+#         return []
     
-    healthStatuses = []
+#     healthStatuses = []
     
-    for rsc in resources:
+#     for rsc in resources:
 
-        client = HealthClient(appconfig)
+#         client = HealthClient(appconfig)
 
-        healthReport = client.get_health(rsc)
+#         healthReport = client.get_health(rsc)
 
-        healthStatuses.append(healthReport)
+#         healthStatuses.append(healthReport)
 
-    return ResourceHealthResult(healthStatuses)
+#     return ResourceHealthResult(healthStatuses)
 
 
-@app.get("/", status_code=200)
-def root(response: fastapi.Response):
-    response.headers["cwhd-version"] = appconfig.version
-    return "alive"
+# @app.get("/", status_code=200)
+# def root(response: fastapi.Response):
+#     response.headers["cwhd-version"] = appconfig.version
+#     return "alive"
 
-# health status
-@app.post("/RHRetriever", status_code=200)
-def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
+# # health status
+# @app.post("/RHRetriever", status_code=200)
+# def RHRetriever(req_body_param: RequestBodyParam, response: fastapi.Response):
 
-    """
-    returns overall health status that powers colored tiles on Grafana
-    """
+#     """
+#     returns overall health status that powers colored tiles on Grafana
+#     """
     
-    try:
-        response.headers["cwhd-version"] = appconfig.version
+#     try:
+#         response.headers["cwhd-version"] = appconfig.version
         
-        Log.debug('start main_request_RHRetriever')
+#         Log.debug('start main_request_RHRetriever')
         
-        ok, resources = get_resource_params(req_body_param)
+#         ok, resources = get_resource_params(req_body_param)
 
-        if not ok:
-            Log.exception('no resource ID supplied')
-            response.status_code = 400
-            return 'no resource ID supplied'
+#         if not ok:
+#             Log.exception('no resource ID supplied')
+#             response.status_code = 400
+#             return 'no resource ID supplied'
 
-        rhState = get_resource_health_states(resources)
+#         rhState = get_resource_health_states(resources)
 
-        return jsons.dumps(rhState)
+#         return jsons.dumps(rhState)
         
-    except Exception as e:
-        Log.exception(f'Health/resource - error occured: {str(e)}')
-        response.status_code = 500
-        return str(e)
+#     except Exception as e:
+#         Log.exception(f'Health/resource - error occured: {str(e)}')
+#         response.status_code = 500
+#         return str(e)
     
 # WARA module
 
