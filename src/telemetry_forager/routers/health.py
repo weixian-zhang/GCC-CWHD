@@ -1,5 +1,4 @@
 import sys, os
-import jsonpickle
 from typing import List
 from health import HealthClient
 import fastapi
