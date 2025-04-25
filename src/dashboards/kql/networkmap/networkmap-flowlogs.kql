@@ -7,9 +7,9 @@ NTANetAnalytics
 | extend SrcNodeInOrOutVNet = iif(SrcIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
                             iif(FlowType == 'AzurePublic' and SrcPublicIps != '', 'NodeOutsideVNet_PaaS', 
                                 iif(FlowType == 'ExternalPublic' and SrcPublicIps != '', 'NodeOutsideAzure',
-                                  //adversary from outside of Azure 
-                                  iif (FlowType =='MaliciousFlow' and FlowDirection == 'Inbound' and SrcIp != '', 'NodeMalicious',
-                                     //adversary from inside of Azure 
+                                //adversary from outside of Azure 
+                                iif (FlowType =='MaliciousFlow' and FlowDirection == 'Inbound' and SrcIp != '', 'NodeMalicious',
+                                    //adversary from inside of Azure 
                                     iif(FlowType =='MaliciousFlow' and FlowDirection == 'Outbound', 'NodeInsideVNet', 'NodeUnknown')
                                 )
                               )
@@ -39,13 +39,14 @@ NTANetAnalytics
 
 | join kind=leftouter 
 (NTAIpDetails 
-| project ['SrcPIP_Ip']=Ip, ['SrcPIP_PublicIpDetails']=PublicIpDetails, ['SrcPIP_ThreatType']=ThreatType, ['SrcPIP_Location']=Location, ['SrcPIP_Url']=Url)
+| project ['SrcPIP_Ip']=Ip, ['SrcPIP_PublicIpDetails']=PublicIpDetails, ['SrcPIP_ThreatType']=ThreatType, ['SrcPIP_Location']=Location, ['SrcPIP_Url']=Url, Src_NTAIpDetails=1
+)
 on $left.SrcPIP == $right.SrcPIP_Ip
 
 | join kind=leftouter
     (
         NTAIpDetails 
-        | project ['DestPIP_Ip']=Ip, ['DestPIP_PublicIpDetails']=PublicIpDetails, ['DestPIP_ThreatType']=ThreatType, ['DestPIP_Location']=Location, ['DestPIP_Url']=Url
+        | project ['DestPIP_Ip']=Ip, ['DestPIP_PublicIpDetails']=PublicIpDetails, ['DestPIP_ThreatType']=ThreatType, ['DestPIP_Location']=Location, ['DestPIP_Url']=Url, Dest_NTAIpDetails=1
     )
 on $left.DestPIP == $right.DestPIP_Ip
 
@@ -55,7 +56,8 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway, 
                      iif(SrcLoadBalancer != '', SrcLoadBalancer, 
                         iif(SrcPIP_PublicIpDetails != '', SrcPIP_PublicIpDetails, 
-                            iif(SrcVm != '' and SrcVm !startswith 'unknown',SrcVm, '' ))))
+                          iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm', 
+                            iif(SrcVm != '', SrcVm, '' )))))
 
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
 
@@ -64,17 +66,27 @@ on $left.DestPIP == $right.DestPIP_Ip
 
 | extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway, 
                         iif(DestLoadBalancer != '', DestLoadBalancer,
-                            iif(DestPIP_PublicIpDetails != '', DestPIP_PublicIpDetails, 
-                                iif(DestVm != '' and DestVm !startswith 'unknown',DestVm, '' ))))
+                            iif(DestPIP_PublicIpDetails != '', DestPIP_PublicIpDetails,
+                               iif(DestSubnetName == 'azurebastionsubnet', 'bastion-vm', 
+                                  iif(DestVm != '',  DestVm, '' )))))
+
 
 | extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
 
-| extend protocol = tolower(strcat(L4Protocol,  iif(L7Protocol != 'Unknown', strcat(':', L7Protocol), '')))
 
-| extend SrcToDestDataMB = BytesSrcToDest / 1000
-| extend DestToSrcDataMB = BytesDestToSrc / 1000
+| extend protocol = tolower(strcat(L4Protocol,  iif(L7Protocol != 'Unknown', strcat(':', L7Protocol), ''))) 
 
-| where FlowType == 'ExternalPublic' and FlowDirection == 'Inbound'
+| summarize BytesSrcToDest = max(BytesSrcToDest), BytesDestToSrc = max(BytesDestToSrc)
+            by Src_NTAIpDetails, Dest_NTAIpDetails, FlowType, FlowDirection, ConnectionType, protocol,
+                    SrcNodeInOrOutVNet, SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName,
+                    DestNodeInOrOutVNet, DestSubscription, DestRG, DestVNet, DestSubnetName, DestName,
+                    SrcPIP_ThreatType, SrcPIP_Location, SrcPIP_Url,
+                    DestIp, DestPIP_ThreatType, DestPIP_Location, DestPIP_Url
+
+
+| extend SrcToDestDataSize = format_bytes(BytesSrcToDest, 2)
+| extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)  
+
 
 
 //SrcName and DestName can be 
@@ -85,13 +97,11 @@ on $left.DestPIP == $right.DestPIP_Ip
     // PaaS services
     // external endpoints which has no name and is empty
     // on-premise which has no name and is empty
-| distinct Time=datetime_utc_to_local(TimeGenerated, 'Asia/Singapore'), FlowType, FlowDirection, ConnectionType, protocol,
-           SrcNodeInOrOutVNet, SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName, SrcToDestDataMB,
-           DestNodeInOrOutVNet, DestSubscription, DestRG, DestVNet, DestSubnetName, DestName, DestToSrcDataMB,
-           SrcPIP_ThreatType, SrcPIP_Location, SrcPIP_Url,
-           DestIp, DestPIP_ThreatType, DestPIP_Location, DestPIP_Url
+| distinct Src_NTAIpDetails, Dest_NTAIpDetails, FlowType, FlowDirection, ConnectionType, protocol,
+        SrcNodeInOrOutVNet, SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName, SrcToDestDataSize,
+        DestNodeInOrOutVNet, DestSubscription, DestRG, DestVNet, DestSubnetName, DestName, DestToSrcDataSize,
+        SrcPIP_ThreatType, SrcPIP_Location, SrcPIP_Url,
+        DestIp, DestPIP_ThreatType, DestPIP_Location, DestPIP_Url
 
 
 // SrcPIP_PublicIpDetails , DestPIP_PublicIpDetails
-
-
