@@ -21,7 +21,7 @@ return {
     //formatter: (params) => '<div>' + 'subnet: ' + params.data.subnet + '</div>' + '<div>' + 'vnet: ' + params.data.vnet + '</div>',
     //valueFormatter: (params) => '<div>' + params.data.src_to_dest_data_size + '</div>'
   },
-  animationDurationUpdate: 1500,
+  animationDurationUpdate: 1000,
   animationEasingUpdate: 'quinticInOut',
   legend: [
     {
@@ -61,7 +61,7 @@ return {
         ...n,
         tooltip: {
           formatter: function (params) {
-            var dataSize = `${params.data.source}&nbsp&nbsp ${params.data.src_to_dest_data_size} &nbsp->&nbsp<-&nbsp' ${params.data.dest_to_srct_data_size} ${params.data.target}`;
+            var dataSize = `${params.data.source}&nbsp&nbsp ${params.data.src_to_dest_data_size} &nbsp->&nbsp<-&nbsp ${params.data.dest_to_srct_data_size} ${params.data.target}`;
             var flowType = `<div>flow type:&nbsp ${params.data.flowType}</div>`;
             var protocol = ((params.data.protocol), `<div>protocol:&nbsp ${params.data.protocol}<div>`, '');
             var connectionType = ((params.data.connectionType), `<div>connection type:&nbsp ${params.data.connectionType}<div>`, '');
@@ -73,10 +73,10 @@ return {
 
       force: {
 
-        edgeLength: 40,
+        edgeLength: 6,
         repulsion: 20000,
         gravity: 0.1,
-        friction: 0.8,
+        friction: 1,
         layoutAnimation: true
       },
 
