@@ -1,0 +1,6 @@
+resources
+| where type == "microsoft.network/virtualnetworks"
+| extend VNet = name
+| mv-expand addressPrefixes = properties.addressSpace.addressPrefixes
+| mv-expand subnet = properties.subnets
+| project VNet, VNetAddressSpace = addressPrefixes, SubnetName=subnet.name, SubnetAddressPrefix=subnet.properties.addressPrefix
