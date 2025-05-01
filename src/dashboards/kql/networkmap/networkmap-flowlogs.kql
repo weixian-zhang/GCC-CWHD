@@ -1,11 +1,15 @@
+let traffic_analytics_pip_table = NTAIpDetails
+        | project ['PublicIP']=Ip, ['PIP_PublicIpDetails']=PublicIpDetails, ['PIP_ThreatType']=ThreatType, ['PIP_Location']=Location, ['PIP_Url']=Url;
+
 NTANetAnalytics
+
 | where FlowType != '' and SubType == 'FlowLog'
 
-// # filter grafana $__timeFrom, $__timeTo
-// | where TimeGenerated between (
-//     (datetime('2023-12-29 08:00:00')) .. 
-//     (datetime('2023-12-30 08:05:00'))
-//   )
+// filter grafana $__timeFrom, $__timeTo
+//| where TimeGenerated between(startofday(datetime(2025-4-27)) .. endofday(datetime(2025-5-1)))
+//| where TimeGenerated >= ago(1d)
+
+| take 5000
 
 | extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
 | extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
@@ -15,108 +19,104 @@ NTANetAnalytics
 | extend SrcVNet = tostring(SrcSubnetSplitted[1])
 | extend SrcSubnetName = tostring(SrcSubnetSplitted[2])
 
-//check "location" of src node
-| extend SrcNodeInOrOutVNet =   iif(SrcIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
-                                  iif(FlowType == 'AzurePublic' and SrcPublicIps != '', 'NodeOutsideVNet_PaaS', 
-                                    iif(FlowType == 'ExternalPublic' and SrcPublicIps != '', 'NodeOutsideAzure',
-                                      //adversary from outside of Azure 
-                                      iif (FlowType =='MaliciousFlow' and FlowDirection == 'Inbound' and SrcIp != '', 'NodeMalicious',
-                                        //adversary from inside of Azure 
-                                        iif(FlowType =='MaliciousFlow' and FlowDirection == 'Outbound', 'NodeInsideVNet', 'NodeUnknown')
-                                )
-                              )
-                            )
-                          )
-
-
 | extend DestSubnetSplitted =  split(DestSubnet, '/')
 | extend DestRG = tostring(DestSubnetSplitted[0])
 | extend DestVNet = tostring(DestSubnetSplitted[1])
 | extend DestSubnetName = tostring(DestSubnetSplitted[2])
 
-//check "location" of dest node
-| extend DestNodeInOrOutVNet = iif(DestIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
-                            iif(FlowType in ('AzurePublic') and DestPublicIps != '', 'NodeOutsideVNet_PaaS', 
-                                iif(FlowType == 'ExternalPublic' and DestPublicIps != '', 'NodeOutsideAzure',
-                                    //adversary from outside of Azure 
-                                    iif(FlowType == 'MaliciousFlow' and FlowDirection== 'Inbound' and DestIp != '', 'NodeInsideVNet',
-                                        //adversary from inside of Azure 
-                                        iif(FlowType == 'MaliciousFlow' and FlowDirection== 'Outbound', 'NodeMalicious', 'NodeUnknown')
-                                )
-                              )
-                            )
-                          )
 
-| join kind=leftouter 
-(NTAIpDetails 
-| project ['SrcPIP_Ip']=Ip, ['SrcPIP_PublicIpDetails']=PublicIpDetails, ['SrcPIP_ThreatType']=ThreatType, ['SrcPIP_Location']=Location, ['SrcPIP_Url']=Url, Src_NTAIpDetails=1
+
+// resolve Azure Public IP from NTAIpDetails table
+| join kind=leftouter
+(
+    traffic_analytics_pip_table
+| project ['SrcPIP_Ip']=PublicIP, ['SrcPIP_PublicIpDetails']=PIP_PublicIpDetails, ['SrcPIP_ThreatType']=PIP_ThreatType, ['SrcPIP_Location']=PIP_Location, ['SrcPIP_Url']=PIP_Url
 )
 on $left.SrcPIP == $right.SrcPIP_Ip
 
 | join kind=leftouter
     (
-        NTAIpDetails 
-        | project ['DestPIP_Ip']=Ip, ['DestPIP_PublicIpDetails']=PublicIpDetails, ['DestPIP_ThreatType']=ThreatType, ['DestPIP_Location']=Location, ['DestPIP_Url']=Url, Dest_NTAIpDetails=1
+        traffic_analytics_pip_table
+        | project ['DestPIP_Ip']=PublicIP, ['DestPIP_PublicIpDetails']=PIP_PublicIpDetails, ['DestPIP_ThreatType']=PIP_ThreatType, ['DestPIP_Location']=PIP_Location, ['DestPIP_Url']=PIP_Url
     )
 on $left.DestPIP == $right.DestPIP_Ip
 
 // set SrcPIP_Ip if exist
 | extend SrcIp = iif(SrcPIP_Ip != '', SrcPIP_Ip, SrcIp)
+// set DestPIP_Ip if exist
+| extend DestIp = strcat(iif(DestPIP_Ip != '', DestPIP_Ip, DestIp), ':', DestPort)
+
+//check "location" of src node
+// | extend SrcNodeInOrOutVNet =   iif(SrcIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
+//                                   iif(FlowType == 'AzurePublic' and SrcPublicIps != '', 'NodeOutsideVNet_PaaS',
+//                                     iif(FlowType == 'ExternalPublic' and SrcPublicIps != '', 'NodeOutsideAzure',
+//                                       //adversary from outside of Azure
+//                                       iif (FlowType =='MaliciousFlow' and FlowDirection == 'Inbound' and SrcIp != '', 'NodeMalicious',
+//                                         //adversary from inside of Azure
+//                                         iif(FlowType =='MaliciousFlow' and FlowDirection == 'Outbound', 'NodeInsideVNet', 'NodeUnknown')
+//                                 )
+//                               )
+//                             )
+//                           )
+
+//check "location" of dest node
+// | extend DestNodeInOrOutVNet = iif(DestIp != '' and FlowType != 'MaliciousFlow', 'NodeInsideVNet',
+//                             iif(FlowType in ('AzurePublic') and DestPublicIps != '', 'NodeOutsideVNet_PaaS',
+//                                 iif(FlowType == 'ExternalPublic' and DestPublicIps != '', 'NodeOutsideAzure',
+//                                     //adversary from outside of Azure
+//                                     iif(FlowType == 'MaliciousFlow' and FlowDirection== 'Inbound' and DestIp != '', 'NodeInsideVNet',
+//                                         //adversary from inside of Azure
+//                                         iif(FlowType == 'MaliciousFlow' and FlowDirection== 'Outbound', 'NodeMalicious', 'NodeUnknown')
+//                                 )
+//                               )
+//                             )
+//                           )
+
 
 // resolve SrcName as private endpoint name if traffic is private endpoint
 // *note: private endpoint is Source and not destination
 | extend PrivateEndpointName = split(PrivateEndpointResourceId, '/')[-1]
 | extend PrivateLinkName = split(PrivateEndpointResourceId, '/')[-2]
 
-| extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway, 
-                     iif(SrcLoadBalancer != '', SrcLoadBalancer, 
-                        iif(SrcPIP_PublicIpDetails != '', SrcPIP_PublicIpDetails, 
+| extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway,
+                     iif(SrcLoadBalancer != '', SrcLoadBalancer,
+                        iif(SrcPIP_PublicIpDetails != '', SrcPIP_PublicIpDetails,
                           iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm',
-                           iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName, 
-                             iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))), 
+                           iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName,
+                             iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
                                iif(SrcVm != '', SrcVm, '-' )))))))
 
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
 
-// set DestPIP_Ip if exist
-| extend DestIp = strcat(iif(DestPIP_Ip != '', DestPIP_Ip, DestIp), ':', DestPort)
 
-| extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway, 
+| extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway,
                         iif(DestLoadBalancer != '', DestLoadBalancer,
                             iif(DestPIP_PublicIpDetails != '', DestPIP_PublicIpDetails,
-                               iif(DestSubnetName == 'azurebastionsubnet', 'bastion-vm', 
-                                iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName, 
-                                  iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))), 
+                               iif(DestSubnetName == 'azurebastionsubnet', 'bastion-vm',
+                                iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName,
+                                  iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))),
                                     iif(DestVm != '',  DestVm, '' )))))))
 
 
 | extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
 
 
-| extend protocol = tolower(strcat(L4Protocol,  iif(L7Protocol != 'Unknown', strcat(':', L7Protocol), ''))) 
+| extend protocol = tolower(strcat(L4Protocol,  iif(L7Protocol != 'Unknown', strcat(':', L7Protocol), '')))
+
 
 | summarize BytesSrcToDest = max(BytesSrcToDest), BytesDestToSrc = max(BytesDestToSrc)
-            by Src_NTAIpDetails, Dest_NTAIpDetails, FlowType, FlowDirection, ConnectionType, protocol,
-                    SrcNodeInOrOutVNet, SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName,
-                    DestNodeInOrOutVNet, DestSubscription, DestRG, DestVNet, DestSubnetName, DestName,
+            by  FlowType, FlowDirection, ConnectionType, protocol,
+                    SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName,
+                    DestSubscription, DestRG, DestVNet, DestSubnetName, DestName,
                     SrcPIP_ThreatType, SrcPIP_Location, SrcPIP_Url,
                     DestIp, DestPIP_ThreatType, DestPIP_Location, DestPIP_Url
 
 
 | extend SrcToDestDataSize = format_bytes(BytesSrcToDest, 2)
-| extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)  
+| extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)
 
-
-//SrcName and DestName can be 
-    // VM
-    // App Gateway
-    // Load Balancer
-    // Private Endpoint
-    // PaaS services
-    // external endpoints which has no name and is empty
-    // on-premise which has no name and is empty
-| distinct Src_NTAIpDetails, Dest_NTAIpDetails, FlowType, FlowDirection, ConnectionType, protocol,
-        SrcNodeInOrOutVNet, SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName, SrcToDestDataSize,
-        DestNodeInOrOutVNet, DestSubscription, DestRG, DestVNet, DestSubnetName, DestName, DestToSrcDataSize,
+| distinct FlowType, FlowDirection, ConnectionType, Protocol=protocol,
+        SrcSubscription, SrcRG, SrcVNet, SrcSubnetName , SrcIp, SrcName, SrcToDestDataSize,
+        DestSubscription, DestRG, DestVNet, DestSubnetName, DestName, DestToSrcDataSize,
         SrcPIP_ThreatType, SrcPIP_Location, SrcPIP_Url,
         DestIp, DestPIP_ThreatType, DestPIP_Location, DestPIP_Url
