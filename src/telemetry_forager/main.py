@@ -11,7 +11,7 @@ from job import WARAEventLoop, WARAApiGenScheduledJob, WARAHistoryCleanUpSchedul
 from wara.wara_api import WARAApi
 from wara.model import WARAExecution, WARARecommendation, WARAImpactedResource, WARAResourceType, WARARetirement
 from memory_queue import MemoryQueue
-from routers import health, wara
+from routers import health, wara, networkmap
 import log as Log
 
 # init global queue
@@ -28,6 +28,7 @@ app = fastapi.FastAPI()
 
 app.include_router(health.router)
 app.include_router(wara.router)
+app.include_router(networkmap.router)
 
 _waraapi = WARAApi(config=appconfig)
 

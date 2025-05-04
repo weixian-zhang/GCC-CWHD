@@ -43,7 +43,10 @@ class AppConfig:
         self.timezone = os.environ.get('Timezone') if os.environ.get('Timezone') else 'Asia/Singapore'
 
         enable_wara = os.environ.get('Enable_WARA')
+
         self.enable_wara = True if enable_wara and enable_wara.lower() == 'true' else False
+
+        self.networkmap_workspace_id = os.environ.get('NetworkMap_Workspace_ID') if os.environ.get('NetworkMap_Workspace_ID') else ''
         
         self.loaded = True
 

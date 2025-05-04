@@ -1,0 +1,31 @@
+
+class NetworkMapNode:
+    def __init__(self, subscriptionId, resource_group, resource_type, name, category, ip, subnet, vnet, srcPIPLocation):
+        self.id = ''
+        self.name = ''
+        self.category = ''
+        self.ip = ''
+        self.subnet = ''
+        self.vnet = ''
+        self.srcPIPLocation = ''
+
+class NetworkMapEdge:
+    def __init__(self, source, target, src_to_dest_data_size, dest_to_srct_data_size, flowType, protocol, connectionType):
+        self.source= ''
+        self.target = ''
+        self.src_to_dest_data_size = ''
+        self.dest_to_srct_data_size = ''
+        self.flowType = ''
+        self.protocol = ''
+        self.connectionType = ''
+
+class NetworkMapCategory:
+    def __init__(self, name):
+        self.name = ''
+
+class NetworkMapMainResult:
+    def __init__(self, nodes, edges, categories):
+        self.nodes = []
+        self.edges = []
+        self.categories = []
+        
