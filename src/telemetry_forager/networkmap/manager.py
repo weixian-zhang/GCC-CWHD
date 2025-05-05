@@ -25,7 +25,7 @@ class NetworkMapManager:
         self.rg_client = ResourceGraphClient(credential=self.azcred)
 
 
-    def get_network_map_without_exyernalpublic_malicious(self, 
+    def get_network_map_without_externalpublic_malicious(self, 
                                start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
@@ -37,9 +37,6 @@ class NetworkMapManager:
                                src_ip: str = 'all',
                                dest_ip: str = 'all') -> NetworkMapResult:
         
-        # start_time=datetime(2025, 4, 30, tzinfo=timezone.utc)
-        # end_time=datetime(2025, 5, 4, tzinfo=timezone.utc)
-
         try:
 
             kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
@@ -261,7 +258,6 @@ class NetworkMapManager:
             Log.exception(f'NetworkMapManager - error occured: {str(e)}')
             return maindf
 
-
     def _apply_filter_flow_direction(self, maindf: pd.DataFrame, flow_direction) -> pd.DataFrame:
 
         if flow_direction == 'all':
@@ -276,7 +272,6 @@ class NetworkMapManager:
         
         return maindf[maindf['SrcVNet'].str.lower() == src_vnet.lower()]
     
-
     def _apply_filter_src_subnet(self, maindf: pd.DataFrame, src_subnet) -> pd.DataFrame:
 
         if src_subnet == 'all':
@@ -284,7 +279,6 @@ class NetworkMapManager:
         
         return maindf[maindf['SrcSubnetName'].str.lower() == src_subnet.lower()]
     
-
     def _apply_filter_dest_vnet(self, maindf: pd.DataFrame, dest_vnet) -> pd.DataFrame:
 
         if dest_vnet == 'all':
@@ -292,7 +286,6 @@ class NetworkMapManager:
         
         return maindf[maindf['DestVNet'].str.lower() == dest_vnet.lower()]
     
-
     def _apply_filter_dest_subnet(self, maindf: pd.DataFrame, dest_subnet) -> pd.DataFrame:
 
         if dest_subnet == 'all':
@@ -300,7 +293,6 @@ class NetworkMapManager:
         
         return maindf[maindf['DestSubnetName'].str.lower() == dest_subnet.lower()]
     
-
     def _apply_filter_src_ip(self, maindf: pd.DataFrame, src_ip) -> pd.DataFrame:
 
         if src_ip == 'all':
@@ -308,7 +300,6 @@ class NetworkMapManager:
         
         return maindf[maindf['SrcIp'] == src_ip]
     
-
     def _apply_filter_dest_ip(self, maindf: pd.DataFrame, dest_ip) -> pd.DataFrame:
 
         if dest_ip == 'all':
@@ -317,7 +308,11 @@ class NetworkMapManager:
         return maindf[maindf['DestIp'] == dest_ip]
     
 
-    def get_unique_src_vnet(self, maindf: pd.DataFrame, src_vnet) -> pd.DataFrame:
+    def get_unique_src_vnet(self,flow_types,start_time, end_time, src_vnet) -> pd.DataFrame:
+
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
 
         if src_vnet == 'all':
             return maindf

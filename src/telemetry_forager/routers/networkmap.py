@@ -30,7 +30,7 @@ nmap = NetworkMapManager(config=appconfig)
 
 @router.post("/api/nmap/vnetflowlog", status_code=200, response_model=None)
 def get_main_vnetfloqlog(body: NetworkMapRequestBody, response: fastapi.Response) -> NetworkMapResult:
-    result = nmap.get_network_map_without_exyernalpublic_malicious(start_time=body.startTime,
+    result = nmap.get_network_map_without_externalpublic_malicious(start_time=body.startTime,
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                     flow_direction=body.flowDirection,
