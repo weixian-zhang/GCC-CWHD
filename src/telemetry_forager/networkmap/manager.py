@@ -98,6 +98,7 @@ class NetworkMapManager:
         dest_nodes_final_df['name'] = maindf['DestName']
         dest_nodes_final_df['category'] = maindf['FlowType']
         dest_nodes_final_df['ip'] = maindf['DestIp']
+        dest_nodes_final_df['destPort'] = maindf['DestPort']
         dest_nodes_final_df['subnet'] = maindf['DestSubnetName']
         dest_nodes_final_df['vnet'] = maindf['DestVNet']
         dest_nodes_final_df['azurePublicDestPIPLocation'] = maindf['AzurePublic_DestPIP_Location']
@@ -129,6 +130,7 @@ class NetworkMapManager:
         edges_df['src_to_dest_data_size'] = maindf['SrcToDestDataSize']
         edges_df['dest_to_srct_data_size'] = maindf['DestToSrcDataSize']
         edges_df['flowType'] = maindf['FlowType']
+        edges_df['flowDirection'] = maindf['FlowDirection']
         edges_df['protocol'] = maindf['protocol']
         edges_df['connectionType'] = maindf['ConnectionType']
 

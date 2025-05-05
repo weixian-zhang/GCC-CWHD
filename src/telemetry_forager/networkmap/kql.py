@@ -28,7 +28,7 @@ NTANetAnalytics
 
 | where (FlowType != '' and SubType == 'FlowLog')
 
-| where FlowType in ({flowType})
+//| where FlowType in ({flowType})
 
 // filter grafana $__timeFrom, $__timeTo
 //| where TimeGenerated between(startofday(datetime(2025-4-27)) .. endofday(datetime(2025-5-1)))
@@ -48,7 +48,6 @@ NTANetAnalytics
 | extend DestRG = tostring(DestSubnetSplitted[0])
 | extend DestVNet = tostring(DestSubnetSplitted[1])
 | extend DestSubnetName = tostring(DestSubnetSplitted[2])
-
 
 
 // resolve Azure Public IP from NTAIpDetails table
@@ -81,7 +80,7 @@ on $left.DestPIP == $right.DestPIP_Ip
 // set SrcPIP_Ip if exist
 | extend SrcIp = iif(SrcPIP_Ip != '', SrcPIP_Ip, SrcIp)
 // set DestPIP_Ip if exist
-| extend DestIp = strcat(iif(DestPIP_Ip != '', DestPIP_Ip, DestIp), ':', DestPort)
+| extend DestIp = iif(DestPIP_Ip != '', DestPIP_Ip, DestIp)
 
 
 // resolve SrcName as private endpoint name if traffic is private endpoint
@@ -124,7 +123,7 @@ on $left.DestPIP == $right.DestPIP_Ip
     FlowType, 
     FlowDirection, 
     ConnectionType, 
-    protocol, 
+    protocol,
     IsFlowCapturedAtUdrHop,
                     
     AzurePublic_SrcPIP_Location, 
@@ -142,7 +141,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     DestRG, 
     DestVNet, 
     DestSubnetName,
-    DestIp, 
+    DestIp,
+    DestPort,
     DestName,
 
     Malicious_SrcPIP_Url,
@@ -161,7 +161,7 @@ on $left.DestPIP == $right.DestPIP_Ip
     FlowType, 
     FlowDirection, 
     ConnectionType, 
-    protocol, 
+    protocol,
     IsFlowCapturedAtUdrHop,
     SrcToDestDataSize,
     DestToSrcDataSize,
@@ -181,7 +181,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     DestRG, 
     DestVNet, 
     DestSubnetName,
-    DestIp, 
+    DestIp,
+    DestPort,
     DestName,
 
     Malicious_SrcPIP_Url,
