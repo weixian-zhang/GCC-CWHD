@@ -20,6 +20,7 @@ class NetworkMapKQL:
 
       return f'''
 
+
 let traffic_analytics_pip_table = NTAIpDetails
               | project ['PublicIP']=Ip, ['PIP_PublicIpDetails']=PublicIpDetails, ['PIP_ThreatType']=ThreatType, ['PIP_Location']=Location, ['PIP_Url']=Url, ['PIP_ThreatDescription']=ThreatDescription;
 
@@ -28,13 +29,10 @@ NTANetAnalytics
 
 | where (FlowType != '' and SubType == 'FlowLog')
 
-//| where FlowType in ({flowType})
 
-// filter grafana $__timeFrom, $__timeTo
-//| where TimeGenerated between(startofday(datetime(2025-4-27)) .. endofday(datetime(2025-5-1)))
-//| where TimeGenerated >= ago(1d)
+| where FlowType in ({flowType})
 
-| take 7000
+| take 8000
 
 | extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
 | extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
@@ -88,24 +86,37 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend PrivateEndpointName = split(PrivateEndpointResourceId, '/')[-1]
 | extend PrivateLinkName = split(PrivateEndpointResourceId, '/')[-2]
 
+| extend SrcNodeType = iif(SrcApplicationGateway != '', 'APPGW',
+                        iif(SrcLoadBalancer != '', 'ALB',
+                         iif(FlowType == 'AzurePublic' and AzurePublic_Src_PublicIpDetails != '', 'PAAS',
+                          iif(SrcSubnetName == 'azurebastionsubnet', 'BASTION',
+                           iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
+                            iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 'NODE'))))))
+
 | extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway,
                     iif(SrcLoadBalancer != '', SrcLoadBalancer,
-                        iif(AzurePublic_Src_PublicIpDetails != '', AzurePublic_Src_PublicIpDetails,
-                        iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm',
-                        iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName,
-                            iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
-                            iif(SrcVm != '', SrcVm, '-' )))))))
+                     iif(AzurePublic_Src_PublicIpDetails != '', AzurePublic_Src_PublicIpDetails,
+                      iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm',
+                       iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName,
+                        iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
+                         iif(SrcVm != '', SrcVm, '-' )))))))
 
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
 
+| extend DestNodeType = iif(DestApplicationGateway != '', 'APPGW',
+                     iif(DestLoadBalancer != '', 'ALB',
+                      iif(FlowType == 'AzurePublic' and AzurePublic_Dest_PublicIpDetails != '', 'PAAS',
+                       iif(DestSubnetName == 'azurebastionsubnet', 'BASTION',
+                        iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
+                         iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 'NODE'))))))
 
 | extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway,
-                        iif(DestLoadBalancer != '', DestLoadBalancer,
-                            iif(AzurePublic_Dest_PublicIpDetails != '', AzurePublic_Dest_PublicIpDetails,
-                            iif(DestSubnetName == 'azurebastionsubnet', 'bastion-vm',
-                                iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName,
-                                iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))),
-                                    iif(DestVm != '',  DestVm, '' )))))))
+                     iif(DestLoadBalancer != '', DestLoadBalancer,
+                      iif(AzurePublic_Dest_PublicIpDetails != '', AzurePublic_Dest_PublicIpDetails,
+                       iif(DestSubnetName == 'azurebastionsubnet', 'bastion-vm',
+                        iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName,
+                         iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))),
+                          iif(DestVm != '',  DestVm, '' )))))))
 
 
 | extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
@@ -125,7 +136,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     ConnectionType, 
     protocol,
     IsFlowCapturedAtUdrHop,
-                    
+    
+    SrcNodeType,
     AzurePublic_SrcPIP_Location, 
     ExternalPublic_Src_Country, 
     SrcSubscription, 
@@ -135,6 +147,7 @@ on $left.DestPIP == $right.DestPIP_Ip
     SrcIp,
     SrcName,
     
+    DestNodeType,
     AzurePublic_DestPIP_Location, 
     ExternalPublic_Dest_Country, 
     DestSubscription, 
@@ -165,7 +178,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     IsFlowCapturedAtUdrHop,
     SrcToDestDataSize,
     DestToSrcDataSize,
-                    
+    
+    SrcNodeType,
     AzurePublic_SrcPIP_Location, 
     ExternalPublic_Src_Country, 
     SrcSubscription, 
@@ -175,6 +189,7 @@ on $left.DestPIP == $right.DestPIP_Ip
     SrcIp,
     SrcName,
     
+    DestNodeType,
     AzurePublic_DestPIP_Location, 
     ExternalPublic_Dest_Country, 
     DestSubscription, 

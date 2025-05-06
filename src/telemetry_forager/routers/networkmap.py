@@ -17,6 +17,10 @@ class NetworkMapRequestBody(BaseModel):
     endTime: datetime
     flowTypes: list[str] = []
     flowDirection: str = 'all'
+    srcSubscription: str = 'all'
+    srcRG: str = 'all'
+    destSubscription: str = 'all'
+    destRG: str = 'all'
     srcVNet: str = 'all'
     destVNet: str = 'all'
     srcSubnet: str = 'all'
@@ -24,21 +28,107 @@ class NetworkMapRequestBody(BaseModel):
     srcIP: str = 'all'
     destIP: str = 'all'
 
+class FilterDataRequestBody(BaseModel):
+  startTime: datetime
+  endTime: datetime
+  flowTypes: list[str] = []
+
 router = APIRouter()
 
 nmap = NetworkMapManager(config=appconfig)
 
 @router.post("/api/nmap/vnetflowlog", status_code=200, response_model=None)
-def get_main_vnetfloqlog(body: NetworkMapRequestBody, response: fastapi.Response) -> NetworkMapResult:
-    result = nmap.get_network_map_without_externalpublic_malicious(start_time=body.startTime,
+def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> NetworkMapResult:
+    result = nmap.get_network_map_without_externalpublic_malicious(
+                                  start_time=body.startTime,
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
-                                    flow_direction=body.flowDirection,
-                                    src_vnet=body.srcVNet,
-                                    dest_vnet=body.destVNet,
-                                    src_subnet=body.srcSubnet,
-                                    dest_subnet=body.destSubnet,
-                                    src_ip=body.srcIP,
-                                    dest_ip=body.destIP
+                                  flow_direction=body.flowDirection,
+                                  src_subscrition=body.srcSubscription,
+                                  dest_subscription=body.destSubscription,
+                                  src_rg=body.srcRG,
+                                  dest_rg=body.destRG,
+                                  src_vnet=body.srcVNet,
+                                  dest_vnet=body.destVNet,
+                                  src_subnet=body.srcSubnet,
+                                  dest_subnet=body.destSubnet,
+                                  src_ip=body.srcIP,
+                                  dest_ip=body.destIP
                                   )
+    return result
+
+
+@router.post("/api/nmap/src/subscription", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_src_subscription(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+
+@router.post("/api/nmap/src/rg", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_src_rg(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+@router.post("/api/nmap/src/vnet", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_src_vnet(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+
+
+@router.post("/api/nmap/src/subnet", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_src_subnet(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+
+@router.post("/api/nmap/src/ip", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_src_ip(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+
+@router.post("/api/nmap/dest/subscription", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_dest_subscription(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+@router.post("/api/nmap/dest/rg", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_dest_rg(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+@router.post("/api/nmap/dest/vnet", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_dest_vnet(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+@router.post("/api/nmap/dest/subnet", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_dest_subnet(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
+    return result
+
+@router.post("/api/nmap/dest/ip", status_code=200, response_model=None)
+def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+    result = nmap.get_unique_dest_ip(flow_types=body.flowTypes,
+                                  start_time=body.startTime,
+                                  end_time=body.endTime)
     return result

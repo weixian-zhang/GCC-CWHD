@@ -30,6 +30,10 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
+                               src_subscrition: str = 'all',
+                               dest_subscription: str = 'all',
+                               src_rg: str = 'all',
+                               dest_rg: str = 'all',
                                src_vnet: str = 'all',
                                dest_vnet: str = 'all',
                                src_subnet: str = 'all',
@@ -50,6 +54,14 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_flow_direction(maindf, flow_direction)
 
+            maindf = self._apply_filter_src_subscription(maindf, src_subscrition)
+
+            maindf = self._apply_filter_src_rg(maindf, src_rg)
+
+            maindf = self._apply_filter_dest_subscription(maindf, dest_subscription)
+
+            maindf = self._apply_filter_dest_rg(maindf, dest_rg)
+
             maindf = self._apply_filter_src_vnet(maindf, src_vnet)
 
             maindf = self._apply_filter_src_subnet(maindf, src_subnet)
@@ -63,7 +75,9 @@ class NetworkMapManager:
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
             nodes = self._create_echart_nodes(maindf=maindf)
+
             edges = self._create_echart_edges(maindf=maindf)
+
             categories = self._create_echart_categories(maindf=maindf)
 
             nmap = NetworkMapResult(nodes, edges, categories)
@@ -81,6 +95,9 @@ class NetworkMapManager:
         src_nodes_final_df['id'] = maindf['SrcIp']
         src_nodes_final_df['name'] = maindf['SrcName']
         src_nodes_final_df['category'] = maindf['FlowType']
+        src_nodes_final_df['srcSubsription'] = maindf['SrcSubscription']
+        src_nodes_final_df['srcRG'] = maindf['SrcRG'] 
+        src_nodes_final_df['srcNodeType'] = maindf['SrcNodeType']
         src_nodes_final_df['ip'] = maindf['SrcIp']
         src_nodes_final_df['subnet'] = maindf['SrcSubnetName']
         src_nodes_final_df['vnet'] = maindf['SrcVNet']
@@ -93,6 +110,9 @@ class NetworkMapManager:
         dest_nodes_final_df = pd.DataFrame()
         dest_nodes_final_df['id'] = maindf['DestIp']
         dest_nodes_final_df['name'] = maindf['DestName']
+        src_nodes_final_df['destSubsription'] = maindf['DestSubscription']
+        src_nodes_final_df['destRG'] = maindf['DestRG']
+        src_nodes_final_df['destNodeType'] = maindf['DestNodeType']
         dest_nodes_final_df['category'] = maindf['FlowType']
         dest_nodes_final_df['ip'] = maindf['DestIp']
         dest_nodes_final_df['destPort'] = maindf['DestPort']
@@ -137,8 +157,7 @@ class NetworkMapManager:
 
         result = json.loads(final_edges_json_str)
 
-        return result
-    
+        return result   
 
     def _create_echart_categories(self, maindf: pd.DataFrame) -> dict:
         tempdf = pd.DataFrame()
@@ -265,6 +284,36 @@ class NetworkMapManager:
         
         return maindf[maindf['FlowDirection'] == flow_direction]     
 
+    def _apply_filter_src_subscription(self, maindf: pd.DataFrame, sub) -> pd.DataFrame:
+
+        if sub == 'all':
+            return maindf
+        
+        return maindf[maindf['SrcSubscription'] == sub]
+    
+    def _apply_filter_src_rg(self, maindf: pd.DataFrame, rg) -> pd.DataFrame:
+
+        if rg == 'all':
+            return maindf
+        
+        return maindf[maindf['SrcRG'].str.lower() == rg.lower()]
+    
+
+    def _apply_filter_dest_subscription(self, maindf: pd.DataFrame, sub) -> pd.DataFrame:
+
+        if sub == 'all':
+            return maindf
+        
+        return maindf[maindf['DestSubscription'] == sub]
+    
+    def _apply_filter_dest_rg(self, maindf: pd.DataFrame, rg) -> pd.DataFrame:
+
+        if rg == 'all':
+            return maindf
+        
+        return maindf[maindf['DestRG'].str.lower() == rg.lower()]
+    
+    
     def _apply_filter_src_vnet(self, maindf: pd.DataFrame, src_vnet) -> pd.DataFrame:
 
         if src_vnet == 'all':
@@ -308,14 +357,49 @@ class NetworkMapManager:
         return maindf[maindf['DestIp'] == dest_ip]
     
 
-    def get_unique_src_vnet(self,flow_types,start_time, end_time, src_vnet) -> pd.DataFrame:
+    def get_unique_src_subscription(self,flow_types,start_time, end_time) -> pd.DataFrame:
 
         kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
         maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        
+        tempdf = maindf.drop_duplicates('SrcSubscription', keep='first')
+        tempdf = tempdf[tempdf['SrcSubscription'] != '']
 
-        if src_vnet == 'all':
-            return maindf
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['SrcSubscription']
+
+        result.loc[-1] = ['all']  # adding a row
+        result.index = result.index + 1  # shifting index
+        result.reset_index(drop=True)  # reset index
+
+        return result.to_dict(orient='records')
+    
+    
+    def get_unique_src_rg(self,flow_types,start_time, end_time) -> pd.DataFrame:
+
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        
+        tempdf = maindf.drop_duplicates('SrcRG', keep='first')
+        tempdf = tempdf[tempdf['SrcRG'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['SrcRG']
+
+        result.loc[-1] = ['all']  # adding a row
+        result.index = result.index + 1  # shifting index
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
+    
+
+    def get_unique_src_vnet(self,flow_types,start_time, end_time) -> pd.DataFrame:
+
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
                     
         tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
         tempdf = tempdf[tempdf['SrcVNet'] != '']
@@ -325,34 +409,19 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
-        result = result.sort_index() 
+        result.reset_index(drop=True)  # reset index
         
-        return result
-    
-    def get_unique_dest_vnet(self, maindf: pd.DataFrame, dest_vnet) -> pd.DataFrame:
-
-        if dest_vnet == 'all':
-            return maindf
-                    
-        tempdf = maindf.drop_duplicates('DestVNet', keep='first')
-        tempdf = tempdf[tempdf['DestVNet'] != '']
-
-        result = pd.DataFrame()
-        result['DisplayName'] = tempdf['DestVNet']
-
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result = result.sort_index() 
-        
-        return result
+        return result.to_dict(orient='records')
     
 
-    def get_unique_src_subnet(self, maindf: pd.DataFrame, src_subnet) -> pd.DataFrame:
-
-        if src_subnet == 'all':
-            return maindf
+    def get_unique_src_subnet(self, flow_types,start_time, end_time) -> pd.DataFrame:
                     
-        tempdf = maindf.copy()
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        
+        tempdf = pd.DataFrame()
+        tempdf['SrcVNet'] = maindf['SrcVNet']
         tempdf['SrcSubnetName'] = maindf['SrcSubnetName'].str.lower()
         tempdf = tempdf.drop_duplicates('SrcSubnetName', keep='first')
         tempdf = tempdf[(tempdf['SrcVNet'] != '') & (tempdf['SrcSubnetName'] != '')]
@@ -366,16 +435,80 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
-        result = result.sort_index() 
-
-        return result
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
     
 
-    def get_unique_dest_vnet(self, maindf: pd.DataFrame, dest_vnet) -> pd.DataFrame:
+    def get_unique_src_ip(self, flow_types,start_time, end_time) -> pd.DataFrame:
+                    
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        if dest_vnet == 'all':
-            return maindf
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
         
+        maindf = maindf.drop_duplicates('SrcIp', keep='first')
+        maindf= maindf[maindf['SrcIp'] != '']
+
+        tempdf = pd.DataFrame()
+        tempdf['SrcName '] = maindf['SrcName']
+        tempdf['SrcIp'] = maindf['SrcIp']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
+        result['SubnetName'] = tempdf['SrcIp']
+
+        result.loc[-1] = ['all', 'all']  # adding a row
+        result.index = result.index + 1  # shifting index
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
+    
+    def get_unique_dest_subscription(self,flow_types,start_time, end_time) -> pd.DataFrame:
+
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('DestSubscription', keep='first')
+        tempdf = tempdf[tempdf['DestSubscription'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['DestSubscription']
+
+        result.loc[-1] = ['all']  # adding a row
+        result.index = result.index + 1  # shifting index
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
+
+    def get_unique_dest_rg(self,flow_types,start_time, end_time) -> pd.DataFrame:
+
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('DestRG', keep='first')
+        tempdf = tempdf[tempdf['DestRG'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['DestRG']
+
+        result.loc[-1] = ['all']  # adding a row
+        result.index = result.index + 1  # shifting index
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
+    
+
+    def get_unique_dest_vnet(self, flow_types,start_time, end_time) -> pd.DataFrame:
+        
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+
+        tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestVNet', keep='first')
         tempdf = tempdf[tempdf['DestVNet'] != '']
 
@@ -384,17 +517,19 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
-        result = result.sort_index() 
-
-        return result
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
     
 
-    def get_unique_dest_subnet(self, maindf: pd.DataFrame, dest_subnet) -> pd.DataFrame:
-
-        if dest_subnet == 'all':
-            return maindf
+    def get_unique_dest_subnet(self, flow_types,start_time, end_time) -> pd.DataFrame:
                     
-        tempdf = maindf.copy()
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+
+        tempdf = pd.DataFrame()
+        tempdf['DestVNet'] = maindf['DestVNet']
         tempdf['DestSubnetName'] = maindf['DestSubnetName'].str.lower()
         tempdf = tempdf.drop_duplicates('DestSubnetName', keep='first')
         tempdf = tempdf[(tempdf['DestVNet'] != '') & (tempdf['DestSubnetName'] != '')]
@@ -408,6 +543,29 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
-        result = result.sort_index() 
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
+    
+    def get_unique_dest_ip(self, flow_types,start_time, end_time) -> pd.DataFrame:
+                    
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        return result
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        
+        maindf = maindf.drop_duplicates('DestIp', keep='first')
+        maindf= maindf[maindf['DestIp'] != '']
+
+        tempdf = pd.DataFrame()
+        tempdf['DestName '] = maindf['DestName']
+        tempdf['DestIp'] = maindf['DestIp']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
+        result['SubnetName'] = tempdf['DestIp']
+
+        result.loc[-1] = ['all', 'all']  # adding a row
+        result.index = result.index + 1  # shifting index
+        result.reset_index(drop=True)  # reset index
+        
+        return result.to_dict(orient='records')
