@@ -132,7 +132,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     BytesDestToSrc = max(BytesDestToSrc) by
     
     FlowType, 
-    FlowDirection, 
+    FlowDirection,
+    FlowEncryption,
     ConnectionType, 
     protocol,
     IsFlowCapturedAtUdrHop,
@@ -172,7 +173,8 @@ on $left.DestPIP == $right.DestPIP_Ip
 
 | distinct 
     FlowType, 
-    FlowDirection, 
+    FlowDirection,
+    FlowEncryption,
     ConnectionType, 
     protocol,
     IsFlowCapturedAtUdrHop,

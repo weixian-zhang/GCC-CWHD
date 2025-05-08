@@ -182,6 +182,7 @@ class NetworkMapManager:
         edges_df['dest_to_srct_data_size'] = maindf['DestToSrcDataSize']
         edges_df['flowType'] = maindf['FlowType']
         edges_df['flowDirection'] = maindf['FlowDirection']
+        edges_df['flowEncryption'] = maindf['FlowEncryption']
         edges_df['protocol'] = maindf['protocol']
         edges_df['connectionType'] = maindf['ConnectionType']
 
