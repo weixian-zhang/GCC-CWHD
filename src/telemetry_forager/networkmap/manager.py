@@ -405,7 +405,9 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
+        
 
         return result.to_dict(orient='records')
     
@@ -424,6 +426,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -444,6 +447,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -471,6 +475,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -497,6 +502,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -517,6 +523,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -537,6 +544,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -558,6 +566,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -585,6 +594,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
@@ -609,6 +619,7 @@ class NetworkMapManager:
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
+        result.sort_index(inplace=True) 
         result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
