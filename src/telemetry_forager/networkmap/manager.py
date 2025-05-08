@@ -16,6 +16,8 @@ from azure.mgmt.resourcegraph.models import *
 import ipaddress
 import json
 
+maindf_cache = pd.DataFrame
+
 class NetworkMapManager:
     def __init__(self, config: AppConfig):
         self.config = config
@@ -24,6 +26,35 @@ class NetworkMapManager:
         self.law_client = LogsQueryClient(self.azcred )
         self.rg_client = ResourceGraphClient(credential=self.azcred)
 
+        # start_time = datetime.now(timezone.utc) - timedelta(days=1)
+        # end_time = datetime.now(timezone.utc)
+        # flow_types: []
+        # flow_direction: str = 'all',
+        # src_subscrition: str = 'all',
+        # dest_subscription: str = 'all',
+        # src_rg: str = 'all',
+        # dest_rg: str = 'all',
+        # src_vnet: str = 'all',
+        # dest_vnet: str = 'all',
+        # src_subnet: str = 'all',
+        # dest_subnet: str = 'all',
+        # src_ip: str = 'all',
+        # dest_ip: str = 'all'
+
+
+    def _set_maindf_cache(self, maindf: pd.DataFrame):
+        global maindf_cache
+        maindf_cache = maindf
+
+    def _get_maindf_cache(self,start_time, end_time, flow_types) -> pd.DataFrame:
+        
+        if maindf_cache.empty:
+            kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+            maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+            self._set_maindf_cache(maindf)
+        
+        return maindf_cache
+        
 
     def get_network_map_without_externalpublic_malicious(self, 
                                start_time: datetime, 
@@ -66,9 +97,9 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_src_subnet(maindf, src_subnet)
 
-            maindf = self.get_unique_dest_vnet(maindf, dest_vnet)
+            maindf = self._apply_filter_dest_vnet(maindf, dest_vnet)
 
-            maindf = self.get_unique_dest_subnet(maindf, dest_subnet)
+            maindf = self._apply_filter_dest_subnet(maindf, dest_subnet)
 
             maindf = self._apply_filter_src_ip(maindf, src_ip)
 
@@ -79,6 +110,9 @@ class NetworkMapManager:
             edges = self._create_echart_edges(maindf=maindf)
 
             categories = self._create_echart_categories(maindf=maindf)
+
+            #cache maindf for filter data use
+            self._set_maindf_cache(maindf)
 
             nmap = NetworkMapResult(nodes, edges, categories)
 
@@ -359,9 +393,9 @@ class NetworkMapManager:
 
     def get_unique_src_subscription(self,flow_types,start_time, end_time) -> pd.DataFrame:
 
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
-
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
         
         tempdf = maindf.drop_duplicates('SrcSubscription', keep='first')
         tempdf = tempdf[tempdf['SrcSubscription'] != '']
@@ -378,9 +412,9 @@ class NetworkMapManager:
     
     def get_unique_src_rg(self,flow_types,start_time, end_time) -> pd.DataFrame:
 
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
-
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
         
         tempdf = maindf.drop_duplicates('SrcRG', keep='first')
         tempdf = tempdf[tempdf['SrcRG'] != '']
@@ -397,9 +431,10 @@ class NetworkMapManager:
 
     def get_unique_src_vnet(self,flow_types,start_time, end_time) -> pd.DataFrame:
 
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
                     
         tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
         tempdf = tempdf[tempdf['SrcVNet'] != '']
@@ -415,10 +450,11 @@ class NetworkMapManager:
     
 
     def get_unique_src_subnet(self, flow_types,start_time, end_time) -> pd.DataFrame:
-                    
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
         
         tempdf = pd.DataFrame()
         tempdf['SrcVNet'] = maindf['SrcVNet']
@@ -442,9 +478,11 @@ class NetworkMapManager:
 
     def get_unique_src_ip(self, flow_types,start_time, end_time) -> pd.DataFrame:
                     
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
         
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
         maindf= maindf[maindf['SrcIp'] != '']
@@ -465,9 +503,10 @@ class NetworkMapManager:
     
     def get_unique_dest_subscription(self,flow_types,start_time, end_time) -> pd.DataFrame:
 
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
 
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestSubscription', keep='first')
@@ -484,9 +523,10 @@ class NetworkMapManager:
 
     def get_unique_dest_rg(self,flow_types,start_time, end_time) -> pd.DataFrame:
 
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
         
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestRG', keep='first')
@@ -504,9 +544,10 @@ class NetworkMapManager:
 
     def get_unique_dest_vnet(self, flow_types,start_time, end_time) -> pd.DataFrame:
         
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
 
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestVNet', keep='first')
@@ -524,9 +565,10 @@ class NetworkMapManager:
 
     def get_unique_dest_subnet(self, flow_types,start_time, end_time) -> pd.DataFrame:
                     
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
 
         tempdf = pd.DataFrame()
         tempdf['DestVNet'] = maindf['DestVNet']
@@ -549,9 +591,10 @@ class NetworkMapManager:
     
     def get_unique_dest_ip(self, flow_types,start_time, end_time) -> pd.DataFrame:
                     
-        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
         
         maindf = maindf.drop_duplicates('DestIp', keep='first')
         maindf= maindf[maindf['DestIp'] != '']
