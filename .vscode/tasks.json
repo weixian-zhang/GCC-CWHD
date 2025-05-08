@@ -4,7 +4,7 @@
 		{
 			"label": "docker build",
 			"type": "shell",
-			"command": "docker build -t docker.io/wxzd/cwhd:v0.1.1-wara .",
+			"command": "docker build -t docker.io/wxzd/cwhd:networkmap-v0.2.0 .",
 			"options": {
 				"cwd": "${workspaceFolder}/src/telemetry_forager"
 			},
@@ -13,7 +13,7 @@
 		{
 			"label": "docker push",
 			"type": "shell",
-			"command": "docker push docker.io/wxzd/cwhd:v0.1.1-wara",
+			"command": "docker push docker.io/wxzd/cwhd:networkmap-v0.2.0",
 			"options": {
 				"cwd": "${workspaceFolder}/src/telemetry_forager"
 			},
