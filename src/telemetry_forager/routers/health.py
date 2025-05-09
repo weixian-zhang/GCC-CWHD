@@ -91,6 +91,7 @@ def get_resource_health_states(resources: List[ResourceParameter]) -> ResourceHe
 
 @router.get("/", status_code=200)
 def root(response: fastapi.Response):
+    raise Exception("This endpoint is not available. Please use /health instead.")
     response.headers["cwhd-version"] = appconfig.version
     return "alive"
 

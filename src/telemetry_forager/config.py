@@ -26,29 +26,36 @@ class AppConfig:
         return hasattr(sys, 'gettrace') and sys.gettrace() is not None
 
     def load_from_envar(self):
-        if self.loaded:
-            return
-        
-        self.version = os.environ.get('Version') if os.environ.get('Version') else '1.1'
-        self.queryTimeSpanHour = int(os.environ.get('QueryTimeSpanHour')) if os.environ.get('QueryTimeSpanHour') else 2
-        self.appinsightsConnString= os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING') if os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING') else ''
-        self.health_status_threshold = self.get_thresholds()
 
-        self.wara_tenantId = os.environ.get('WARA_TenantId') if os.environ.get('WARA_TenantId') else ''
+        try:
 
-        self.table_storage_url = os.environ.get('Table_Storage_URL') if os.environ.get('Table_Storage_URL') else ''
+            if self.loaded:
+                return
+            
+            self.version = os.environ.get('Version') if os.environ.get('Version') else '1.1'
+            self.queryTimeSpanHour = int(os.environ.get('QueryTimeSpanHour')) if os.environ.get('QueryTimeSpanHour') else 2
+            self.appinsightsConnString= os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING') if os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING') else ''
+            self.health_status_threshold = self.get_thresholds()
 
-        self.wara_days_to_keep_run_history= int(os.environ.get('WARA_Days_To_Keep_Run_History')) if os.environ.get('WARA_Days_To_Keep_Run_History') else 180
+            self.wara_tenantId = os.environ.get('WARA_TenantId') if os.environ.get('WARA_TenantId') else ''
 
-        self.timezone = os.environ.get('Timezone') if os.environ.get('Timezone') else 'Asia/Singapore'
+            self.table_storage_url = os.environ.get('Table_Storage_URL') if os.environ.get('Table_Storage_URL') else ''
 
-        enable_wara = os.environ.get('Enable_WARA')
+            self.wara_days_to_keep_run_history= int(os.environ.get('WARA_Days_To_Keep_Run_History')) if os.environ.get('WARA_Days_To_Keep_Run_History') else 180
 
-        self.enable_wara = True if enable_wara and enable_wara.lower() == 'true' else False
+            self.timezone = os.environ.get('Timezone') if os.environ.get('Timezone') else 'Asia/Singapore'
 
-        self.networkmap_workspace_id = os.environ.get('NetworkMap_Workspace_ID') if os.environ.get('NetworkMap_Workspace_ID') else ''
-        
-        self.loaded = True
+            enable_wara = os.environ.get('Enable_WARA')
+
+            self.enable_wara = True if enable_wara and enable_wara.lower() == 'true' else False
+
+            self.networkmap_workspace_id = os.environ.get('NetworkMap_Workspace_ID') if os.environ.get('NetworkMap_Workspace_ID') else ''
+            
+            self.loaded = True
+
+        except Exception as e:
+            raise Exception(f'AppConfig - error in loading config from env var {e}')
+
 
     def get_thresholds(self) -> HealthStatusThreshold:
 

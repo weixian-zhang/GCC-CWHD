@@ -16,6 +16,7 @@ from azure.mgmt.resourcegraph.models import *
 import ipaddress
 import json
 
+
 maindf_cache = pd.DataFrame
 
 class NetworkMapManager:

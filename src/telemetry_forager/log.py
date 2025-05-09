@@ -12,35 +12,39 @@ logger = None
 
 
 def init(appconfig: AppConfig) -> None:
-        #global loaded, tracer, logger
+        try:
 
-        global loaded, logger
+            global loaded, logger
 
-        if not appconfig:
-            raise('Error initializing logger as appconfig is None')
-        
-        if not loaded:
-             loaded = True
-        else:
-             return
+            if not appconfig:
+                raise('Error initializing logger as appconfig is None')
+            
+            if not loaded:
+                loaded = True
+            else:
+                return
 
-        # http client related logs level t
-        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+            # http client related logs level t
+            logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
-        # all azure library log level error only
-        az_logger = logging.getLogger('azure.storage')
-        az_logger.setLevel(logging.ERROR)
-        az_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+            # all azure library log level error only
+            az_logger = logging.getLogger('azure.storage')
+            az_logger.setLevel(logging.ERROR)
+            az_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
-        azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
-        #azure_handler.setLevel(level=logging.ERROR)
-        console_handler = logging.StreamHandler()
+            azure_handler = AzureLogHandler(connection_string=appconfig.appinsightsConnString)
+            #azure_handler.setLevel(level=logging.ERROR)
+            console_handler = logging.StreamHandler()
 
-        logger = logging.getLogger('default_logger')
-        logger.setLevel(logging.DEBUG)
-        logger.propagate = False
-        logger.addHandler(azure_handler)
-        logger.addHandler(console_handler)
+            logger = logging.getLogger('default_logger')
+            logger.setLevel(logging.DEBUG)
+            logger.propagate = False
+            logger.addHandler(azure_handler)
+            logger.addHandler(console_handler)
+
+        except Exception as e:
+            print(f"Log init - Error initializing Log: {e}")
+            raise
 
 
 
