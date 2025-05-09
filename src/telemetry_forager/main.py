@@ -1,6 +1,6 @@
 import sys
 def my_except_hook(exctype, value, traceback):
-  print("main global error handler", exc_info=(exctype, value, traceback))
+  print(f'main global error handler: {exctype}, {value}')
 sys.excepthook = my_except_hook
 
 from init import appconfig
@@ -25,6 +25,7 @@ app.include_router(networkmap.router)
 _waraapi = WARAApi(config=appconfig)
 
 
+raise fastapi.HTTPException(status_code=500, detail="WARA API is not initialized") if _waraapi is None else None
 
 
 # run background jobs
