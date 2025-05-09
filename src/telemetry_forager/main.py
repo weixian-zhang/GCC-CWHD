@@ -24,10 +24,6 @@ app.include_router(networkmap.router)
 
 _waraapi = WARAApi(config=appconfig)
 
-
-raise fastapi.HTTPException(status_code=500, detail="WARA API is not initialized") if _waraapi is None else None
-
-
 # run background jobs
 if appconfig.enable_wara:
     Log.debug('main - WARA is enabled')
