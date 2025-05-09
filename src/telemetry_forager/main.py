@@ -1,9 +1,6 @@
 import sys
 def my_except_hook(exctype, value, traceback):
-  if exctype == KeyboardInterrupt:
-    Log.error("main global error handler", exc_info=(exctype, value, traceback))
-  else:
-    sys.__excepthook__(exctype, value, traceback)
+  Log.error("main global error handler", exc_info=(exctype, value, traceback))
 sys.excepthook = my_except_hook
 
 from init import appconfig
