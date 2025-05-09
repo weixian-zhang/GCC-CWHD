@@ -61,13 +61,13 @@ RUN python.exe -m pip install --upgrade pip
 # Set working directory
 WORKDIR /app
 
+
+COPY requirements.txt .
+
+RUN pip install --quiet --no-cache-dir -r requirements.txt 
+
 # Copy application code
 COPY . .
-
-# Install dependencies in a temporary directory
-#RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt 
-
 
 # Expose the port FastAPI will run on
 EXPOSE 8000 
