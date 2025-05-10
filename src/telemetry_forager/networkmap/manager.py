@@ -127,6 +127,7 @@ class NetworkMapManager:
     def _create_echart_nodes(self, maindf: pd.DataFrame) -> dict:
 
         src_nodes_final_df = pd.DataFrame()
+        src_nodes_final_df['timeGenerated'] = maindf['TimeGenerated']
         src_nodes_final_df['id'] = maindf['SrcIp']
         src_nodes_final_df['name'] = maindf['SrcName']
         src_nodes_final_df['category'] = maindf['FlowType']
@@ -143,6 +144,7 @@ class NetworkMapManager:
         src_nodes_final_df['maliciousSrcPIPThreatDescription'] = maindf['Malicious_SrcPIP_ThreatDescription']
 
         dest_nodes_final_df = pd.DataFrame()
+        dest_nodes_final_df['timeGenerated'] = maindf['TimeGenerated']
         dest_nodes_final_df['id'] = maindf['DestIp']
         dest_nodes_final_df['name'] = maindf['DestName']
         dest_nodes_final_df['category'] = maindf['FlowType']
@@ -176,6 +178,8 @@ class NetworkMapManager:
     def _create_echart_edges(self, maindf: pd.DataFrame) -> dict:
 
         edges_df = pd.DataFrame()
+        edges_df['timeGenerated'] = maindf['TimeGenerated']
+        edges_df['category'] = maindf['FlowType']
         edges_df['source'] = maindf['SrcIp']
         edges_df['target'] = maindf['DestIp']
         # edges_df['value'] = tempdf['SrcToDestDataSize'] + '-> <-' + tempdf['DestToSrcDataSize'] + '<div> flowtype: ' + tempdf['FlowType'] + '</div>' + '<div> protocol: ' +  tempdf['protocol'] + '/div>'
@@ -212,6 +216,8 @@ class NetworkMapManager:
             df['SrcName'] = df.apply(lambda x: x['SrcSubnetName'] if x['SrcName']=='' else x['SrcName'], axis=1)
 
             maindf = df.drop_duplicates(subset=['SrcName', 'DestName'])
+
+            maindf['TimeGenerated'] = maindf['TimeGenerated'].dt.strftime('%a %d %b %Y %H:%M:%S')
 
             maindf.fillna('', inplace=True)
 

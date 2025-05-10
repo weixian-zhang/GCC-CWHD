@@ -129,7 +129,8 @@ on $left.DestPIP == $right.DestPIP_Ip
 
 | summarize 
     BytesSrcToDest = max(BytesSrcToDest),
-    BytesDestToSrc = max(BytesDestToSrc) by
+    BytesDestToSrc = max(BytesDestToSrc),
+    TimeGenerated = arg_max(TimeGenerated,*)  by
     
     FlowType, 
     FlowDirection,
@@ -171,7 +172,8 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend SrcToDestDataSize = format_bytes(BytesSrcToDest, 2)
 | extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)
 
-| distinct 
+| distinct
+    TimeGenerated,
     FlowType, 
     FlowDirection,
     FlowEncryption,
