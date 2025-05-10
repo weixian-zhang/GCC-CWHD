@@ -23,8 +23,9 @@
   "panels": [
     {
       "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "fea68tn3gj2m8e"
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
       },
       "fieldConfig": {
         "defaults": {
@@ -52,7 +53,7 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 14,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -73,7 +74,7 @@
         "header": true,
         "isUseLocalTime": false,
         "minimizeOutputFormat": "text",
-        "padding": 10,
+        "padding": 0,
         "persistent": false,
         "saveSelectedGroup": false,
         "saveSelectedGroupKey": "",
@@ -81,83 +82,27 @@
         "showLabel": true,
         "showName": false,
         "showResetButton": false,
-        "showTotal": false,
+        "showTotal": true,
         "statusSort": false,
         "sticky": false,
         "tabsInOrder": true,
         "variable": "flowTypes"
       },
       "pluginVersion": "3.6.0",
-      "transparent": true,
-      "type": "volkovlabs-variable-panel"
-    },
-    {
-      "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "fea68tn3gj2m8e"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "thresholdsStyle": {
-              "mode": "color",
-              "thresholds": []
-            }
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
           },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 7,
-        "x": 14,
-        "y": 0
-      },
-      "id": 5,
-      "options": {
-        "alwaysVisibleFilter": false,
-        "autoScroll": false,
-        "collapsedByDefault": false,
-        "customValue": false,
-        "displayMode": "button",
-        "emptyValue": false,
-        "favorites": {
-          "enabled": false,
-          "storage": "browser"
-        },
-        "filter": false,
-        "groupSelection": false,
-        "header": true,
-        "isUseLocalTime": false,
-        "minimizeOutputFormat": "text",
-        "padding": 10,
-        "persistent": false,
-        "saveSelectedGroup": false,
-        "saveSelectedGroupKey": "",
-        "showGroupTotal": false,
-        "showLabel": true,
-        "showName": false,
-        "showResetButton": false,
-        "showTotal": false,
-        "statusSort": false,
-        "sticky": false,
-        "tabsInOrder": true,
-        "variable": "flowDirection"
-      },
-      "pluginVersion": "3.6.0",
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
       "transparent": true,
       "type": "volkovlabs-variable-panel"
     },
@@ -193,9 +138,94 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 4,
+        "w": 24,
         "x": 0,
         "y": 2
+      },
+      "id": 5,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "button",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 0,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "flowDirection"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 4
       },
       "id": 3,
       "options": {
@@ -280,9 +310,9 @@
         "h": 1,
         "w": 4,
         "x": 4,
-        "y": 2
+        "y": 4
       },
-      "id": 4,
+      "id": 10,
       "options": {
         "alwaysVisibleFilter": false,
         "autoScroll": false,
@@ -333,8 +363,9 @@
     },
     {
       "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "fea68tn3gj2m8e"
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
       },
       "fieldConfig": {
         "defaults": {
@@ -364,7 +395,7 @@
         "h": 1,
         "w": 4,
         "x": 8,
-        "y": 2
+        "y": 4
       },
       "id": 6,
       "options": {
@@ -398,13 +429,28 @@
         "variable": "src_vnet"
       },
       "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
       "transparent": true,
       "type": "volkovlabs-variable-panel"
     },
     {
       "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "fea68tn3gj2m8e"
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
       },
       "fieldConfig": {
         "defaults": {
@@ -434,7 +480,7 @@
         "h": 1,
         "w": 4,
         "x": 12,
-        "y": 2
+        "y": 4
       },
       "id": 7,
       "options": {
@@ -468,13 +514,28 @@
         "variable": "src_subnet"
       },
       "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
       "transparent": true,
       "type": "volkovlabs-variable-panel"
     },
     {
       "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "fea68tn3gj2m8e"
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
       },
       "fieldConfig": {
         "defaults": {
@@ -504,7 +565,7 @@
         "h": 1,
         "w": 4,
         "x": 16,
-        "y": 2
+        "y": 4
       },
       "id": 8,
       "options": {
@@ -538,8 +599,487 @@
         "variable": "src_ip"
       },
       "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
       "transparent": true,
       "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 5
+      },
+      "id": 9,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "dest_subscription"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 4,
+        "y": 5
+      },
+      "id": 4,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "dest_rg"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 8,
+        "y": 5
+      },
+      "id": 12,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "dest_vnet"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 12,
+        "y": 5
+      },
+      "id": 13,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "dest_subnet"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 16,
+        "y": 5
+      },
+      "id": 14,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "minimize",
+        "emptyValue": false,
+        "favorites": {
+          "enabled": false,
+          "storage": "browser"
+        },
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "isUseLocalTime": false,
+        "minimizeOutputFormat": "text",
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": true,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "tabsInOrder": true,
+        "variable": "dest_ip"
+      },
+      "pluginVersion": "3.6.0",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "azure-monitor-oob"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 15,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "azure-monitor-oob"
+          },
+          "queryType": "Azure Monitor",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
     },
     {
       "datasource": {
@@ -548,10 +1088,10 @@
         "uid": "fea68tn3gj2m8e"
       },
       "gridPos": {
-        "h": 18,
+        "h": 22,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 7
       },
       "id": 1,
       "options": {
@@ -567,7 +1107,7 @@
           "key": "",
           "plugin": "AMap.Scale,AMap.ToolBar"
         },
-        "getOption": "\n\ndata = {\n  nodes: JSON.parse(context.panel.data.series[0].fields[0].values[0]),\n  edges: JSON.parse(context.panel.data.series[0].fields[1].values[0]),\n  categories: JSON.parse(context.panel.data.series[0].fields[2].values[0]),\n};\n\n\n\nreturn {\n  title: {\n    text: '',\n    subtext: '',\n    top: 'top',\n    left: 'left'\n  },\n  tooltip: {\n    trigger: 'item',\n    //show: true,\n    //formatter: (params) => '<div>' + 'subnet: ' + params.data.subnet + '</div>' + '<div>' + 'vnet: ' + params.data.vnet + '</div>',\n    //valueFormatter: (params) => '<div>' + params.data.src_to_dest_data_size + '</div>'\n  },\n  animationDurationUpdate: 1000,\n  animationEasingUpdate: 'quinticInOut',\n  legend: [\n    {\n      data: ['InterVNet', 'IntraVNet', 'AzurePublic', 'ExternalPublic', 'UnknownPrivate', 'S2S', 'P2S', 'Unknown'],\n      position: 'right',\n      orient: 'vertical',\n      right: 10,\n      top: 20,\n      bottom: 20\n    }\n  ],\n  series: [\n    {\n      name: 'Node Name',\n      type: 'graph',\n      layout: 'force',\n      data: data.nodes.map(n => ({\n        ...n,\n        tooltip: {\n          formatter: function (params) {\n\n            var subnet = ((params.data.subnet != '') ? `<div>subnet:&nbsp${params.data.subnet}</div>` : '');\n            var vnet = ((params.data.vnet != '') ? `<div>vnet:&nbsp${params.data.vnet}</div>` : '');\n            var subscription = ((params.data.subscription) ? `<div>subscription:&nbsp${params.data.subscription}</div>` : '');\n            var rg = ((params.data.rg) ? `<div>rg:&nbsp${params.data.rg}</div>` : '');\n            var azPublicPIPLocation = ((params.data.azurePublicPIPLocation) ? `<div>PaaS location:&nbsp${params.data.azurePublicPIPLocation}</div>` : '');\n            var externalPublicPIPLocation = ((params.data.externalPublicCountry) ? `<div>Internet location:&nbsp${params.data.externalPublicCountry}</div>` : '');\n\n            // if (!subnet && !vnet && !src_pip_location && !dest_pip_location) {\n            //   return ''\n            // }\n\n            return subnet + vnet + subscription + rg + azPublicPIPLocation + externalPublicPIPLocation;\n          }\n        }\n      })),\n      //links: data.edges,\n      links: data.edges.map(n => ({\n        ...n,\n        tooltip: {\n          formatter: function (params) {\n            var dataSize = `${params.data.source}&nbsp&nbsp ${params.data.src_to_dest_data_size} &nbsp->&nbsp<-&nbsp ${params.data.dest_to_srct_data_size} ${params.data.target}`;\n            var flowType = `<div>flow type:&nbsp ${params.data.flowType}</div>`;\n            var protocol = ((params.data.protocol), `<div>protocol:&nbsp ${params.data.protocol}<div>`, '');\n            var connectionType = ((params.data.connectionType), `<div>connection type:&nbsp ${params.data.connectionType}<div>`, '');\n            return dataSize + flowType + protocol + connectionType\n          }\n        }\n      })),\n      categories: data.categories,//categories, //graphData.categories,\n\n      force: {\n\n        edgeLength: 6,\n        repulsion: 20000,\n        gravity: 0.1,\n        friction: 1,\n        layoutAnimation: true\n      },\n\n\n      edgeSymbol: ['none', 'arrow'],\n      animation: false,\n      roam: true,\n      draggable: true,\n      zoom: 0.2,\n\n      symbol: 'circle',\n\n      label: {\n        show: true,\n        formatter: (params) => params.data.name + '\\n' + params.data.ip,\n        position: 'right',\n        fontSize: 12\n      },\n\n      // edgeLabel: {\n      //   show: false,\n      //   formatter: (params) => params.data.source + ' ' + params.data.src_to_dest_data_size + '-> <- ' + params.data.dest_to_srct_data_size + ' ' + params.datatarget + '\\n' + params.data.flowType,\n      //   color: '#FFF',\n      //   fontSize: 11,\n      //   fontStyle: 'normal'\n      // },\n\n\n      symbolSize: 30,\n\n      lineStyle: {\n        color: '#FFFFFF',\n        width: 1,\n        opacity: 1,\n        curveness: 0.2\n      },\n      emphasis: {\n        focus: 'adjacency',\n        lineStyle: {\n          width: 4\n        }\n      },\n      edgeSymbol: ['none', 'arrow'],\n      edgeSymbolSize: [2, 9],\n\n    }\n  ]\n};",
+        "getOption": "\nvar nodes = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[2].values[0]);\nvar edges = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[1].values[0]);\nvar categories = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[0].values[0]);\n\ndata = {\n  nodes: nodes, //JSON.parse(context.panel.data.series[0].fields[2].values[0]),\n  edges: edges,\n  categories: categories,\n};\n\n\nreturn {\n  title: {\n    text: '',\n    subtext: '',\n    top: 'top',\n    left: 'left'\n  },\n  tooltip: {\n    trigger: 'item',\n    //show: true,\n    //formatter: (params) => '<div>' + 'subnet: ' + params.data.subnet + '</div>' + '<div>' + 'vnet: ' + params.data.vnet + '</div>',\n    //valueFormatter: (params) => '<div>' + params.data.src_to_dest_data_size + '</div>'\n  },\n  animationDurationUpdate: 1000,\n  animationEasingUpdate: 'quinticInOut',\n  legend: [\n    {\n      data: [\n        {\n          name: 'InterVNet',\n          itemStyle: {\n            color: '#00FFFF'\n          }\n        },\n        {\n          name: 'IntraVNet',\n          itemStyle: {\n            color: '#528AAE'\n          }\n        },\n        {\n          name: 'AzurePublic',\n          itemStyle: {\n            color: '#D78C3D'\n          }\n        },\n        {\n          name: 'ExternalPublic',\n          itemStyle: {\n            color: '#FE8EAC'\n          }\n        },\n        {\n          name: 'UnknownPrivate',\n          itemStyle: {\n            color: '#f5e642'\n          }\n        },\n        {\n          name: 'Unknown',\n          itemStyle: {\n            color: '#c242f5'\n          }\n        },\n        {\n          name: 'S2S',\n          itemStyle: {\n            color: '#228B22'\n          }\n        },\n        {\n          name: 'P2S',\n          itemStyle: {\n            color: '#93E9BE'\n          }\n        },\n        {\n          name: 'MaliciousFlow',\n          itemStyle: {\n            color: '#FF2400'\n          }\n        }\n      ],\n      position: 'right',\n      orient: 'vertical',\n      right: 10,\n      top: 20,\n      bottom: 20\n    }\n  ],\n  series: [\n    {\n      name: 'Node Name',\n      type: 'graph',\n      layout: 'force',\n      data: data.nodes.map(n => ({\n        ...n,\n        itemStyle: {\n          color: n.category == 'AzurePublic' ? '#D78C3D' :\n            n.category == 'IntraVNet' ? '#528AAE' :\n              n.category == 'InterVNet' ? '#00FFFF' :\n                n.category == 'ExternalPublic' ? '#FE8EAC' :\n                  n.category == 'UnknownPrivate' ? '#f5e642' :\n                    n.category == 'Unknown' ? '#c242f5' :\n                      n.category == 'S2S' ? '#228B22' :\n                        n.category == 'P2S' ? '#93E9BE' :\n                          n.category == 'MaliciousFlow' ? '#FF2400' : '#FFFFFF'\n        },\n        tooltip: {\n          formatter: function (params) {\n\n            var subnet = ((params.data.subnet != '') ? `<div>subnet:&nbsp${params.data.subnet}</div>` : '');\n            var vnet = ((params.data.vnet != '') ? `<div>vnet:&nbsp${params.data.vnet}</div>` : '');\n            var subscription = ((params.data.subscription) ? `<div>subscription:&nbsp${params.data.subscription}</div>` : '');\n            var rg = ((params.data.rg) ? `<div>rg:&nbsp${params.data.rg}</div>` : '');\n            var azPublicPIPLocation = ((params.data.azurePublicPIPLocation) ? `<div>PaaS location:&nbsp${params.data.azurePublicPIPLocation}</div>` : '');\n            var externalPublicPIPLocation = ((params.data.externalPublicCountry) ? `<div>Internet location:&nbsp${params.data.externalPublicCountry}</div>` : '');\n\n            // if (!subnet && !vnet && !src_pip_location && !dest_pip_location) {\n            //   return ''\n            // }\n\n            return subnet + vnet + subscription + rg + azPublicPIPLocation + externalPublicPIPLocation;\n          }\n        }\n      })),\n      //links: data.edges,\n      links: data.edges.map(n => ({\n        ...n,\n        tooltip: {\n          formatter: function (params) {\n            var dataSize = `${params.data.source}&nbsp&nbsp ${params.data.src_to_dest_data_size} &nbsp->&nbsp<-&nbsp ${params.data.dest_to_srct_data_size} ${params.data.target}`;\n            var flowType = `<div>flow type:&nbsp ${params.data.flowType}</div>`;\n            var protocol = ((params.data.protocol), `<div>protocol:&nbsp ${params.data.protocol}<div>`, '');\n            var connectionType = ((params.data.connectionType), `<div>connection type:&nbsp ${params.data.connectionType}<div>`, '');\n            return dataSize + flowType + protocol + connectionType\n          }\n        }\n      })),\n      categories: data.categories,//categories, //graphData.categories,\n\n      force: {\n\n        edgeLength: 6,\n        repulsion: 20000,\n        gravity: 0.1,\n        friction: 1,\n        layoutAnimation: true\n      },\n\n\n      edgeSymbol: ['none', 'arrow'],\n      animation: false,\n      roam: true,\n      draggable: true,\n      zoom: 0.2,\n\n      symbol: 'circle',\n\n      label: {\n        show: true,\n        formatter: (params) => params.data.name + '\\n' + params.data.ip,\n        position: 'right',\n        fontSize: 12\n      },\n\n      // edgeLabel: {\n      //   show: false,\n      //   formatter: (params) => params.data.source + ' ' + params.data.src_to_dest_data_size + '-> <- ' + params.data.dest_to_srct_data_size + ' ' + params.datatarget + '\\n' + params.data.flowType,\n      //   color: '#FFF',\n      //   fontSize: 11,\n      //   fontStyle: 'normal'\n      // },\n\n\n      symbolSize: 30,\n\n      lineStyle: {\n        color: '#FFFFFF',\n        width: 1,\n        opacity: 1,\n        curveness: 0.2\n      },\n      emphasis: {\n        focus: 'adjacency',\n        lineStyle: {\n          width: 4\n        }\n      },\n      edgeSymbol: ['none', 'arrow'],\n      edgeSymbolSize: [2, 9],\n\n    }\n  ]\n};",
         "google": {
           "callback": "gmapReady",
           "key": ""
@@ -588,7 +1128,7 @@
       "targets": [
         {
           "columns": [],
-          "data": "",
+          "data": "{\n  \"nodes\": [\n    {\n      \"id\": \"172.18.0.4\",\n      \"name\": \"vpngw-cwhd-s2s-azure-VM-172.18.0.4\",\n      \"category\": \"IntraVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-cwhd\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"172.18.0.4\",\n      \"subnet\": \"gatewaysubnet\",\n      \"vnet\": \"vnet-cwhd-s2s-azure\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": \"\",\n      \"maliciousSrcPipThreatType\": \"\",\n      \"maliciousSrcPIPThreatDescription\": \"\",\n      \"destPort\": null,\n      \"maliciousDestPIPUrl\": null,\n      \"maliciousDestPIPThreatType\": null,\n      \"maliciousDestPIPThreatDescription\": null\n    },\n    {\n      \"id\": \"192.166.0.4\",\n      \"name\": \"vnetgw-cwhd-onpremise-VM-192.166.0.4\",\n      \"category\": \"IntraVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-cwhd\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"192.166.0.4\",\n      \"subnet\": \"gatewaysubnet\",\n      \"vnet\": \"vnet-cwh-s2s-onpremise\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": \"\",\n      \"maliciousSrcPipThreatType\": \"\",\n      \"maliciousSrcPIPThreatDescription\": \"\",\n      \"destPort\": null,\n      \"maliciousDestPIPUrl\": null,\n      \"maliciousDestPIPThreatType\": null,\n      \"maliciousDestPIPThreatDescription\": null\n    },\n    {\n      \"id\": \"172.18.1.4\",\n      \"name\": \"vm-cwhd-s2s-azure\",\n      \"category\": \"InterVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-cwhd\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"172.18.1.4\",\n      \"subnet\": \"vm\",\n      \"vnet\": \"vnet-cwhd-s2s-azure\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": \"\",\n      \"maliciousSrcPipThreatType\": \"\",\n      \"maliciousSrcPIPThreatDescription\": \"\",\n      \"destPort\": null,\n      \"maliciousDestPIPUrl\": null,\n      \"maliciousDestPIPThreatType\": null,\n      \"maliciousDestPIPThreatDescription\": null\n    },\n    {\n      \"id\": \"172.18.0.5\",\n      \"name\": \"managed vm in gatewaysubnet subnet\",\n      \"category\": \"IntraVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-cwhd\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"172.18.0.5\",\n      \"subnet\": \"gatewaysubnet\",\n      \"vnet\": \"vnet-cwhd-s2s-azure\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": null,\n      \"maliciousSrcPipThreatType\": null,\n      \"maliciousSrcPIPThreatDescription\": null,\n      \"destPort\": 54321,\n      \"maliciousDestPIPUrl\": \"\",\n      \"maliciousDestPIPThreatType\": \"\",\n      \"maliciousDestPIPThreatDescription\": \"\"\n    },\n    {\n      \"id\": \"192.166.0.5\",\n      \"name\": \"managed vm in gatewaysubnet subnet\",\n      \"category\": \"IntraVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-cwhd\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"192.166.0.5\",\n      \"subnet\": \"gatewaysubnet\",\n      \"vnet\": \"vnet-cwh-s2s-onpremise\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": null,\n      \"maliciousSrcPipThreatType\": null,\n      \"maliciousSrcPIPThreatDescription\": null,\n      \"destPort\": 54321,\n      \"maliciousDestPIPUrl\": \"\",\n      \"maliciousDestPIPThreatType\": \"\",\n      \"maliciousDestPIPThreatDescription\": \"\"\n    },\n    {\n      \"id\": \"10.0.1.75\",\n      \"name\": \"vm-build-agent-win-server-1\",\n      \"category\": \"InterVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-common\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"10.0.1.75\",\n      \"subnet\": \"vms\",\n      \"vnet\": \"vnet-management\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": null,\n      \"maliciousSrcPipThreatType\": null,\n      \"maliciousSrcPIPThreatDescription\": null,\n      \"destPort\": 80,\n      \"maliciousDestPIPUrl\": \"\",\n      \"maliciousDestPIPThreatType\": \"\",\n      \"maliciousDestPIPThreatDescription\": \"\"\n    },\n    {\n      \"id\": \"192.166.1.4\",\n      \"name\": \"vm-cwhd-s2s-onpremise\",\n      \"category\": \"InterVNet\",\n      \"subscription\": \"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\n      \"rg\": \"rg-cwhd\",\n      \"nodeType\": \"NODE\",\n      \"ip\": \"192.166.1.4\",\n      \"subnet\": \"vm\",\n      \"vnet\": \"vnet-cwh-s2s-onpremise\",\n      \"azurePublicPIPLocation\": \"\",\n      \"externalPublicCountry\": \"\",\n      \"maliciousSrcPIPUrl\": null,\n      \"maliciousSrcPipThreatType\": null,\n      \"maliciousSrcPIPThreatDescription\": null,\n      \"destPort\": 80,\n      \"maliciousDestPIPUrl\": \"\",\n      \"maliciousDestPIPThreatType\": \"\",\n      \"maliciousDestPIPThreatDescription\": \"\"\n    }\n  ],\n  \"edges\": [\n    {\n      \"source\": \"172.18.0.4\",\n      \"target\": \"172.18.0.5\",\n      \"src_to_dest_data_size\": \"213.35 KB\",\n      \"dest_to_srct_data_size\": \"213.46 KB\",\n      \"flowType\": \"IntraVNet\",\n      \"flowDirection\": \"Inbound\",\n      \"flowEncryption\": \"Unencrypted\",\n      \"protocol\": \"tcp\",\n      \"connectionType\": \"\"\n    },\n    {\n      \"source\": \"192.166.0.4\",\n      \"target\": \"192.166.0.5\",\n      \"src_to_dest_data_size\": \"230.41 KB\",\n      \"dest_to_srct_data_size\": \"230.32 KB\",\n      \"flowType\": \"IntraVNet\",\n      \"flowDirection\": \"Inbound\",\n      \"flowEncryption\": \"Unencrypted\",\n      \"protocol\": \"tcp\",\n      \"connectionType\": \"\"\n    },\n    {\n      \"source\": \"172.18.1.4\",\n      \"target\": \"10.0.1.75\",\n      \"src_to_dest_data_size\": \"75.27 KB\",\n      \"dest_to_srct_data_size\": \"139.08 KB\",\n      \"flowType\": \"InterVNet\",\n      \"flowDirection\": \"Inbound\",\n      \"flowEncryption\": \"Unencrypted\",\n      \"protocol\": \"tcp:http\",\n      \"connectionType\": \"VNetPeering\"\n    },\n    {\n      \"source\": \"172.18.1.4\",\n      \"target\": \"192.166.1.4\",\n      \"src_to_dest_data_size\": \"142.21 KB\",\n      \"dest_to_srct_data_size\": \"219.29 KB\",\n      \"flowType\": \"InterVNet\",\n      \"flowDirection\": \"Inbound\",\n      \"flowEncryption\": \"Unencrypted\",\n      \"protocol\": \"tcp:http\",\n      \"connectionType\": \"VpnGateway\"\n    }\n  ],\n  \"categories\": \"[{\\\"name\\\":\\\"IntraVNet\\\"},{\\\"name\\\":\\\"InterVNet\\\"}]\"\n}",
           "datasource": {
             "type": "yesoreyeram-infinity-datasource",
             "uid": "fea68tn3gj2m8e"
@@ -606,12 +1146,12 @@
           "root_selector": "$",
           "source": "url",
           "type": "json",
-          "uql": "parse-json\r\n| project nodes",
-          "url": "https://${cwhd_url}/api/nmap/vnetflowlog",
+          "uql": "parse-json",
+          "url": "${cwhd_url}/api/nmap/vnetflowlog",
           "url_options": {
             "body_content_type": "application/json",
             "body_type": "raw",
-            "data": "{\r\n  \"startTime\": \"$__timeFrom\",\r\n  \"endTime\": \"$__timeFrom\",\r\n  \"flowTypes\": \"[${flowTypes:doublequote}]\",\r\n  \"flowDirection\":\"Inbound\",\r\n  \"srcSubscription\":\"c9061bc7-fa28-41d9-a783-2600b29c6e2f\",\r\n  \"srcRG\":\"all\",\r\n  \"destSubscription\": \"all\",\r\n  \"destRG\":\"all\",\r\n  \"srcVNet\": \"all\",\r\n  \"destVNet\": \"all\",\r\n  \"srcSubnet\": \"all\",\r\n  \"destSubnet\": \"all\",\r\n  \"srcIP\": \"all\",\r\n  \"destIP\": \"all\"\r\n}",
+            "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}],\r\n  \"flowDirection\":\"${flowDirection}\",\r\n  \"srcSubscription\":\"${src_subscription}\",\r\n  \"srcRG\":\"${src_subnet}\",\r\n  \"destSubscription\": \"${dest_subscription}\",\r\n  \"destRG\":\"${dest_rg}\",\r\n  \"srcVNet\": \"${src_vnet}\",\r\n  \"destVNet\": \"${dest_vnet}\",\r\n  \"srcSubnet\": \"${src_subnet}\",\r\n  \"destSubnet\": \"${dest_subnet}\",\r\n  \"srcIP\": \"${src_ip}\",\r\n  \"destIP\": \"${dest_ip}\"\r\n}",
             "method": "POST"
           }
         }
@@ -619,30 +1159,20 @@
       "type": "volkovlabs-echarts-panel"
     }
   ],
+  "refresh": "",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
+        "allValue": ".*",
         "current": {
           "selected": false,
           "text": [
-            "IntraVNet",
-            "InterVNet",
-            "S2S",
-            "P2P",
-            "UnknownPrivate",
-            "Unknown",
-            "AzurePublic"
+            "InterVNet"
           ],
           "value": [
-            "IntraVNet",
-            "InterVNet",
-            "S2S",
-            "P2P",
-            "UnknownPrivate",
-            "Unknown",
-            "AzurePublic"
+            "InterVNet"
           ]
         },
         "hide": 2,
@@ -652,7 +1182,7 @@
         "name": "flowTypes",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "IntraVNet",
             "value": "IntraVNet"
           },
@@ -662,32 +1192,42 @@
             "value": "InterVNet"
           },
           {
-            "selected": true,
-            "text": "S2S",
-            "value": "S2S"
-          },
-          {
-            "selected": true,
-            "text": "P2P",
-            "value": "P2P"
-          },
-          {
-            "selected": true,
+            "selected": false,
             "text": "AzurePublic",
             "value": "AzurePublic"
           },
           {
-            "selected": true,
+            "selected": false,
+            "text": "ExternalPublic",
+            "value": "ExternalPublic"
+          },
+          {
+            "selected": false,
+            "text": "S2S",
+            "value": "S2S"
+          },
+          {
+            "selected": false,
+            "text": "P2P",
+            "value": "P2P"
+          },
+          {
+            "selected": false,
             "text": "UnknownPrivate",
             "value": "UnknownPrivate"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Unknown",
             "value": "Unknown"
+          },
+          {
+            "selected": false,
+            "text": "MaliciousFlow",
+            "value": "MaliciousFlow"
           }
         ],
-        "query": "IntraVNet,InterVNet,S2S,P2P,AzurePublic,UnknownPrivate, Unknown",
+        "query": "IntraVNet,InterVNet,AzurePublic,ExternalPublic,S2S,P2P,UnknownPrivate, Unknown,MaliciousFlow",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
@@ -700,10 +1240,11 @@
         "type": "constant"
       },
       {
+        "allValue": "all",
         "current": {
           "selected": false,
-          "text": "all",
-          "value": "all"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -711,7 +1252,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Src Sub",
         "multi": false,
         "name": "src_subscription",
@@ -729,7 +1270,7 @@
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://cwhd-wara-defrbcg3eqcrbabv.southeastasia-01.azurewebsites.net/api/nmap/src/subscription",
+            "url": "$cwhd_url/api/nmap/src/subscription",
             "url_options": {
               "body_content_type": "application/json",
               "body_type": "raw",
@@ -748,10 +1289,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
           "selected": false,
-          "text": "rg-cwhd",
-          "value": "rg-cwhd"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -759,8 +1301,8 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
-        "label": "src rg",
+        "includeAll": true,
+        "label": "Src RG",
         "multi": false,
         "name": "src_rg",
         "options": [],
@@ -796,11 +1338,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -808,7 +1350,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Src VNet",
         "multi": false,
         "name": "src_vnet",
@@ -826,11 +1368,11 @@
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/src/vnet",
+            "url": "${cwhd_url}/api/nmap/src/vnet",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
               "method": "POST"
             }
           },
@@ -845,11 +1387,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -857,7 +1399,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Src Subnet",
         "multi": false,
         "name": "src_subnet",
@@ -871,15 +1413,17 @@
             "columns": [],
             "filters": [],
             "format": "table",
+            "parser": "uql",
             "refId": "",
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/src/subnet",
+            "uql": "parse-json\r\n| extend \"__value\"=\"SubnetName\", \"__text\"=\"DisplayName\"",
+            "url": "${cwhd_url}/api/nmap/src/subnet",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
               "method": "POST"
             }
           },
@@ -894,11 +1438,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -906,7 +1450,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Src IP",
         "multi": false,
         "name": "src_ip",
@@ -920,15 +1464,17 @@
             "columns": [],
             "filters": [],
             "format": "table",
+            "parser": "uql",
             "refId": "",
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/src/ip",
+            "uql": "parse-json\r\n| extend \"__value\"=\"SubnetName\", \"__text\"=\"DisplayName\"",
+            "url": "${cwhd_url}/api/nmap/src/ip",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
               "method": "POST"
             }
           },
@@ -943,11 +1489,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -955,7 +1501,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Dest Sub",
         "multi": false,
         "name": "dest_subscription",
@@ -973,11 +1519,11 @@
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/dest/subscription",
+            "url": "${cwhd_url}/api/nmap/dest/subscription",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
               "method": "POST"
             }
           },
@@ -992,11 +1538,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -1004,7 +1550,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Dest RG",
         "multi": false,
         "name": "dest_rg",
@@ -1022,11 +1568,11 @@
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/dest/rg",
+            "url": "${cwhd_url}/api/nmap/dest/rg",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
               "method": "POST"
             }
           },
@@ -1041,11 +1587,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -1053,7 +1599,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Dest VNet",
         "multi": false,
         "name": "dest_vnet",
@@ -1071,11 +1617,11 @@
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/dest/vnet",
+            "url": "${cwhd_url}/api/nmap/dest/vnet",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
               "method": "POST"
             }
           },
@@ -1090,11 +1636,11 @@
         "type": "query"
       },
       {
+        "allValue": "all",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "yesoreyeram-infinity-datasource",
@@ -1102,7 +1648,7 @@
         },
         "definition": "infinity-cwhd-wara- (infinity) json",
         "hide": 2,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Dest Subnet",
         "multi": false,
         "name": "dest_subnet",
@@ -1116,15 +1662,17 @@
             "columns": [],
             "filters": [],
             "format": "table",
+            "parser": "uql",
             "refId": "",
             "root_selector": "",
             "source": "url",
             "type": "json",
-            "url": "https://${cwhd_url}/api/nmap/dest/subnet",
+            "uql": "parse-json\r\n| extend \"__value\"=\"SubnetName\", \"__text\"=\"DisplayName\"",
+            "url": "${cwhd_url}/api/nmap/dest/subnet",
             "url_options": {
-              "body_content_type": "text/plain",
+              "body_content_type": "application/json",
               "body_type": "raw",
-              "data": "{\r\n  \"startTime\": $__timeFrom(),\r\n  \"endTime\": $__timeTo(),\r\n  \"flowTypes\": $flowTypes\r\n\r\n}",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n}",
               "method": "POST"
             }
           },
@@ -1169,6 +1717,57 @@
         "query": "all, Inbound, Outbound",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": "all",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "yesoreyeram-infinity-datasource",
+          "uid": "fea68tn3gj2m8e"
+        },
+        "definition": "infinity-cwhd-wara- (infinity) json",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Dest IP",
+        "multi": false,
+        "name": "dest_ip",
+        "options": [],
+        "query": {
+          "azureLogAnalytics": {
+            "query": "",
+            "resources": []
+          },
+          "infinityQuery": {
+            "columns": [],
+            "filters": [],
+            "format": "table",
+            "parser": "uql",
+            "refId": "",
+            "root_selector": "",
+            "source": "url",
+            "type": "json",
+            "uql": "parse-json\r\n| extend \"__value\"=\"SubnetName\", \"__text\"=\"DisplayName\"",
+            "url": "${cwhd_url}/api/nmap/dest/ip",
+            "url_options": {
+              "body_content_type": "application/json",
+              "body_type": "raw",
+              "data": "{\r\n  \"startTime\": \"${__from:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"endTime\": \"${__to:date:YYYY-MM-DD HH:MM:SS}\",\r\n  \"flowTypes\": [${flowTypes:doublequote}]\r\n\r\n}",
+              "method": "POST"
+            }
+          },
+          "queryType": "infinity",
+          "refId": "A",
+          "subscription": "c9061bc7-fa28-41d9-a783-2600b29c6e2f"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -1180,6 +1779,6 @@
   "timezone": "browser",
   "title": "Network Map",
   "uid": "bejym6sck9q0we",
-  "version": 92,
+  "version": 126,
   "weekStart": ""
 }
