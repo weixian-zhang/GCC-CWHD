@@ -228,16 +228,21 @@ class NetworkMapManager:
 
             df = pd.DataFrame()
 
-            response =  self.law_client.query_workspace(
-                        workspace_id= self.config.networkmap_workspace_id,
-                        query=kql_query,
-                        timespan=(start_time, end_time)
-                    )
+            start_time = start_time.astimezone(timezone.utc)
+            end_time = end_time.astimezone(timezone.utc)
 
-            if response.status == LogsQueryStatus.SUCCESS:
-                table = response.tables[0]
-                df = pd.DataFrame(data=table.rows, columns=table.columns)
-                #result = df.to_dict(orient='records')
+            if self.config.networkmap_workspace_id:
+
+                response =  self.law_client.query_workspace(
+                            workspace_id= self.config.networkmap_workspace_id,
+                            query=kql_query,
+                            timespan=(start_time, end_time)
+                        )
+
+                if response.status == LogsQueryStatus.SUCCESS:
+                    table = response.tables[0]
+                    df = pd.DataFrame(data=table.rows, columns=table.columns)
+                    #result = df.to_dict(orient='records')
 
             return df
 

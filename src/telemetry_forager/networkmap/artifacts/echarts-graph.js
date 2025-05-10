@@ -1,11 +1,13 @@
 
+var nodes = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[2].values[0]);
+var edges = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[1].values[0]);
+var categories = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[0].values[0]);
 
 data = {
-  nodes: JSON.parse(context.panel.data.series[0].fields[0].values[0]),
-  edges: JSON.parse(context.panel.data.series[0].fields[1].values[0]),
-  categories: JSON.parse(context.panel.data.series[0].fields[2].values[0]),
+  nodes: nodes, //JSON.parse(context.panel.data.series[0].fields[2].values[0]),
+  edges: edges,
+  categories: categories,
 };
-
 
 
 return {
@@ -25,7 +27,62 @@ return {
   animationEasingUpdate: 'quinticInOut',
   legend: [
     {
-      data: ['InterVNet', 'IntraVNet', 'AzurePublic', 'ExternalPublic', 'UnknownPrivate', 'S2S', 'P2S', 'Unknown'],
+      data: [
+        {
+          name: 'InterVNet',
+          itemStyle: {
+            color: '#00FFFF'
+          }
+        },
+        {
+          name: 'IntraVNet',
+          itemStyle: {
+            color: '#528AAE'
+          }
+        },
+        {
+          name: 'AzurePublic',
+          itemStyle: {
+            color: '#D78C3D'
+          }
+        },
+        {
+          name: 'ExternalPublic',
+          itemStyle: {
+            color: '#FE8EAC'
+          }
+        },
+        {
+          name: 'UnknownPrivate',
+          itemStyle: {
+            color: '#f5e642'
+          }
+        },
+        {
+          name: 'Unknown',
+          itemStyle: {
+            color: '#c242f5'
+          }
+        },
+        {
+          name: 'S2S',
+          itemStyle: {
+            color: '#228B22'
+          }
+        },
+        {
+          name: 'P2S',
+          itemStyle: {
+            color: '#93E9BE'
+          }
+        },
+        {
+          name: 'MaliciousFlow',
+          itemStyle: {
+            color: '#FF2400'
+          }
+        }
+      ],
       position: 'right',
       orient: 'vertical',
       right: 10,
@@ -40,19 +97,32 @@ return {
       layout: 'force',
       data: data.nodes.map(n => ({
         ...n,
+        itemStyle: {
+          color: n.category == 'AzurePublic' ? '#D78C3D' :
+            n.category == 'IntraVNet' ? '#528AAE' :
+              n.category == 'InterVNet' ? '#00FFFF' :
+                n.category == 'ExternalPublic' ? '#FE8EAC' :
+                  n.category == 'UnknownPrivate' ? '#f5e642' :
+                    n.category == 'Unknown' ? '#c242f5' :
+                      n.category == 'S2S' ? '#228B22' :
+                        n.category == 'P2S' ? '#93E9BE' :
+                          n.category == 'MaliciousFlow' ? '#FF2400' : '#FFFFFF'
+        },
         tooltip: {
           formatter: function (params) {
 
             var subnet = ((params.data.subnet != '') ? `<div>subnet:&nbsp${params.data.subnet}</div>` : '');
             var vnet = ((params.data.vnet != '') ? `<div>vnet:&nbsp${params.data.vnet}</div>` : '');
-            var src_pip_location = ((params.data.srcPIPLocation) ? `<div>src ip location:&nbsp${params.data.srcPIPLocation}</div>` : '');
-            var dest_pip_location = ((params.data.destPIPLocation) ? `<div>dest ip location:&nbsp${params.data.destPIPLocation}</div>` : '');
+            var subscription = ((params.data.subscription) ? `<div>subscription:&nbsp${params.data.subscription}</div>` : '');
+            var rg = ((params.data.rg) ? `<div>rg:&nbsp${params.data.rg}</div>` : '');
+            var azPublicPIPLocation = ((params.data.azurePublicPIPLocation) ? `<div>PaaS location:&nbsp${params.data.azurePublicPIPLocation}</div>` : '');
+            var externalPublicPIPLocation = ((params.data.externalPublicCountry) ? `<div>Internet location:&nbsp${params.data.externalPublicCountry}</div>` : '');
 
-            if (!subnet && !vnet && !src_pip_location && !dest_pip_location) {
-              return ''
-            }
+            // if (!subnet && !vnet && !src_pip_location && !dest_pip_location) {
+            //   return ''
+            // }
 
-            return subnet + vnet + src_pip_location + dest_pip_location;
+            return subnet + vnet + subscription + rg + azPublicPIPLocation + externalPublicPIPLocation;
           }
         }
       })),
