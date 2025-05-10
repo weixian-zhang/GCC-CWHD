@@ -405,10 +405,10 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['SrcSubscription']
 
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
 
         return result.to_dict(orient='records')
@@ -426,10 +426,10 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['SrcRG']
 
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -447,10 +447,10 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['SrcVNet']
 
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -475,10 +475,10 @@ class NetworkMapManager:
         result['DisplayName'] = temp_result.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SubnetName'] = temp_result['SrcSubnetName']
 
-        result.loc[-1] = ['all', 'all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all', 'all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -502,10 +502,10 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SrcIp'] = tempdf['SrcIp']
 
-        result.loc[-1] = ['all', 'all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all', 'all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -523,10 +523,10 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['DestSubscription']
 
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
 
@@ -544,10 +544,10 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['DestRG']
 
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -566,10 +566,10 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['DestVNet']
 
-        result.loc[-1] = ['all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -594,10 +594,10 @@ class NetworkMapManager:
         result['DisplayName'] = temp_result.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SubnetName'] = temp_result['DestSubnetName']
 
-        result.loc[-1] = ['all', 'all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all', 'all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
     
@@ -619,9 +619,9 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['DestIp'] = tempdf['DestIp']
 
-        result.loc[-1] = ['all', 'all']  # adding a row
-        result.index = result.index + 1  # shifting index
-        result.sort_index(inplace=True) 
-        result.reset_index(drop=True)  # reset index
+        # result.loc[-1] = ['all', 'all']  # adding a row
+        # result.index = result.index + 1  # shifting index
+        # result.sort_index(inplace=True) 
+        # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
