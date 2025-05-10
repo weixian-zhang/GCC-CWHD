@@ -500,7 +500,7 @@ class NetworkMapManager:
 
         result = pd.DataFrame()
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
-        result['SubnetName'] = tempdf['SrcIp']
+        result['SrcIp'] = tempdf['SrcIp']
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
@@ -617,7 +617,7 @@ class NetworkMapManager:
 
         result = pd.DataFrame()
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
-        result['SubnetName'] = tempdf['DestIp']
+        result['DestIp'] = tempdf['DestIp']
 
         result.loc[-1] = ['all', 'all']  # adding a row
         result.index = result.index + 1  # shifting index
