@@ -91,7 +91,8 @@ on $left.DestPIP == $right.DestPIP_Ip
                          iif(FlowType == 'AzurePublic' and AzurePublic_Src_PublicIpDetails != '', 'PAAS',
                           iif(SrcSubnetName == 'azurebastionsubnet', 'BASTION',
                            iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
-                            iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 'NODE'))))))
+                            iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 
+                             iif(FlowType == 'MaliciousFlow', 'MALICIOUSFLOW', 'NODE')))))))
 
 | extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway,
                     iif(SrcLoadBalancer != '', SrcLoadBalancer,
@@ -108,7 +109,8 @@ on $left.DestPIP == $right.DestPIP_Ip
                       iif(FlowType == 'AzurePublic' and AzurePublic_Dest_PublicIpDetails != '', 'PAAS',
                        iif(DestSubnetName == 'azurebastionsubnet', 'BASTION',
                         iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
-                         iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 'NODE'))))))
+                         iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 
+                          iif(FlowType == 'MaliciousFlow', 'MALICIOUSFLOW', 'NODE')))))))
 
 | extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway,
                      iif(DestLoadBalancer != '', DestLoadBalancer,
@@ -172,8 +174,8 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend SrcToDestDataSize = format_bytes(BytesSrcToDest, 2)
 | extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)
 
-| distinct
-    TimeGenerated,
+| distinct 
+TimeGenerated,
     FlowType, 
     FlowDirection,
     FlowEncryption,
