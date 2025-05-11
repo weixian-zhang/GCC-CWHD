@@ -20,6 +20,9 @@ import time
 
 maindf_cache = pd.DataFrame
 
+maindf_in_progress = False
+maindf_completed = False
+
 class NetworkMapManager:
     def __init__(self, config: AppConfig):
         self.config = config
@@ -74,24 +77,17 @@ class NetworkMapManager:
                                df = False) -> NetworkMapResult:
         
         try:
+            global maindf_in_progress, maindf_completed
             
             #reset cache
-            if not df:
-                self._set_maindf_cache(pd.DataFrame())
-            else:
-                time.sleep(0.5)
-            
+            maindf_in_progress = True
+            maindf_completed = False
+            self._set_maindf_cache(pd.DataFrame())
+                
 
-            ok, maindf = self._get_maindf_cache()
+            kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-
-            if not ok:
-
-                kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
-
-                maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
-
-                self._set_maindf_cache(maindf)
+            maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
 
         
             self._resolve_src_dest_name_for_known_traffic(maindf)
@@ -127,12 +123,17 @@ class NetworkMapManager:
             #cache maindf for filter data use
             self._set_maindf_cache(maindf)
 
+            maindf_in_progress = False
+            maindf_completed = True
+
             nmap = NetworkMapResult(nodes, edges, categories)
 
             return nmap if df == False else maindf
 
 
         except Exception as e:
+            maindf_in_progress = False
+            maindf_completed = False
             Log.exception(f'NetworkMapManager - error occured: {str(e)}')
             return {}
 
@@ -665,8 +666,21 @@ class NetworkMapManager:
         #                        src_ip=src_ip,
         #                        dest_ip=dest_ip)
 
-        ok, maindf = self._get_maindf_cache()
+        if not maindf_in_progress and not maindf_completed:
+            return pd.DataFrame()
         
+        while True:
+            if maindf_in_progress and not maindf_completed:
+                time.sleep(0.3)
+                continue
+            else:
+                break
+            
+
+        ok, maindf = self._get_maindf_cache()
+
+        if not ok:
+            return pd.DataFrame()
         
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
         maindf= maindf[maindf['SrcIp'] != '']
@@ -915,7 +929,22 @@ class NetworkMapManager:
         #                        dest_ip=dest_ip,
         #                        df=True)
 
+        if not maindf_in_progress and not maindf_completed:
+            return pd.DataFrame()
+        
+        while True:
+            if maindf_in_progress and not maindf_completed:
+                time.sleep(0.3)
+                continue
+            else:
+                break
+
         ok, maindf = self._get_maindf_cache()
+        
+        if not ok:
+            return pd.DataFrame()
+
+        maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         
         maindf = maindf.drop_duplicates('DestIp', keep='first')
         maindf= maindf[maindf['DestIp'] != '']

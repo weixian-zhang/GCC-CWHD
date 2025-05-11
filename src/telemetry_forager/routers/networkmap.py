@@ -120,7 +120,7 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
 
 
 @router.post("/api/nmap/src/subnet", status_code=200, response_model=None)
-def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> dict:
+def get_src_subnet(body: NetworkMapRequestBody, response: fastapi.Response) -> dict:
     result = nmap.get_unique_src_subnet(start_time=body.startTime,
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
@@ -139,7 +139,8 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
 
 
 @router.post("/api/nmap/src/ip", status_code=200, response_model=None)
-def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> dict:
+# def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> dict:
+def get_src_ip(response: fastapi.Response) -> dict:
     # result = nmap.get_unique_src_ip(
     #                               start_time=body.startTime,
     #                               end_time=body.endTime,
