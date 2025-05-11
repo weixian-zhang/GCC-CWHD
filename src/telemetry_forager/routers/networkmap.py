@@ -140,22 +140,25 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
 
 @router.post("/api/nmap/src/ip", status_code=200, response_model=None)
 def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> dict:
-    result = nmap.get_unique_src_ip(
-                                  start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  src_subscrition=body.srcSubscription,
-                                  dest_subscription=body.destSubscription,
-                                  src_rg=body.srcRG,
-                                  dest_rg=body.destRG,
-                                  src_vnet=body.srcVNet,
-                                  dest_vnet=body.destVNet,
-                                  src_subnet=body.srcSubnet,
-                                  dest_subnet=body.destSubnet,
-                                  src_ip=body.srcIP,
-                                  dest_ip=body.destIP
-                                  )
+    # result = nmap.get_unique_src_ip(
+    #                               start_time=body.startTime,
+    #                               end_time=body.endTime,
+    #                               flow_types=body.flowTypes,
+    #                               flow_direction=body.flowDirection,
+    #                               src_subscrition=body.srcSubscription,
+    #                               dest_subscription=body.destSubscription,
+    #                               src_rg=body.srcRG,
+    #                               dest_rg=body.destRG,
+    #                               src_vnet=body.srcVNet,
+    #                               dest_vnet=body.destVNet,
+    #                               src_subnet=body.srcSubnet,
+    #                               dest_subnet=body.destSubnet,
+    #                               src_ip=body.srcIP,
+    #                               dest_ip=body.destIP
+    #                               )
+
+    result = nmap.get_unique_src_ip()
+
     return result
 
 
@@ -233,18 +236,21 @@ def get_dest_subnet(body: NetworkMapRequestBody, response: fastapi.Response) -> 
 
 @router.post("/api/nmap/dest/ip", status_code=200, response_model=None)
 def get_dest_ip(body: NetworkMapRequestBody, response: fastapi.Response) -> dict:
-    result = nmap.get_unique_dest_ip(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  src_subscrition=body.srcSubscription,
-                                  dest_subscription=body.destSubscription,
-                                  src_rg=body.srcRG,
-                                  dest_rg=body.destRG,
-                                  src_vnet=body.srcVNet,
-                                  dest_vnet=body.destVNet,
-                                  src_subnet=body.srcSubnet,
-                                  dest_subnet=body.destSubnet,
-                                  src_ip=body.srcIP,
-                                  dest_ip=body.destIP)
+    # result = nmap.get_unique_dest_ip(start_time=body.startTime,
+    #                               end_time=body.endTime,
+    #                               flow_types=body.flowTypes,
+    #                               flow_direction=body.flowDirection,
+    #                               src_subscrition=body.srcSubscription,
+    #                               dest_subscription=body.destSubscription,
+    #                               src_rg=body.srcRG,
+    #                               dest_rg=body.destRG,
+    #                               src_vnet=body.srcVNet,
+    #                               dest_vnet=body.destVNet,
+    #                               src_subnet=body.srcSubnet,
+    #                               dest_subnet=body.destSubnet,
+    #                               src_ip=body.srcIP,
+    #                               dest_ip=body.destIP)
+
+    result = nmap.get_unique_dest_ip()
+
     return result
