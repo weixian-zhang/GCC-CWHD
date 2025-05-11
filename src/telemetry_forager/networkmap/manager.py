@@ -214,6 +214,11 @@ class NetworkMapManager:
 
             df = self._get_vnet_flow_log(kql_query=kql_query, start_time=start_time, end_time=end_time)
 
+            if df.empty:
+                return pd.DataFrame()
+
+            # convert timeGenerated to datetime
+
             # update SrcName with Subnet name if SrcName is empty        
             df['SrcName'] = df.apply(lambda x: x['SrcSubnetName'] if x['SrcName']=='' else x['SrcName'], axis=1)
 

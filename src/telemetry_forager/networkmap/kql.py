@@ -138,7 +138,6 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend NSG = iif(AclGroup startswith '/', AclGroup, '')
 | extend NSGRule = iif(AclGroup startswith '/', AclRule, '')
 
-| where Malicious_SrcPIP_ThreatDescription != '' or Malicious_DestPIP_ThreatDescription != ''
 
 | summarize 
     BytesSrcToDest = max(BytesSrcToDest),
