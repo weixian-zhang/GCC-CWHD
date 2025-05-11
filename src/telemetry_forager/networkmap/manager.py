@@ -543,23 +543,23 @@ class NetworkMapManager:
                                src_ip: str = 'all',
                                dest_ip: str = 'all') -> pd.DataFrame:
                     
-        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+        kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
 
         #maindf = self._get_maindf_cache(start_time, end_time, flow_types)
-        maindf =  self._get_maindf_cache(start_time, end_time, flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip)
+        # maindf =  self._get_maindf_cache(start_time, end_time, flow_types,
+        #                        flow_direction=flow_direction,
+        #                        src_subscrition=src_subscrition,
+        #                        dest_subscription=dest_subscription,
+        #                        src_rg=src_rg,
+        #                        dest_rg=dest_rg,
+        #                        src_vnet=src_vnet,
+        #                        dest_vnet=dest_vnet,
+        #                        src_subnet=src_subnet,
+        #                        dest_subnet=dest_subnet,
+        #                        src_ip=src_ip,
+        #                        dest_ip=dest_ip)
         
         
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
