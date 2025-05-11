@@ -47,11 +47,42 @@ class NetworkMapManager:
         global maindf_cache
         maindf_cache = maindf
 
-    def _get_maindf_cache(self,start_time, end_time, flow_types) -> pd.DataFrame:
+    def _get_maindf_cache(self,start_time: datetime, 
+                               end_time: datetime,
+                               flow_types: list[str] = [],
+                               flow_direction: str = 'all',
+                               src_subscrition: str = 'all',
+                               dest_subscription: str = 'all',
+                               src_rg: str = 'all',
+                               dest_rg: str = 'all',
+                               src_vnet: str = 'all',
+                               dest_vnet: str = 'all',
+                               src_subnet: str = 'all',
+                               dest_subnet: str = 'all',
+                               src_ip: str = 'all',
+                               dest_ip: str = 'all') -> pd.DataFrame:
         
         if maindf_cache.empty:
-            kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
-            maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+            # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+            # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+
+            maindf = self.get_network_map_without_externalpublic_malicious(
+                               start_time=start_time, 
+                               end_time=end_time,
+                               flow_types=flow_types,
+                               flow_direction=flow_direction,
+                               src_subscrition=src_subscrition,
+                               dest_subscription=dest_subscription,
+                               src_rg=src_rg,
+                               dest_rg=dest_rg,
+                               src_vnet=src_vnet,
+                               dest_vnet=dest_vnet,
+                               src_subnet=src_subnet,
+                               dest_subnet=dest_subnet,
+                               src_ip=src_ip,
+                               dest_ip=dest_ip,
+                               df = True)
+            
             self._set_maindf_cache(maindf)
         
         return maindf_cache
@@ -71,7 +102,8 @@ class NetworkMapManager:
                                src_subnet: str = 'all',
                                dest_subnet: str = 'all',
                                src_ip: str = 'all',
-                               dest_ip: str = 'all') -> NetworkMapResult:
+                               dest_ip: str = 'all',
+                               df = False) -> NetworkMapResult:
         
         try:
 
@@ -117,7 +149,7 @@ class NetworkMapManager:
 
             nmap = NetworkMapResult(nodes, edges, categories)
 
-            return nmap
+            return nmap if df == False else maindf
 
 
         except Exception as e:
@@ -213,11 +245,6 @@ class NetworkMapManager:
         try:
 
             df = self._get_vnet_flow_log(kql_query=kql_query, start_time=start_time, end_time=end_time)
-
-            if df.empty:
-                return pd.DataFrame()
-
-            # convert timeGenerated to datetime
 
             # update SrcName with Subnet name if SrcName is empty        
             df['SrcName'] = df.apply(lambda x: x['SrcSubnetName'] if x['SrcName']=='' else x['SrcName'], axis=1)
@@ -501,13 +528,39 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
 
-    def get_unique_src_ip(self, flow_types,start_time, end_time) -> pd.DataFrame:
+    def get_unique_src_ip(self, start_time: datetime, 
+                               end_time: datetime,
+                               flow_types: list[str] = [],
+                               flow_direction: str = 'all',
+                               src_subscrition: str = 'all',
+                               dest_subscription: str = 'all',
+                               src_rg: str = 'all',
+                               dest_rg: str = 'all',
+                               src_vnet: str = 'all',
+                               dest_vnet: str = 'all',
+                               src_subnet: str = 'all',
+                               dest_subnet: str = 'all',
+                               src_ip: str = 'all',
+                               dest_ip: str = 'all') -> pd.DataFrame:
                     
         # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
         # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
 
-        maindf = self._get_maindf_cache(start_time, end_time, flow_types)
+        #maindf = self._get_maindf_cache(start_time, end_time, flow_types)
+        maindf =  self._get_maindf_cache(start_time, end_time, flow_types,
+                               flow_direction=flow_direction,
+                               src_subscrition=src_subscrition,
+                               dest_subscription=dest_subscription,
+                               src_rg=src_rg,
+                               dest_rg=dest_rg,
+                               src_vnet=src_vnet,
+                               dest_vnet=dest_vnet,
+                               src_subnet=src_subnet,
+                               dest_subnet=dest_subnet,
+                               src_ip=src_ip,
+                               dest_ip=dest_ip)
+        
         
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
         maindf= maindf[maindf['SrcIp'] != '']

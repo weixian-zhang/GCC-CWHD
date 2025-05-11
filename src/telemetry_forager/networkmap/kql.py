@@ -135,7 +135,7 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend ExternalPublic_Src_Country = iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', Country, '')
 | extend ExternalPublic_Dest_Country = iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', Country, '')
 
-| extend NSG = iif(AclGroup startswith '/', AclGroup, '')
+| extend NSG = iif(AclGroup startswith '/', split(AclGroup, '/')[-1], '')
 | extend NSGRule = iif(AclGroup startswith '/', AclRule, '')
 
 
