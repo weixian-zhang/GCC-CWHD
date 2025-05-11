@@ -32,7 +32,7 @@ NTANetAnalytics
 
 | where FlowType in ({flowType})
 
-| take 8000
+| take 9000
 
 | extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
 | extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
@@ -69,8 +69,8 @@ on $left.SrcPIP == $right.SrcPIP_Ip
         ['DestPIP_Ip']=PublicIP, 
         ['AzurePublic_Dest_PublicIpDetails']=PIP_PublicIpDetails,
         ['AzurePublic_DestPIP_Location']=PIP_Location, 
-        ['Malicious_DestPIP_ThreatType']=PIP_ThreatType, 
         ['Malicious_DestPIP_Url']=PIP_Url, 
+        ['Malicious_DestPIP_ThreatType']=PIP_ThreatType, 
         ['Malicious_DestPIP_ThreatDescription']=PIP_ThreatDescription
 )
 on $left.DestPIP == $right.DestPIP_Ip
@@ -87,38 +87,44 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend PrivateLinkName = split(PrivateEndpointResourceId, '/')[-2]
 
 | extend SrcNodeType = iif(SrcApplicationGateway != '', 'APPGW',
-                        iif(SrcLoadBalancer != '', 'ALB',
-                         iif(FlowType == 'AzurePublic' and AzurePublic_Src_PublicIpDetails != '', 'PAAS',
-                          iif(SrcSubnetName == 'azurebastionsubnet', 'BASTION',
-                           iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
-                            iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 
-                             iif(FlowType == 'MaliciousFlow', 'MALICIOUSFLOW', 'NODE')))))))
+                       iif(SrcLoadBalancer != '', 'ALB',
+                       iif(SrcExpressRouteCircuit != '', 'EXPRESSROUTE',
+                       iif(FlowType == 'AzurePublic' and AzurePublic_Src_PublicIpDetails != '', 'PAAS',
+                       iif(SrcSubnetName == 'azurebastionsubnet', 'BASTION',
+                       iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
+                       iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound' and Malicious_SrcPIP_ThreatType != '', 'EXTERNALPUBLICMALICIOUS', 
+                       iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 
+                       iif(FlowType == 'MaliciousFlow'and FlowDirection == 'Inbound', 'MALICIOUSFLOW', 'NODE')))))))))
 
 | extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway,
-                    iif(SrcLoadBalancer != '', SrcLoadBalancer,
-                     iif(AzurePublic_Src_PublicIpDetails != '', AzurePublic_Src_PublicIpDetails,
-                      iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm',
-                       iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName,
-                        iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
-                         iif(SrcVm != '', SrcVm, '-' )))))))
+                   iif(SrcLoadBalancer != '', SrcLoadBalancer,
+                   iif(AzurePublic_Src_PublicIpDetails != '', AzurePublic_Src_PublicIpDetails,
+                   iif(SrcExpressRouteCircuit != '', 'expressroute-node',
+                   iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm',
+                   iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName,
+                   iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
+                         iif(SrcVm != '', SrcVm, '-' ))))))))
 
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
 
 | extend DestNodeType = iif(DestApplicationGateway != '', 'APPGW',
-                     iif(DestLoadBalancer != '', 'ALB',
-                      iif(FlowType == 'AzurePublic' and AzurePublic_Dest_PublicIpDetails != '', 'PAAS',
-                       iif(DestSubnetName == 'azurebastionsubnet', 'BASTION',
+                        iif(DestLoadBalancer != '', 'ALB',
+                        iif(DestExpressRouteCircuit != '', 'EXPRESSROUTE',
+                        iif(FlowType == 'AzurePublic' and AzurePublic_Dest_PublicIpDetails != '', 'PAAS',
+                        iif(DestSubnetName == 'azurebastionsubnet', 'BASTION',
                         iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  'PRIVATEENDPOINT',
-                         iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 
-                          iif(FlowType == 'MaliciousFlow', 'MALICIOUSFLOW', 'NODE')))))))
+                        iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound' and Malicious_DestPIP_ThreatType != '', 'EXTERNALPUBLICMALICIOUS',
+                        iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 
+                        iif(FlowType == 'MaliciousFlow' and FlowDirection == 'Outbound', 'MALICIOUSFLOW', 'NODE')))))))))
 
 | extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway,
                      iif(DestLoadBalancer != '', DestLoadBalancer,
                       iif(AzurePublic_Dest_PublicIpDetails != '', AzurePublic_Dest_PublicIpDetails,
+                       iif(DestExpressRouteCircuit != '', 'expressroute-node', 
                        iif(DestSubnetName == 'azurebastionsubnet', 'bastion-vm',
                         iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName,
                          iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))),
-                          iif(DestVm != '',  DestVm, '' )))))))
+                          iif(DestVm != '',  DestVm, '' ))))))))
 
 
 | extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
@@ -129,10 +135,15 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend ExternalPublic_Src_Country = iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', Country, '')
 | extend ExternalPublic_Dest_Country = iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', Country, '')
 
+| extend NSG = iif(AclGroup startswith '/', AclGroup, '')
+| extend NSGRule = iif(AclGroup startswith '/', AclRule, '')
+
+| where Malicious_SrcPIP_ThreatDescription != '' or Malicious_DestPIP_ThreatDescription != ''
+
 | summarize 
     BytesSrcToDest = max(BytesSrcToDest),
     BytesDestToSrc = max(BytesDestToSrc),
-    TimeGenerated = arg_max(TimeGenerated,*)  by
+    TimeGenerated = max(TimeGenerated) by
     
     FlowType, 
     FlowDirection,
@@ -140,6 +151,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     ConnectionType, 
     protocol,
     IsFlowCapturedAtUdrHop,
+    NSG,
+    NSGRule,
     
     SrcNodeType,
     AzurePublic_SrcPIP_Location, 
@@ -175,7 +188,8 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)
 
 | distinct 
-TimeGenerated,
+
+    TimeGenerated,
     FlowType, 
     FlowDirection,
     FlowEncryption,
@@ -184,6 +198,8 @@ TimeGenerated,
     IsFlowCapturedAtUdrHop,
     SrcToDestDataSize,
     DestToSrcDataSize,
+    NSG,
+    NSGRule,
     
     SrcNodeType,
     AzurePublic_SrcPIP_Location, 

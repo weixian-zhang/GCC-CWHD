@@ -179,6 +179,8 @@ class NetworkMapManager:
 
         edges_df = pd.DataFrame()
         edges_df['timeGenerated'] = maindf['TimeGenerated']
+        edges_df['nsg'] = maindf['NSG']
+        edges_df['nsgRule'] = maindf['NSGRule']
         edges_df['category'] = maindf['FlowType']
         edges_df['source'] = maindf['SrcIp']
         edges_df['target'] = maindf['DestIp']
@@ -217,7 +219,7 @@ class NetworkMapManager:
 
             maindf = df.drop_duplicates(subset=['SrcName', 'DestName'])
 
-            maindf['TimeGenerated'] = maindf['TimeGenerated'].dt.strftime('%a %d %b %Y %H:%M:%S')
+            maindf['timeGenerated'] = maindf['TimeGenerated'].dt.strftime('%a %d %b %Y %H:%M:%S')
 
             maindf.fillna('', inplace=True)
 
