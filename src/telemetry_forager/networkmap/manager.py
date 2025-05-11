@@ -15,6 +15,7 @@ from azure.mgmt.resourcegraph import ResourceGraphClient
 from azure.mgmt.resourcegraph.models import *
 import ipaddress
 import json
+import time
 
 
 maindf_cache = pd.DataFrame
@@ -77,6 +78,8 @@ class NetworkMapManager:
             #reset cache
             if not df:
                 self._set_maindf_cache(pd.DataFrame())
+            else:
+                time.sleep(0.5)
             
 
             ok, maindf = self._get_maindf_cache()
