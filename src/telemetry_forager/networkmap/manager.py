@@ -20,6 +20,7 @@ import time
 
 maindf_cache = pd.DataFrame
 
+filter_data_fetcher_wait_for_maindf_sec = 30
 maindf_in_progress = False
 maindf_completed = False
 global_current_data_key = ''
@@ -738,7 +739,7 @@ class NetworkMapManager:
         
         wait_for = 0.5
         waited_sec = 0
-        should_wait_until = 20
+        should_wait_until = filter_data_fetcher_wait_for_maindf_sec
         
         time.sleep(wait_for)
         
