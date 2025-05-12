@@ -47,19 +47,7 @@ class NetworkMapManager:
         # dest_ip: str = 'all'
 
 
-    def _set_maindf_cache(self, maindf: pd.DataFrame):
-        global maindf_cache
-        maindf_cache = maindf
-
-    def _get_maindf_cache(self) -> list[bool,pd.DataFrame]:
-        
-        if maindf_cache.empty:
-            return False, maindf_cache
-            
-        return True, maindf_cache
-        
-
-    def get_network_map_without_externalpublic_malicious(self, 
+    def get_network_map(self, 
                                start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
@@ -76,6 +64,7 @@ class NetworkMapManager:
                                dest_ip: str = 'all',
                                df = False) -> NetworkMapResult:
         
+        
         try:
             global maindf_in_progress, maindf_completed
             
@@ -83,6 +72,8 @@ class NetworkMapManager:
             maindf_in_progress = True
             maindf_completed = False
             self._set_maindf_cache(pd.DataFrame())
+
+            time.sleep(20)
                 
 
             kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
@@ -114,18 +105,16 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
-            nodes = self._create_echart_nodes(maindf=maindf)
-
-            edges = self._create_echart_edges(maindf=maindf)
-
-            categories = self._create_echart_categories(maindf=maindf)
-
+        
             #cache maindf for filter data use
             self._set_maindf_cache(maindf)
 
             maindf_in_progress = False
             maindf_completed = True
 
+            nodes = self._create_echart_nodes(maindf=maindf)
+            edges = self._create_echart_edges(maindf=maindf)
+            categories = self._create_echart_categories(maindf=maindf)
             nmap = NetworkMapResult(nodes, edges, categories)
 
             return nmap if df == False else maindf
@@ -419,38 +408,15 @@ class NetworkMapManager:
         return maindf[maindf['DestIp'] == dest_ip]
     
 
-    def get_unique_src_subscription(self,
-                               start_time: datetime, 
+    def get_unique_src_subscription(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+
+        maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         
         tempdf = maindf.drop_duplicates('SrcSubscription', keep='first')
         tempdf = tempdf[tempdf['SrcSubscription'] != '']
@@ -467,38 +433,13 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
     
-    def get_unique_src_rg(self,
-                               start_time: datetime, 
+    def get_unique_src_rg(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
         
         tempdf = maindf.drop_duplicates('SrcRG', keep='first')
         tempdf = tempdf[tempdf['SrcRG'] != '']
@@ -514,38 +455,13 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
 
-    def get_unique_src_vnet(self,
-                               start_time: datetime, 
+    def get_unique_src_vnet(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
                     
         tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
         tempdf = tempdf[tempdf['SrcVNet'] != '']
@@ -561,38 +477,13 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
 
-    def get_unique_src_subnet(self,
-                               start_time: datetime, 
+    def get_unique_src_subnet(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
         
         tempdf = pd.DataFrame()
         tempdf['SrcVNet'] = maindf['SrcVNet']
@@ -615,72 +506,14 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
 
-    def get_unique_src_ip(self):
-        #                         start_time: datetime, 
-        #                        end_time: datetime,
-        #                        flow_types: list[str] = [],
-        #                        flow_direction: str = 'all',
-        #                        src_subscrition: str = 'all',
-        #                        dest_subscription: str = 'all',
-        #                        src_rg: str = 'all',
-        #                        dest_rg: str = 'all',
-        #                        src_vnet: str = 'all',
-        #                        dest_vnet: str = 'all',
-        #                        src_subnet: str = 'all',
-        #                        dest_subnet: str = 'all',
-        #                        src_ip: str = 'all',
-        #                        dest_ip: str = 'all') -> pd.DataFrame:
+    def get_unique_src_ip(self, start_time: datetime, 
+                               end_time: datetime,
+                               flow_types: list[str] = [],
+                               flow_direction: str = 'all',
+                               wait_for_maindf=True) -> pd.DataFrame:
         
-        # maindf = self.get_network_map_without_externalpublic_malicious(
-        #                        start_time,
-        #                        end_time,
-        #                        flow_types,
-        #                        flow_direction=flow_direction,
-        #                        src_subscrition=src_subscrition,
-        #                        dest_subscription=dest_subscription,
-        #                        src_rg=src_rg,
-        #                        dest_rg=dest_rg,
-        #                        src_vnet=src_vnet,
-        #                        dest_vnet=dest_vnet,
-        #                        src_subnet=src_subnet,
-        #                        dest_subnet=dest_subnet,
-        #                        src_ip=src_ip,
-        #                        dest_ip=dest_ip,
-        #                        df=True)
-                    
-        # kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
-        # maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
-
-        # maindf = self._get_maindf_cache(start_time, end_time, flow_types)
-        # maindf =  self._get_maindf_cache(start_time, end_time, flow_types,
-        #                        flow_direction=flow_direction,
-        #                        src_subscrition=src_subscrition,
-        #                        dest_subscription=dest_subscription,
-        #                        src_rg=src_rg,
-        #                        dest_rg=dest_rg,
-        #                        src_vnet=src_vnet,
-        #                        dest_vnet=dest_vnet,
-        #                        src_subnet=src_subnet,
-        #                        dest_subnet=dest_subnet,
-        #                        src_ip=src_ip,
-        #                        dest_ip=dest_ip)
-
-        if not maindf_in_progress and not maindf_completed:
-            return pd.DataFrame()
-        
-        while True:
-            if maindf_in_progress and not maindf_completed:
-                time.sleep(0.3)
-                continue
-            else:
-                break
-            
-
-        ok, maindf = self._get_maindf_cache()
-
-        if not ok:
-            return pd.DataFrame()
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
         
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
         maindf= maindf[maindf['SrcIp'] != '']
@@ -700,38 +533,21 @@ class NetworkMapManager:
         
         return result.to_dict(orient='records')
     
-    def get_unique_dest_subscription(self,
-                               start_time: datetime, 
+    def get_unique_dest_subscription(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        if wait_for_maindf:
+            self._wait_for_maindf()
+        else:
+            self.get_network_map(start_time, end_time, flow_types, flow_direction)
+
+        ok, maindf = self._get_maindf_cache()
+        
+        if not ok:
+            return pd.DataFrame()
 
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestSubscription', keep='first')
@@ -747,38 +563,13 @@ class NetworkMapManager:
         
         return result.to_dict(orient='records')
 
-    def get_unique_dest_rg(self,
-                               start_time: datetime, 
+    def get_unique_dest_rg(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
         
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestRG', keep='first')
@@ -795,38 +586,21 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
 
-    def get_unique_dest_vnet(self,
-                               start_time: datetime, 
+    def get_unique_dest_vnet(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        if wait_for_maindf:
+            self._wait_for_maindf()
+        else:
+            self.get_network_map(start_time, end_time, flow_types, flow_direction)
+
+        ok, maindf = self._get_maindf_cache()
+        
+        if not ok:
+            return pd.DataFrame()
 
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestVNet', keep='first')
@@ -843,38 +617,13 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
 
-    def get_unique_dest_subnet(self,
-                               start_time: datetime, 
+    def get_unique_dest_subnet(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all') -> pd.DataFrame:
+                               wait_for_maindf=True) -> pd.DataFrame:
 
-        maindf = self.get_network_map_without_externalpublic_malicious(
-                               start_time,
-                               end_time,
-                               flow_types,
-                               flow_direction=flow_direction,
-                               src_subscrition=src_subscrition,
-                               dest_subscription=dest_subscription,
-                               src_rg=src_rg,
-                               dest_rg=dest_rg,
-                               src_vnet=src_vnet,
-                               dest_vnet=dest_vnet,
-                               src_subnet=src_subnet,
-                               dest_subnet=dest_subnet,
-                               src_ip=src_ip,
-                               dest_ip=dest_ip,
-                               df=True)
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
 
         tempdf = pd.DataFrame()
         tempdf['DestVNet'] = maindf['DestVNet']
@@ -896,53 +645,17 @@ class NetworkMapManager:
         
         return result.to_dict(orient='records')
     
-    def get_unique_dest_ip(self):
-        #                        start_time: datetime, 
-        #                        end_time: datetime,
-        #                        flow_types: list[str] = [],
-        #                        flow_direction: str = 'all',
-        #                        src_subscrition: str = 'all',
-        #                        dest_subscription: str = 'all',
-        #                        src_rg: str = 'all',
-        #                        dest_rg: str = 'all',
-        #                        src_vnet: str = 'all',
-        #                        dest_vnet: str = 'all',
-        #                        src_subnet: str = 'all',
-        #                        dest_subnet: str = 'all',
-        #                        src_ip: str = 'all',
-        #                        dest_ip: str = 'all') -> pd.DataFrame:
+    def get_unique_dest_ip(self, start_time: datetime, 
+                               end_time: datetime,
+                               flow_types: list[str] = [],
+                               flow_direction: str = 'all',
+                               wait_for_maindf=True) -> pd.DataFrame:
+        '''
+        wait_for_maindf is mainly for testing this function without having to call 
+        '''
 
-        # maindf = self.get_network_map_without_externalpublic_malicious(
-        #                        start_time,
-        #                        end_time,
-        #                        flow_types,
-        #                        flow_direction=flow_direction,
-        #                        src_subscrition=src_subscrition,
-        #                        dest_subscription=dest_subscription,
-        #                        src_rg=src_rg,
-        #                        dest_rg=dest_rg,
-        #                        src_vnet=src_vnet,
-        #                        dest_vnet=dest_vnet,
-        #                        src_subnet=src_subnet,
-        #                        dest_subnet=dest_subnet,
-        #                        src_ip=src_ip,
-        #                        dest_ip=dest_ip,
-        #                        df=True)
 
-        if not maindf_in_progress and not maindf_completed:
-            return pd.DataFrame()
-        
-        while True:
-            if maindf_in_progress and not maindf_completed:
-                time.sleep(0.3)
-                continue
-            else:
-                break
-
-        ok, maindf = self._get_maindf_cache()
-        
-        if not ok:
-            return pd.DataFrame()
+        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
 
         maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         
@@ -963,3 +676,59 @@ class NetworkMapManager:
         # result.reset_index(drop=True)  # reset index
         
         return result.to_dict(orient='records')
+    
+
+    # *** cache logic ***
+
+    def _set_maindf_cache(self, maindf: pd.DataFrame):
+        global maindf_cache
+        maindf_cache = maindf
+
+    def _get_maindf_cache(self) -> list[bool,pd.DataFrame]:
+        
+        if maindf_cache.empty:
+            return False, maindf_cache
+            
+        return True, maindf_cache
+    
+    def _get_maindf_from_cache_for_filter(self, start_time: datetime, 
+                               end_time: datetime,
+                               flow_types: list[str] = [],
+                               flow_direction: str = 'all',
+                               wait_for_maindf=True) -> pd.DataFrame:
+        
+        if wait_for_maindf:
+            self._wait_for_maindf()
+        else:
+            self.get_network_map(start_time, end_time, flow_types, flow_direction)
+
+        ok, maindf = self._get_maindf_cache()
+        
+        if not ok:
+            return pd.DataFrame()
+        
+        return maindf
+        
+        
+    def _wait_for_maindf(self):
+        '''
+        a critical function used by "get filter data" functions to wait for maindf cache to be completed
+        handles 2 scenario:
+            - filter function started by network_map have not - (not maindf_in_progress and not maindf_completed
+            - network_map started but filter function have not - (maindf_in_progress and not maindf_completed)
+        '''
+        
+        wait_for = 0.5
+        waited_sec = 0
+        should_wait_until = 7
+        
+        time.sleep(wait_for)
+        
+        while (maindf_in_progress and not maindf_completed) or (not maindf_in_progress and not maindf_completed):
+            
+            # waited more than 7 secs, break out
+            if waited_sec >= should_wait_until:
+                break
+
+            time.sleep(wait_for)
+            waited_sec += wait_for
