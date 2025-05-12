@@ -73,14 +73,10 @@ class NetworkMapManager:
 
             # other filter data fetcher will wait for this function to set global data key
             global_current_data_key = current_data_key
-            
-            #reset cache
+            self._set_maindf_cache(pd.DataFrame())
             maindf_in_progress = True
             maindf_completed = False
-            self._set_maindf_cache(pd.DataFrame())
-
-            time.sleep(20)
-                
+            
 
             kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
 
@@ -740,8 +736,6 @@ class NetworkMapManager:
         wait_for = 0.5
         waited_sec = 0
         should_wait_until = filter_data_fetcher_wait_for_maindf_sec
-        
-        time.sleep(wait_for)
         
         while current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
             
