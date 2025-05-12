@@ -32,7 +32,7 @@ NTANetAnalytics
 
 | where FlowType in ({flowType})
 
-| take 500
+| take 8000
 
 | extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
 | extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
