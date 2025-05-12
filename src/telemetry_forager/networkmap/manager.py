@@ -742,7 +742,7 @@ class NetworkMapManager:
         
         time.sleep(wait_for)
         
-        while global_current_data_key == '' and current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
+        while current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
             
             # waited more than 7 secs, break out
             if waited_sec >= should_wait_until:
