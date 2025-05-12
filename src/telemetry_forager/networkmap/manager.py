@@ -720,7 +720,7 @@ class NetworkMapManager:
         
         wait_for = 0.5
         waited_sec = 0
-        should_wait_until = 7
+        should_wait_until = 20
         
         time.sleep(wait_for)
         
