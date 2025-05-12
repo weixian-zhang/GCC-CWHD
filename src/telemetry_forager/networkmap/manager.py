@@ -22,6 +22,7 @@ maindf_cache = pd.DataFrame
 
 maindf_in_progress = False
 maindf_completed = False
+global_current_data_key = ''
 
 class NetworkMapManager:
     def __init__(self, config: AppConfig):
@@ -62,11 +63,15 @@ class NetworkMapManager:
                                dest_subnet: str = 'all',
                                src_ip: str = 'all',
                                dest_ip: str = 'all',
-                               df = False) -> NetworkMapResult:
+                               df = False,
+                               current_data_key = '') -> NetworkMapResult:
         
         
         try:
-            global maindf_in_progress, maindf_completed
+            global maindf_in_progress, maindf_completed, global_current_data_key
+
+            # other filter data fetcher will wait for this function to set global data key
+            global_current_data_key = current_data_key
             
             #reset cache
             maindf_in_progress = True
@@ -414,9 +419,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
 
         maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         
@@ -426,11 +434,6 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['SrcSubscription']
 
-        # result.loc[-1] = ['all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
-        
 
         return result.to_dict(orient='records')
     
@@ -439,9 +442,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
         
         tempdf = maindf.drop_duplicates('SrcRG', keep='first')
         tempdf = tempdf[tempdf['SrcRG'] != '']
@@ -461,9 +467,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
                     
         tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
         tempdf = tempdf[tempdf['SrcVNet'] != '']
@@ -483,9 +492,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
         
         tempdf = pd.DataFrame()
         tempdf['SrcVNet'] = maindf['SrcVNet']
@@ -512,10 +524,13 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
         
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
         
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
         maindf= maindf[maindf['SrcIp'] != '']
@@ -539,17 +554,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        if wait_for_maindf:
-            self._wait_for_maindf()
-        else:
-            self.get_network_map(start_time, end_time, flow_types, flow_direction)
-
-        ok, maindf = self._get_maindf_cache()
-        
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
         if not ok:
-            return pd.DataFrame()
+            return {'status': 'timeout as maindf took too long to complete'}
 
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestSubscription', keep='first')
@@ -569,9 +579,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
         
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestRG', keep='first')
@@ -592,17 +605,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        if wait_for_maindf:
-            self._wait_for_maindf()
-        else:
-            self.get_network_map(start_time, end_time, flow_types, flow_direction)
-
-        ok, maindf = self._get_maindf_cache()
-        
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
         if not ok:
-            return pd.DataFrame()
+            return {'status': 'timeout as maindf took too long to complete'}
 
         tempdf = pd.DataFrame()
         tempdf = maindf.drop_duplicates('DestVNet', keep='first')
@@ -623,9 +631,12 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
 
         tempdf = pd.DataFrame()
         tempdf['DestVNet'] = maindf['DestVNet']
@@ -651,14 +662,18 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
         '''
         wait_for_maindf is mainly for testing this function without having to call 
         '''
 
 
-        maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        if not ok:
+            return {'status': 'timeout as maindf took too long to complete'}
 
+        # maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         
         maindf = maindf.drop_duplicates('DestIp', keep='first')
@@ -697,22 +712,23 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               wait_for_maindf=True) -> pd.DataFrame:
+                               wait_for_maindf=True,
+                               current_data_key='') -> pd.DataFrame:
         
         if wait_for_maindf:
-            self._wait_for_maindf()
+            self._wait_for_maindf(current_data_key)
         else:
             self.get_network_map(start_time, end_time, flow_types, flow_direction)
 
         ok, maindf = self._get_maindf_cache()
         
         if not ok:
-            return pd.DataFrame()
+            return False, pd.DataFrame()
         
-        return maindf
+        return True, maindf
         
         
-    def _wait_for_maindf(self):
+    def _wait_for_maindf(self, current_data_key):
         '''
         a critical function used by "get filter data" functions to wait for maindf cache to be completed
         handles 2 scenario:
@@ -726,7 +742,7 @@ class NetworkMapManager:
         
         time.sleep(wait_for)
         
-        while (maindf_in_progress and not maindf_completed) or (not maindf_in_progress and not maindf_completed):
+        while global_current_data_key == '' and current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
             
             # waited more than 7 secs, break out
             if waited_sec >= should_wait_until:

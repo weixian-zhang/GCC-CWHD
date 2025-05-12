@@ -27,6 +27,7 @@ class NetworkMapRequestBody(BaseModel):
     destSubnet: str = 'all'
     srcIP: str = 'all'
     destIP: str = 'all'
+    current_data_key: str = ''
 
 class FilterDataRequestBody(BaseModel):
   startTime: datetime
@@ -34,6 +35,7 @@ class FilterDataRequestBody(BaseModel):
   flowTypes: list[str] = []
   flowDirection: str = 'all'
   wait_for_maindf: bool = True
+  current_data_key: str = ''
 
 router = APIRouter()
 
@@ -55,7 +57,8 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
                                   src_subnet=body.srcSubnet,
                                   dest_subnet=body.destSubnet,
                                   src_ip=body.srcIP,
-                                  dest_ip=body.destIP
+                                  dest_ip=body.destIP,
+                                  current_data_key=body.current_data_key
                                   )
     return result
 
@@ -69,7 +72,8 @@ def get_src_subscription(body: FilterDataRequestBody, response: fastapi.Response
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 
@@ -79,7 +83,8 @@ def get_src_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/src/vnet", status_code=200, response_model=None)
@@ -88,7 +93,8 @@ def get_src_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dic
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 
@@ -99,35 +105,22 @@ def get_src_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> d
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 
 @router.post("/api/nmap/src/ip", status_code=200, response_model=None)
 # def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 def get_src_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
-    # result = nmap.get_unique_src_ip(
-                                #   start_time=body.startTime,
-                                #   end_time=body.endTime,
-                                #   flow_types=body.flowTypes,
-                                #   flow_direction=body.flowDirection,
-    #                               src_subscrition=body.srcSubscription,
-    #                               dest_subscription=body.destSubscription,
-    #                               src_rg=body.srcRG,
-    #                               dest_rg=body.destRG,
-    #                               src_vnet=body.srcVNet,
-    #                               dest_vnet=body.destVNet,
-    #                               src_subnet=body.srcSubnet,
-    #                               dest_subnet=body.destSubnet,
-    #                               src_ip=body.srcIP,
-    #                               dest_ip=body.destIP
-    #                               )
+
 
     result = nmap.get_unique_src_ip(start_time=body.startTime,
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
 
     return result
 
@@ -138,7 +131,8 @@ def get_dest_subscription(body: FilterDataRequestBody, response: fastapi.Respons
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/rg", status_code=200, response_model=None)
@@ -147,7 +141,8 @@ def get_dest_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/vnet", status_code=200, response_model=None)
@@ -156,7 +151,8 @@ def get_dest_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> di
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/subnet", status_code=200, response_model=None)
@@ -165,30 +161,18 @@ def get_dest_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> 
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/ip", status_code=200, response_model=None)
 def get_dest_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
-    # result = nmap.get_unique_dest_ip(start_time=body.startTime,
-    #                               end_time=body.endTime,
-    #                               flow_types=body.flowTypes,
-    #                               flow_direction=body.flowDirection,
-    #                               src_subscrition=body.srcSubscription,
-    #                               dest_subscription=body.destSubscription,
-    #                               src_rg=body.srcRG,
-    #                               dest_rg=body.destRG,
-    #                               src_vnet=body.srcVNet,
-    #                               dest_vnet=body.destVNet,
-    #                               src_subnet=body.srcSubnet,
-    #                               dest_subnet=body.destSubnet,
-    #                               src_ip=body.srcIP,
-    #                               dest_ip=body.destIP)
 
     result = nmap.get_unique_dest_ip(start_time=body.startTime,
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
                                   flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf)
+                                  wait_for_maindf=body.wait_for_maindf,
+                                  current_data_key=body.current_data_key)
 
     return result
