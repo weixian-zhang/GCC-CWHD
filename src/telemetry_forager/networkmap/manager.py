@@ -194,6 +194,8 @@ class NetworkMapManager:
         edges_df['flowEncryption'] = maindf['FlowEncryption']
         edges_df['protocol'] = maindf['protocol']
         edges_df['connectionType'] = maindf['ConnectionType']
+        edges_df['isUDRHop'] = maindf['IsFlowCapturedAtUdrHop']
+        
 
         edges_df = edges_df.drop_duplicates(subset=['source', 'target'])
 
