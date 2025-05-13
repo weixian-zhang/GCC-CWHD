@@ -372,8 +372,6 @@ class NetworkMapManager:
         if not subs or len(subs) == 1 and subs[0] == 'all':
             return maindf
         
-        subs = [x.lower() for x in subs]
-        
         return maindf[maindf['SrcSubscription'].isin(subs)]
         
         #return maindf[maindf['SrcSubscription'] == sub]
@@ -387,13 +385,10 @@ class NetworkMapManager:
         
         return maindf[maindf['SrcRG'].str.lower() == rgs.lower()]
     
-
     def _apply_filter_dest_subscription(self, maindf: pd.DataFrame, subs) -> pd.DataFrame:
 
         if not subs or len(subs) == 1 and subs[0] == 'all':
             return maindf
-        
-        subs = [x.lower() for x in subs]
 
         return maindf[maindf['DestSubscription'].isin(subs)]
     
@@ -405,7 +400,6 @@ class NetworkMapManager:
         rgs = [x.lower() for x in rgs]
         
         return maindf[maindf['DestRG'].isin(rgs)]
-    
     
     def _apply_filter_src_vnet(self, maindf: pd.DataFrame, src_vnets) -> pd.DataFrame:
 
@@ -425,7 +419,6 @@ class NetworkMapManager:
         
         return  maindf[maindf['SrcSubnetName'].isin(src_subnets)]
         
-    
     def _apply_filter_dest_vnet(self, maindf: pd.DataFrame, dest_vnets) -> pd.DataFrame:
 
         if not dest_vnets or len(dest_vnets) == 1 and dest_vnets[0] == 'all':
@@ -435,7 +428,6 @@ class NetworkMapManager:
         
         return  maindf[maindf['DestVNet'].isin(dest_vnets)]
         
-    
     def _apply_filter_dest_subnet(self, maindf: pd.DataFrame, dest_subnets) -> pd.DataFrame:
 
         if not dest_subnets or len(dest_subnets) == 1 and dest_subnets[0] == 'all':
@@ -445,13 +437,10 @@ class NetworkMapManager:
         
         return  maindf[maindf['DestSubnetName'].isin(dest_subnets)]
         
-    
     def _apply_filter_src_ip(self, maindf: pd.DataFrame, src_ips) -> pd.DataFrame:
 
         if not src_ips or len(src_ips) == 1 and src_ips[0] == 'all':
             return maindf
-        
-        src_ips = [x.lower() for x in src_ips]
         
         return  maindf[maindf['SrcIp'].isin(src_ips)]
         
@@ -460,8 +449,6 @@ class NetworkMapManager:
 
         if not dest_ips or len(dest_ips) == 1 and dest_ips[0] == 'all':
             return maindf
-        
-        dest_ips = [x.lower() for x in dest_ips]
         
         return  maindf[maindf['DestIp'].isin(dest_ips)]
     
