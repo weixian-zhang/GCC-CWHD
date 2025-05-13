@@ -169,11 +169,36 @@ class NetworkMapManager:
         
             self._resolve_src_dest_name_for_known_traffic(maindf)
 
-            unique_src_ip = self._create_unique_src_ip(maindf=maindf)
+            src_subscription = self._create_unique_src_subscription(maindf=maindf)
 
-            unique_dest_ip = self._create_unique_dest_ip(maindf=maindf)
+            src_rg = self._create_unique_src_rg(maindf=maindf)
 
-            fd = FilterDataResult(unique_src_ip, unique_dest_ip)
+            src_vnet = self._create_unique_src_vnet(maindf=maindf)
+
+            src_subnet = self._create_unique_src_subnet(maindf=maindf)
+
+            src_ip = self._create_unique_src_ip(maindf=maindf)
+
+            dest_subscription = self._create_unique_dest_subscription(maindf=maindf)
+
+            dest_rg = self._create_unique_dest_rg(maindf=maindf)
+
+            dest_vnet = self._create_unique_dest_vnet(maindf=maindf)
+
+            dest_subnet = self._create_unique_dest_subnet(maindf=maindf)
+
+            dest_ip = self._create_unique_dest_ip(maindf=maindf)
+
+            fd = FilterDataResult(src_subscription=src_subscription,
+                                  src_rg=src_rg,
+                                  src_vnet=src_vnet,
+                                  src_subnet=src_subnet,
+                                  src_ip=src_ip,
+                                  dest_subscription=dest_subscription,
+                                  dest_rg=dest_rg,
+                                  dest_vnet=dest_vnet,
+                                  dest_subnet=dest_subnet,
+                                  dest_ip=dest_ip)
 
             return fd
         
@@ -267,7 +292,57 @@ class NetworkMapManager:
         result =  tempdf.to_json(orient='records')
         return result
     
+    def _create_unique_src_subscription(self, maindf: pd.DataFrame) -> dict:
+        maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
+        
+        tempdf = maindf.drop_duplicates('SrcSubscription', keep='first')
+        tempdf = tempdf[tempdf['SrcSubscription'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['SrcSubscription']
+
+        return result.to_dict(orient='records')
+    
+
+    def _create_unique_src_rg(self, maindf: pd.DataFrame) -> dict:
+        
+        tempdf = maindf.drop_duplicates('SrcRG', keep='first')
+        tempdf = tempdf[tempdf['SrcRG'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['SrcRG']
+        
+        return result.to_dict(orient='records')
+
+    def _create_unique_src_vnet(self, maindf: pd.DataFrame) -> dict:
+        tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
+        tempdf = tempdf[tempdf['SrcVNet'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['SrcVNet']
+            
+        return result.to_dict(orient='records')
+
+    def _create_unique_src_subnet(self, maindf: pd.DataFrame) -> dict:
+        
+        tempdf = pd.DataFrame()
+        tempdf['SrcVNet'] = maindf['SrcVNet']
+        tempdf['SrcSubnetName'] = maindf['SrcSubnetName'].str.lower()
+        tempdf = tempdf.drop_duplicates('SrcSubnetName', keep='first')
+        tempdf = tempdf[(tempdf['SrcVNet'] != '') & (tempdf['SrcSubnetName'] != '')]
+
+        temp_result = pd.DataFrame()
+        temp_result = tempdf[['SrcVNet', 'SrcSubnetName']]
+
+        result = pd.DataFrame()
+        result['DisplayName'] = temp_result.apply(lambda x: ' / '.join(x.dropna()), axis=1)
+        result['SubnetName'] = temp_result['SrcSubnetName']
+        
+        return result.to_dict(orient='records')
+    
+
     def _create_unique_src_ip(self, maindf: pd.DataFrame) -> dict:
+
         maindf = maindf.drop_duplicates('SrcIp', keep='first')
         maindf= maindf[maindf['SrcIp'] != '']
 
@@ -279,6 +354,55 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SrcIp'] = tempdf['SrcIp']
         
+        return result.to_dict(orient='records')
+    
+    def _create_unique_dest_subscription(self, maindf: pd.DataFrame) -> dict:
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('DestSubscription', keep='first')
+        tempdf = tempdf[tempdf['DestSubscription'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['DestSubscription']
+        
+        return result.to_dict(orient='records')
+    
+    def _create_unique_dest_rg(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('DestRG', keep='first')
+        tempdf = tempdf[tempdf['DestRG'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['DestRG']
+        
+        return result.to_dict(orient='records')
+
+    
+    def _create_unique_dest_vnet(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('DestVNet', keep='first')
+        tempdf = tempdf[tempdf['DestVNet'] != '']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['DestVNet']
+        
+        return result.to_dict(orient='records')
+
+    def _create_unique_dest_subnet(self, maindf: pd.DataFrame) -> dict:
+        tempdf = pd.DataFrame()
+        tempdf['DestVNet'] = maindf['DestVNet']
+        tempdf['DestSubnetName'] = maindf['DestSubnetName'].str.lower()
+        tempdf = tempdf.drop_duplicates('DestSubnetName', keep='first')
+        tempdf = tempdf[(tempdf['DestVNet'] != '') & (tempdf['DestSubnetName'] != '')]
+
+        temp_result = pd.DataFrame()
+        temp_result = tempdf[['DestVNet', 'DestSubnetName']]
+
+        result = pd.DataFrame()
+        result['DisplayName'] = temp_result.apply(lambda x: ' / '.join(x.dropna()), axis=1)
+        result['SubnetName'] = temp_result['DestSubnetName']
+
         return result.to_dict(orient='records')
     
     def _create_unique_dest_ip(self, maindf: pd.DataFrame) -> dict:
