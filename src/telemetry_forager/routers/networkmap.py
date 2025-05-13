@@ -27,7 +27,6 @@ class NetworkMapRequestBody(BaseModel):
     destSubnet: list[str] = []
     srcIP: list[str] = []
     destIP: list[str] = []
-    current_data_key: str = ''
 
 class FilterDataRequestBody(BaseModel):
   startTime: datetime
@@ -59,8 +58,7 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
                                   src_subnet=body.srcSubnet,
                                   dest_subnet=body.destSubnet,
                                   src_ip=body.srcIP,
-                                  dest_ip=body.destIP,
-                                  current_data_key=body.current_data_key
+                                  dest_ip=body.destIP
                                   )
     return result
 

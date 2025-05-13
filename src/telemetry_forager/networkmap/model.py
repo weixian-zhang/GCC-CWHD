@@ -36,13 +36,21 @@ class NetworkMapCategory:
         self.name = ''
 
 class NetworkMapResult:
-    def __init__(self, nodes, edges, categories, unique_src_ip, unique_dest_ip):
+    def __init__(self, nodes, edges, categories):
         self.nodes = nodes
         self.edges = edges
         self.categories = categories
 
 class FilterDataResult:
-     def __init__(self, unique_src_ip, unique_dest_ip):
-        self.unique_src_ip = unique_src_ip
-        self.unique_dest_ip = unique_dest_ip
+     def __init__(self, src_subscription,src_rg,src_vnet,src_subnet, src_ip,dest_subscription,dest_rg,dest_vnet,dest_subnet, dest_ip):
+        self.src_subscription = src_subscription
+        self.src_rg= src_rg
+        self.src_vnet= src_vnet
+        self.src_subnet= src_subnet
+        self.src_ip = src_ip
+        self.dest_subscription = dest_subscription
+        self.dest_rg = dest_rg
+        self.dest_vnet = dest_vnet
+        self.dest_subnet = dest_subnet
+        self.dest_ip = dest_ip
         

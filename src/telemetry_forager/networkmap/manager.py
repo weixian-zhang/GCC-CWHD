@@ -72,9 +72,7 @@ class NetworkMapManager:
                                src_subnet: list[str] = [],
                                dest_subnet: list[str] = [],
                                src_ip: list[str] = [],
-                               dest_ip: list[str] = [],
-                               df = False,
-                               current_data_key = '') -> NetworkMapResult:
+                               dest_ip: list[str] = []) -> NetworkMapResult:
         
         global maindf_srcsub_cache
         global maindf_srcrg_cache
@@ -130,16 +128,16 @@ class NetworkMapManager:
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
             # hydrate cache
-            maindf_srcsub_cache[current_data_key] = maindf
-            maindf_srcrg_cache[current_data_key] = maindf
-            maindf_srcvnet_cache[current_data_key] = maindf
-            maindf_srcsubnet_cache[current_data_key] = maindf
-            maindf_srcip_cache[current_data_key] = maindf
-            maindf_destsub_cache[current_data_key] = maindf
-            maindf_destrg_cache[current_data_key] = maindf
-            maindf_destvnet_cache[current_data_key] = maindf
-            maindf_destsubnet_cache[current_data_key] = maindf
-            maindf_destip_cache[current_data_key] = maindf
+            # maindf_srcsub_cache[current_data_key] = maindf
+            # maindf_srcrg_cache[current_data_key] = maindf
+            # maindf_srcvnet_cache[current_data_key] = maindf
+            # maindf_srcsubnet_cache[current_data_key] = maindf
+            # maindf_srcip_cache[current_data_key] = maindf
+            # maindf_destsub_cache[current_data_key] = maindf
+            # maindf_destrg_cache[current_data_key] = maindf
+            # maindf_destvnet_cache[current_data_key] = maindf
+            # maindf_destsubnet_cache[current_data_key] = maindf
+            # maindf_destip_cache[current_data_key] = maindf
 
 
             nodes = self._create_echart_nodes(maindf=maindf)
@@ -148,7 +146,7 @@ class NetworkMapManager:
             
             nmap = NetworkMapResult(nodes=nodes, edges=edges, categories=categories)
 
-            return nmap if df == False else maindf
+            return nmap #if df == False else maindf
 
         except Exception as e:
             maindf_in_progress = False
