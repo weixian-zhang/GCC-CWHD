@@ -40,6 +40,9 @@ class NetworkMapResult:
         self.nodes = nodes
         self.edges = edges
         self.categories = categories
+
+class FilterDataResult:
+     def __init__(self, unique_src_ip, unique_dest_ip):
         self.unique_src_ip = unique_src_ip
         self.unique_dest_ip = unique_dest_ip
         

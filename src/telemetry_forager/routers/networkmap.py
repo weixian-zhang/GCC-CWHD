@@ -8,8 +8,8 @@ import log as Log
 from pydantic import BaseModel
 from init import appconfig
 from networkmap.manager import NetworkMapManager
-from networkmap.model import NetworkMapResult
-from datetime import datetime, timezone
+from networkmap.model import NetworkMapResult, FilterDataResult
+from datetime import datetime
 
 
 class NetworkMapRequestBody(BaseModel):
@@ -30,12 +30,12 @@ class NetworkMapRequestBody(BaseModel):
     current_data_key: str = ''
 
 class FilterDataRequestBody(BaseModel):
-#   startTime: datetime
-#   endTime: datetime
-#   flowTypes: list[str] = []
-#   flowDirection: str = 'all'
+  startTime: datetime
+  endTime: datetime
+  flowTypes: list[str] = []
+  flowDirection: str = 'all'
 #   wait_for_maindf: bool = True
-  current_data_key: str = ''
+#  current_data_key: str = ''
 
 
 router = APIRouter()
@@ -62,6 +62,15 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
                                   dest_ip=body.destIP,
                                   current_data_key=body.current_data_key
                                   )
+    return result
+
+@router.post("/api/nmap/filterdata", status_code=200, response_model=None)
+def get_filter_data(body: FilterDataRequestBody, response: fastapi.Response) -> FilterDataResult:
+
+    result = nmap.get_filter_data(start_time=body.startTime,
+                                  end_time=body.endTime,
+                                  flow_types=body.flowTypes,
+                                  flow_direction=body.flowDirection)
     return result
 
 

@@ -8,7 +8,7 @@ import pandas as pd
 import log as Log
 from azure.core.exceptions import HttpResponseError
 from .kql import NetworkMapKQL
-from .model import NetworkMapResult
+from .model import NetworkMapResult, FilterDataResult
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.subscription import SubscriptionClient
 from azure.mgmt.resourcegraph import ResourceGraphClient
@@ -145,19 +145,44 @@ class NetworkMapManager:
             nodes = self._create_echart_nodes(maindf=maindf)
             edges = self._create_echart_edges(maindf=maindf)
             categories = self._create_echart_categories(maindf=maindf)
-            unique_src_ip = self._create_unique_src_ip(maindf=maindf)
-            unique_dest_ip = self._create_unique_dest_ip(maindf=maindf)
-
-            nmap = NetworkMapResult(nodes, edges, categories, unique_src_ip, unique_dest_ip)
+            
+            nmap = NetworkMapResult(nodes=nodes, edges=edges, categories=categories)
 
             return nmap if df == False else maindf
-
 
         except Exception as e:
             maindf_in_progress = False
             maindf_completed = False
             Log.exception(f'NetworkMapManager - error occured: {str(e)}')
             return {}
+        
+    def get_filter_data(self, start_time: datetime, 
+                               end_time: datetime,
+                               flow_types: list[str] = [],
+                               flow_direction: str = 'all') -> FilterDataResult:
+
+        try:
+
+            row_limit = self.config.networkMap_VNetFlowLog_Limit_Rows
+
+            kql_query = self.kql.vnet_flow_logs_kql(flow_types=flow_types, flow_direction=flow_direction, row_limit=row_limit)
+
+            maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
+        
+            self._resolve_src_dest_name_for_known_traffic(maindf)
+
+            unique_src_ip = self._create_unique_src_ip(maindf=maindf)
+
+            unique_dest_ip = self._create_unique_dest_ip(maindf=maindf)
+
+            fd = FilterDataResult(unique_src_ip, unique_dest_ip)
+
+            return fd
+        
+        except Exception as e:
+            Log.exception(f'NetworkMapManager - error occured: {str(e)}')
+    
+
 
     def _create_echart_nodes(self, maindf: pd.DataFrame) -> dict:
 
