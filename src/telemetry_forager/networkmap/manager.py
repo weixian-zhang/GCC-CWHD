@@ -145,7 +145,10 @@ class NetworkMapManager:
             nodes = self._create_echart_nodes(maindf=maindf)
             edges = self._create_echart_edges(maindf=maindf)
             categories = self._create_echart_categories(maindf=maindf)
-            nmap = NetworkMapResult(nodes, edges, categories)
+            unique_src_ip = self._create_unique_src_ip(maindf=maindf)
+            unique_dest_ip = self._create_unique_dest_ip(maindf=maindf)
+
+            nmap = NetworkMapResult(nodes, edges, categories, unique_src_ip, unique_dest_ip)
 
             return nmap if df == False else maindf
 
@@ -240,6 +243,36 @@ class NetworkMapManager:
         tempdf['name'] = maindf['FlowType'].unique()
         result =  tempdf.to_json(orient='records')
         return result
+    
+    def _create_unique_src_ip(self, maindf: pd.DataFrame) -> dict:
+        maindf = maindf.drop_duplicates('SrcIp', keep='first')
+        maindf= maindf[maindf['SrcIp'] != '']
+
+        tempdf = pd.DataFrame()
+        tempdf['SrcName '] = maindf['SrcName']
+        tempdf['SrcIp'] = maindf['SrcIp']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
+        result['SrcIp'] = tempdf['SrcIp']
+        
+        return result.to_dict(orient='records')
+    
+    def _create_unique_dest_ip(self, maindf: pd.DataFrame) -> dict:
+        maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
+        
+        maindf = maindf.drop_duplicates('DestIp', keep='first')
+        maindf= maindf[maindf['DestIp'] != '']
+
+        tempdf = pd.DataFrame()
+        tempdf['DestName '] = maindf['DestName']
+        tempdf['DestIp'] = maindf['DestIp']
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
+        result['DestIp'] = tempdf['DestIp']
+        
+        return result.to_dict(orient='records')
     
 
     def _get_main_dataframe(self, kql_query, start_time, end_time) -> pd.DataFrame:

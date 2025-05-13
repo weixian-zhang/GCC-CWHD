@@ -36,8 +36,10 @@ class NetworkMapCategory:
         self.name = ''
 
 class NetworkMapResult:
-    def __init__(self, nodes, edges, categories):
+    def __init__(self, nodes, edges, categories, unique_src_ip, unique_dest_ip):
         self.nodes = nodes
         self.edges = edges
         self.categories = categories
+        self.unique_src_ip = unique_src_ip
+        self.unique_dest_ip = unique_dest_ip
         
