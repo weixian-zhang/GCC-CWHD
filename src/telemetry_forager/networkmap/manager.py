@@ -18,7 +18,9 @@ import json
 import time
 
 
-maindf_cache = pd.DataFrame
+maindf_cache = pd.DataFrame # TBD to remove
+maindf_srcip_cache = {}
+maindf_destip_cache = {}
 
 filter_data_fetcher_wait_for_maindf_sec = 30
 maindf_in_progress = False
@@ -67,15 +69,17 @@ class NetworkMapManager:
                                df = False,
                                current_data_key = '') -> NetworkMapResult:
         
-        
+        global maindf_srcip_cache, maindf_destip_cache
+
         try:
-            global maindf_in_progress, maindf_completed, global_current_data_key
+            
+            #global maindf_in_progress, maindf_completed, global_current_data_key
 
             # other filter data fetcher will wait for this function to set global data key
-            global_current_data_key = current_data_key
-            self._set_maindf_cache(pd.DataFrame())
-            maindf_in_progress = True
-            maindf_completed = False
+            # global_current_data_key = current_data_key
+            # self._set_maindf_cache(pd.DataFrame())
+            # maindf_in_progress = True
+            # maindf_completed = False
             
 
             kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
@@ -109,7 +113,10 @@ class NetworkMapManager:
 
         
             #cache maindf for filter data use
-            self._set_maindf_cache(maindf)
+            #self._set_maindf_cache(maindf)
+            
+            maindf_srcip_cache[current_data_key] = maindf
+            maindf_destip_cache[current_data_key] = maindf
 
             maindf_in_progress = False
             maindf_completed = True
@@ -524,8 +531,15 @@ class NetworkMapManager:
                                wait_for_maindf=True,
                                current_data_key='') -> pd.DataFrame:
         
+        global maindf_srcip_cache
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, 
+                                                            end_time, 
+                                                            flow_types, 
+                                                            flow_direction, 
+                                                            wait_for_maindf,
+                                                            maindf_srcip_cache,
+                                                            current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
         
@@ -540,10 +554,8 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SrcIp'] = tempdf['SrcIp']
 
-        # result.loc[-1] = ['all', 'all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        
+        maindf_srcip_cache = {}
         
         return result.to_dict(orient='records')
     
@@ -664,9 +676,15 @@ class NetworkMapManager:
         '''
         wait_for_maindf is mainly for testing this function without having to call 
         '''
+        global maindf_destip_cache
 
-
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, 
+                                                            end_time, 
+                                                            flow_types, 
+                                                            flow_direction, 
+                                                            wait_for_maindf,
+                                                            maindf_destip_cache,
+                                                            current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
 
@@ -684,10 +702,8 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['DestIp'] = tempdf['DestIp']
 
-        # result.loc[-1] = ['all', 'all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        
+        maindf_destip_cache = {}
         
         return result.to_dict(orient='records')
     
@@ -698,26 +714,29 @@ class NetworkMapManager:
         global maindf_cache
         maindf_cache = maindf
 
-    def _get_maindf_cache(self) -> list[bool,pd.DataFrame]:
+    def _get_maindf_cache(self, cache, current_data_key) -> list[bool,pd.DataFrame]:
         
-        if maindf_cache.empty:
-            return False, maindf_cache
+        if current_data_key in cache:
+            return True, cache[current_data_key]
             
-        return True, maindf_cache
+        return False, pd.DataFrame()
     
     def _get_maindf_from_cache_for_filter(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
                                wait_for_maindf=True,
+                               cache = {},
                                current_data_key='') -> pd.DataFrame:
         
-        if wait_for_maindf:
-            self._wait_for_maindf(current_data_key)
-        else:
-            self.get_network_map(start_time, end_time, flow_types, flow_direction)
+        maindf = pd.DataFrame()
 
-        ok, maindf = self._get_maindf_cache()
+        if wait_for_maindf:
+            self._wait_for_maindf(cache, current_data_key)
+        else:
+            maindf = self.get_network_map(start_time, end_time, flow_types, flow_direction)
+
+        ok, maindf = self._get_maindf_cache(cache, current_data_key)
         
         if not ok:
             return False, pd.DataFrame()
@@ -725,7 +744,7 @@ class NetworkMapManager:
         return True, maindf
         
         
-    def _wait_for_maindf(self, current_data_key):
+    def _wait_for_maindf(self, cache, current_data_key):
         '''
         a critical function used by "get filter data" functions to wait for maindf cache to be completed
         handles 2 scenario:
@@ -737,7 +756,8 @@ class NetworkMapManager:
         waited_sec = 0
         should_wait_until = filter_data_fetcher_wait_for_maindf_sec
         
-        while current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
+        while current_data_key not in cache:
+        #current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
             
             # waited more than 7 secs, break out
             if waited_sec >= should_wait_until:
