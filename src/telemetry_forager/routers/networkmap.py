@@ -78,6 +78,38 @@ def get_src_subscription(body: FilterDataRequestBody, response: fastapi.Response
                                   current_data_key=body.current_data_key)
     return result
 
+@router.post("/api/nmap/src/flowtypes", status_code=200, response_model=None)
+def get_src_rg(response: fastapi.Response) -> dict:
+    return [
+        	{
+		        "DisplayName": "IntraVNet"
+            },
+            {
+                "DisplayName": "InterVNet"
+            },
+            {
+                "DisplayName": "AzurePublic"
+            },
+            {
+                "DisplayName": "ExternalPublic"
+            },
+            {
+                "DisplayName": "S2S"
+            },
+            {
+                "DisplayName": "P2P"
+            },
+            {
+                "DisplayName": "UnknownPrivate"
+            },
+            {
+                "DisplayName": "Unknown"
+            },
+            {
+                "DisplayName": "MaliciousFlow"
+            }
+    ]
+
 
 @router.post("/api/nmap/src/rg", status_code=200, response_model=None)
 def get_src_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
