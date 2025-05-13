@@ -1,3 +1,36 @@
+context.grafana.eventBus.subscribe({ type: "variables-changed" }, () => {
+  console.log("var changed");
+});
+
+// refresh dashbaord to refresh echart panel
+//neededdue to variable dependency makes panel fire request last while other filter data requests get fired first
+var flowTypeVar = context.grafana.replaceVariables('${flowTypes:doublequote}');
+
+if (!window.oldFlowType) {
+  window.oldFlowType = flowTypeVar
+  console.log(`1st time flow type changed, ${window.oldFlowType}`)
+}
+else if (window.oldFlowType != flowTypeVar) {
+  console.log(`subsequent time flow type changed, ${flowTypeVar}..refresh dashboard as flow type has changed`);
+  window.oldFlowType = flowTypeVar;
+  context.grafana.refresh();
+}
+
+var flowDirectionVar = context.grafana.replaceVariables('$flowDirection');
+
+if (!window.oldFlowDirection) {
+  window.oldFlowDirection = flowDirectionVar
+  console.log(`1st time flow direction changed, ${window.oldFlowDirection}`)
+}
+else if (window.oldFlowDirection != flowDirectionVar) {
+  console.log(`subsequent time flow direction changed, ${flowDirectionVar}..refresh dashboard as flow type has changed`);
+  window.oldFlowDirection = flowDirectionVar;
+  context.grafana.refresh();
+}
+
+
+// echarts starts here
+
 
 var nodes = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[2].values[0]);
 var edges = !context.panel.data.series[0].fields ? [] : JSON.parse(context.panel.data.series[0].fields[1].values[0]);
@@ -23,7 +56,7 @@ return {
     //formatter: (params) => '<div>' + 'subnet: ' + params.data.subnet + '</div>' + '<div>' + 'vnet: ' + params.data.vnet + '</div>',
     //valueFormatter: (params) => '<div>' + params.data.src_to_dest_data_size + '</div>'
   },
-  animationDurationUpdate: 1000,
+  animationDurationUpdate: 100,
   animationEasingUpdate: 'linear',
   legend: [
     {
@@ -170,8 +203,11 @@ return {
             var connectionType = ((params.data.connectionType), `<div>connection type:&nbsp ${params.data.connectionType}<div>`, '');
             var nsg = ((params.data.nsg) ? `<div>NSG:&nbsp${params.data.nsg}</div>` : '');
             var nsgRule = ((params.data.nsgRule) ? `<div>NSG Rule:&nbsp${params.data.nsgRule}</div>` : '');
+            var isUDRHop = ((params.data.isUDRHop) ? `<div>is udr routed:&nbsp${params.data.isUDRHop}</div>` : '');
 
-            return timeGenerated + dataSize + flowType + protocol + connectionType + nsg + nsgRule
+
+
+            return timeGenerated + dataSize + flowType + protocol + connectionType + nsg + nsgRule + isUDRHop;
           }
         },
 

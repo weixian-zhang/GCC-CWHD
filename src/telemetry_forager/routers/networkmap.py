@@ -17,24 +17,24 @@ class NetworkMapRequestBody(BaseModel):
     endTime: datetime
     flowTypes: list[str] = []
     flowDirection: str = 'all'
-    srcSubscription: str = 'all'
-    srcRG: str = 'all'
-    destSubscription: str = 'all'
-    destRG: str = 'all'
-    srcVNet: str = 'all'
-    destVNet: str = 'all'
-    srcSubnet: str = 'all'
-    destSubnet: str = 'all'
-    srcIP: str = 'all'
-    destIP: str = 'all'
+    srcSubscription: list[str] = []
+    srcRG: list[str] = []
+    destSubscription: list[str] = []
+    destRG: list[str] = []
+    srcVNet: list[str] = []
+    destVNet: list[str] = []
+    srcSubnet: list[str] = []
+    destSubnet: list[str] = []
+    srcIP: list[str] = []
+    destIP: list[str] = []
     current_data_key: str = ''
 
 class FilterDataRequestBody(BaseModel):
-  startTime: datetime
-  endTime: datetime
-  flowTypes: list[str] = []
-  flowDirection: str = 'all'
-  wait_for_maindf: bool = True
+#   startTime: datetime
+#   endTime: datetime
+#   flowTypes: list[str] = []
+#   flowDirection: str = 'all'
+#   wait_for_maindf: bool = True
   current_data_key: str = ''
 
 
@@ -68,73 +68,22 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
 @router.post("/api/nmap/src/subscription", status_code=200, response_model=None)
 def get_src_subscription(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
     
-    return {}
-
-    result = nmap.get_unique_src_subscription(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_src_subscription(current_data_key=body.current_data_key)
     return result
-
-@router.post("/api/nmap/src/flowtypes", status_code=200, response_model=None)
-def get_src_rg(response: fastapi.Response) -> dict:
-    return [
-        	{
-		        "DisplayName": "IntraVNet"
-            },
-            {
-                "DisplayName": "InterVNet"
-            },
-            {
-                "DisplayName": "AzurePublic"
-            },
-            {
-                "DisplayName": "ExternalPublic"
-            },
-            {
-                "DisplayName": "S2S"
-            },
-            {
-                "DisplayName": "P2P"
-            },
-            {
-                "DisplayName": "UnknownPrivate"
-            },
-            {
-                "DisplayName": "Unknown"
-            },
-            {
-                "DisplayName": "MaliciousFlow"
-            }
-    ]
 
 
 @router.post("/api/nmap/src/rg", status_code=200, response_model=None)
 def get_src_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return {}
 
-    result = nmap.get_unique_src_rg(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_src_rg(current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/src/vnet", status_code=200, response_model=None)
 def get_src_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return {}
 
-    result = nmap.get_unique_src_vnet(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_src_vnet(current_data_key=body.current_data_key)
     return result
 
 
@@ -142,14 +91,7 @@ def get_src_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dic
 @router.post("/api/nmap/src/subnet", status_code=200, response_model=None)
 def get_src_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return {}
-
-    result = nmap.get_unique_src_subnet(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_src_subnet(current_data_key=body.current_data_key)
     return result
 
 
@@ -157,74 +99,38 @@ def get_src_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> d
 # def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 def get_src_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-
-    result = nmap.get_unique_src_ip(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
-
+    result = nmap.get_unique_src_ip(current_data_key=body.current_data_key)
     return result
 
 
 @router.post("/api/nmap/dest/subscription", status_code=200, response_model=None)
 def get_dest_subscription(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return {}
 
-    result = nmap.get_unique_dest_subscription(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_dest_subscription(current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/rg", status_code=200, response_model=None)
 def get_dest_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return {}
-
-    result = nmap.get_unique_dest_rg(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_dest_rg(current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/vnet", status_code=200, response_model=None)
 def get_dest_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
-    result = nmap.get_unique_dest_vnet(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+
+    result = nmap.get_unique_dest_vnet(current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/subnet", status_code=200, response_model=None)
 def get_dest_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return {}
-
-    result = nmap.get_unique_dest_subnet(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_dest_subnet(current_data_key=body.current_data_key)
     return result
 
 @router.post("/api/nmap/dest/ip", status_code=200, response_model=None)
 def get_dest_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    result = nmap.get_unique_dest_ip(start_time=body.startTime,
-                                  end_time=body.endTime,
-                                  flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection,
-                                  wait_for_maindf=body.wait_for_maindf,
-                                  current_data_key=body.current_data_key)
+    result = nmap.get_unique_dest_ip(current_data_key=body.current_data_key)
 
     return result

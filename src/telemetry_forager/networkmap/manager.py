@@ -19,7 +19,15 @@ import time
 
 
 maindf_cache = pd.DataFrame # TBD to remove
+maindf_srcsub_cache = {}
+maindf_srcrg_cache = {}
+maindf_srcvnet_cache = {}
+maindf_srcsubnet_cache = {}
 maindf_srcip_cache = {}
+maindf_destsub_cache = {}
+maindf_destrg_cache = {}
+maindf_destvnet_cache = {}
+maindf_destsubnet_cache = {}
 maindf_destip_cache = {}
 
 filter_data_fetcher_wait_for_maindf_sec = 30
@@ -56,20 +64,29 @@ class NetworkMapManager:
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
-                               src_subscrition: str = 'all',
-                               dest_subscription: str = 'all',
-                               src_rg: str = 'all',
-                               dest_rg: str = 'all',
-                               src_vnet: str = 'all',
-                               dest_vnet: str = 'all',
-                               src_subnet: str = 'all',
-                               dest_subnet: str = 'all',
-                               src_ip: str = 'all',
-                               dest_ip: str = 'all',
+                               src_subscrition: list[str] = [],
+                               dest_subscription: list[str] = [],
+                               src_rg: list[str] = [],
+                               dest_rg: list[str] = [],
+                               src_vnet: list[str] = [],
+                               dest_vnet: list[str] = [],
+                               src_subnet: list[str] = [],
+                               dest_subnet: list[str] = [],
+                               src_ip: list[str] = [],
+                               dest_ip: list[str] = [],
                                df = False,
                                current_data_key = '') -> NetworkMapResult:
         
-        global maindf_srcip_cache, maindf_destip_cache
+        global maindf_srcsub_cache
+        global maindf_srcrg_cache
+        global maindf_srcvnet_cache
+        global maindf_srcsubnet_cache
+        global maindf_srcip_cache
+        global maindf_destsub_cache
+        global maindf_destrg_cache
+        global maindf_destvnet_cache
+        global maindf_destsubnet_cache
+        global maindf_destip_cache
 
         try:
             
@@ -82,14 +99,15 @@ class NetworkMapManager:
             # maindf_completed = False
             
 
-            kql_query = self.kql.vnet_flow_without_externalpublic_malicious_query(flow_types=flow_types)
+            kql_query = self.kql.vnet_flow_logs_kql(flow_types=flow_types, flow_direction=flow_direction)
+
 
             maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
 
         
             self._resolve_src_dest_name_for_known_traffic(maindf)
 
-            maindf = self._apply_filter_flow_direction(maindf, flow_direction)
+            #maindf = self._apply_filter_flow_direction(maindf, flow_direction)
 
             maindf = self._apply_filter_src_subscription(maindf, src_subscrition)
 
@@ -111,15 +129,18 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
-        
-            #cache maindf for filter data use
-            #self._set_maindf_cache(maindf)
-            
+            # hydrate cache
+            maindf_srcsub_cache[current_data_key] = maindf
+            maindf_srcrg_cache[current_data_key] = maindf
+            maindf_srcvnet_cache[current_data_key] = maindf
+            maindf_srcsubnet_cache[current_data_key] = maindf
             maindf_srcip_cache[current_data_key] = maindf
+            maindf_destsub_cache[current_data_key] = maindf
+            maindf_destrg_cache[current_data_key] = maindf
+            maindf_destvnet_cache[current_data_key] = maindf
+            maindf_destsubnet_cache[current_data_key] = maindf
             maindf_destip_cache[current_data_key] = maindf
 
-            maindf_in_progress = False
-            maindf_completed = True
 
             nodes = self._create_echart_nodes(maindf=maindf)
             edges = self._create_echart_edges(maindf=maindf)
@@ -173,7 +194,7 @@ class NetworkMapManager:
         dest_nodes_final_df['maliciousDestPIPThreatDescription'] = maindf['Malicious_DestPIP_ThreatDescription']
 
 
-        # # #id,title,subtitle,mainstat,secondarystat,color
+        # id,title,subtitle,mainstat,secondarystat,color
         combined_list = [src_nodes_final_df, dest_nodes_final_df]
 
         final_nodes_df = pd.concat(combined_list)
@@ -346,87 +367,110 @@ class NetworkMapManager:
         
         return maindf[maindf['FlowDirection'] == flow_direction]     
 
-    def _apply_filter_src_subscription(self, maindf: pd.DataFrame, sub) -> pd.DataFrame:
+    def _apply_filter_src_subscription(self, maindf: pd.DataFrame, subs: list[str]) -> pd.DataFrame:
 
-        if sub == 'all':
+        if not subs or len(subs) == 1 and subs[0] == 'all':
             return maindf
         
-        return maindf[maindf['SrcSubscription'] == sub]
+        subs = [x.lower() for x in subs]
+        
+        return maindf[maindf['SrcSubscription'].isin(subs)]
+        
+        #return maindf[maindf['SrcSubscription'] == sub]
     
-    def _apply_filter_src_rg(self, maindf: pd.DataFrame, rg) -> pd.DataFrame:
+    def _apply_filter_src_rg(self, maindf: pd.DataFrame, rgs: list[str]) -> pd.DataFrame:
 
-        if rg == 'all':
+        if not rgs or len(rgs) == 1 and rgs[0] == 'all':
             return maindf
         
-        return maindf[maindf['SrcRG'].str.lower() == rg.lower()]
+        rgs = [x.lower() for x in rgs]
+        
+        return maindf[maindf['SrcRG'].str.lower() == rgs.lower()]
     
 
-    def _apply_filter_dest_subscription(self, maindf: pd.DataFrame, sub) -> pd.DataFrame:
+    def _apply_filter_dest_subscription(self, maindf: pd.DataFrame, subs) -> pd.DataFrame:
 
-        if sub == 'all':
+        if not subs or len(subs) == 1 and subs[0] == 'all':
             return maindf
         
-        return maindf[maindf['DestSubscription'] == sub]
-    
-    def _apply_filter_dest_rg(self, maindf: pd.DataFrame, rg) -> pd.DataFrame:
+        subs = [x.lower() for x in subs]
 
-        if rg == 'all':
+        return maindf[maindf['DestSubscription'].isin(subs)]
+    
+    def _apply_filter_dest_rg(self, maindf: pd.DataFrame, rgs) -> pd.DataFrame:
+
+        if not rgs or len(rgs) == 1 and rgs[0] == 'all':
             return maindf
         
-        return maindf[maindf['DestRG'].str.lower() == rg.lower()]
+        rgs = [x.lower() for x in rgs]
+        
+        return maindf[maindf['DestRG'].isin(rgs)]
     
     
-    def _apply_filter_src_vnet(self, maindf: pd.DataFrame, src_vnet) -> pd.DataFrame:
+    def _apply_filter_src_vnet(self, maindf: pd.DataFrame, src_vnets) -> pd.DataFrame:
 
-        if src_vnet == 'all':
+        if not src_vnets or len(src_vnets) == 1 and src_vnets[0] == 'all':
             return maindf
         
-        return maindf[maindf['SrcVNet'].str.lower() == src_vnet.lower()]
+        src_vnets = [x.lower() for x in src_vnets]
+        
+        return  maindf[maindf['SrcVNet'].isin(src_vnets)]
     
-    def _apply_filter_src_subnet(self, maindf: pd.DataFrame, src_subnet) -> pd.DataFrame:
+    def _apply_filter_src_subnet(self, maindf: pd.DataFrame, src_subnets) -> pd.DataFrame:
 
-        if src_subnet == 'all':
+        if not src_subnets or len(src_subnets) == 1 and src_subnets[0] == 'all':
             return maindf
         
-        return maindf[maindf['SrcSubnetName'].str.lower() == src_subnet.lower()]
+        src_subnets = [x.lower() for x in src_subnets]
+        
+        return  maindf[maindf['SrcSubnetName'].isin(src_subnets)]
+        
     
-    def _apply_filter_dest_vnet(self, maindf: pd.DataFrame, dest_vnet) -> pd.DataFrame:
+    def _apply_filter_dest_vnet(self, maindf: pd.DataFrame, dest_vnets) -> pd.DataFrame:
 
-        if dest_vnet == 'all':
+        if not dest_vnets or len(dest_vnets) == 1 and dest_vnets[0] == 'all':
             return maindf
         
-        return maindf[maindf['DestVNet'].str.lower() == dest_vnet.lower()]
+        dest_vnets = [x.lower() for x in dest_vnets]
+        
+        return  maindf[maindf['DestVNet'].isin(dest_vnets)]
+        
     
-    def _apply_filter_dest_subnet(self, maindf: pd.DataFrame, dest_subnet) -> pd.DataFrame:
+    def _apply_filter_dest_subnet(self, maindf: pd.DataFrame, dest_subnets) -> pd.DataFrame:
 
-        if dest_subnet == 'all':
+        if not dest_subnets or len(dest_subnets) == 1 and dest_subnets[0] == 'all':
             return maindf
         
-        return maindf[maindf['DestSubnetName'].str.lower() == dest_subnet.lower()]
+        dest_subnets = [x.lower() for x in dest_subnets]
+        
+        return  maindf[maindf['DestSubnetName'].isin(dest_subnets)]
+        
     
-    def _apply_filter_src_ip(self, maindf: pd.DataFrame, src_ip) -> pd.DataFrame:
+    def _apply_filter_src_ip(self, maindf: pd.DataFrame, src_ips) -> pd.DataFrame:
 
-        if src_ip == 'all':
+        if not src_ips or len(src_ips) == 1 and src_ips[0] == 'all':
             return maindf
         
-        return maindf[maindf['SrcIp'] == src_ip]
+        src_ips = [x.lower() for x in src_ips]
+        
+        return  maindf[maindf['SrcIp'].isin(src_ips)]
+        
     
-    def _apply_filter_dest_ip(self, maindf: pd.DataFrame, dest_ip) -> pd.DataFrame:
+    def _apply_filter_dest_ip(self, maindf: pd.DataFrame, dest_ips) -> pd.DataFrame:
 
-        if dest_ip == 'all':
+        if not dest_ips or len(dest_ips) == 1 and dest_ips[0] == 'all':
             return maindf
         
-        return maindf[maindf['DestIp'] == dest_ip]
+        dest_ips = [x.lower() for x in dest_ips]
+        
+        return  maindf[maindf['DestIp'].isin(dest_ips)]
     
 
-    def get_unique_src_subscription(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_src_subscription(self, current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_srcsub_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_srcsub_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
 
@@ -438,18 +482,16 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['SrcSubscription']
 
+        maindf_srcsub_cache = {}
 
         return result.to_dict(orient='records')
     
     
-    def get_unique_src_rg(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_src_rg(self, current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_srcrg_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_srcrg_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
         
@@ -459,47 +501,35 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['SrcRG']
 
-        # result.loc[-1] = ['all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        maindf_srcrg_cache = {}
         
         return result.to_dict(orient='records')
     
 
-    def get_unique_src_vnet(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_src_vnet(self, current_data_key='') -> pd.DataFrame:
+       
+       global maindf_srcvnet_cache
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
-        if not ok:
+       ok, maindf = self._get_maindf_from_cache_for_filter(maindf_srcvnet_cache, current_data_key)
+       if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
                     
-        tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
-        tempdf = tempdf[tempdf['SrcVNet'] != '']
+       tempdf = maindf.drop_duplicates('SrcVNet', keep='first')
+       tempdf = tempdf[tempdf['SrcVNet'] != '']
 
-        result = pd.DataFrame()
-        result['DisplayName'] = tempdf['SrcVNet']
+       result = pd.DataFrame()
+       result['DisplayName'] = tempdf['SrcVNet']
 
-        # result.loc[-1] = ['all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+       maindf_srcvnet_cache = {}
         
-        return result.to_dict(orient='records')
+       return result.to_dict(orient='records')
     
 
-    def get_unique_src_subnet(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_src_subnet(self, current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_srcsubnet_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_srcsubnet_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
         
@@ -516,30 +546,16 @@ class NetworkMapManager:
         result['DisplayName'] = temp_result.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SubnetName'] = temp_result['SrcSubnetName']
 
-        # result.loc[-1] = ['all', 'all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        maindf_srcsubnet_cache = {}
         
         return result.to_dict(orient='records')
     
 
-    def get_unique_src_ip(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_src_ip(self, current_data_key='') -> pd.DataFrame:
         
         global maindf_srcip_cache
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, 
-                                                            end_time, 
-                                                            flow_types, 
-                                                            flow_direction, 
-                                                            wait_for_maindf,
-                                                            maindf_srcip_cache,
-                                                            current_data_key)
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_srcip_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
         
@@ -559,14 +575,11 @@ class NetworkMapManager:
         
         return result.to_dict(orient='records')
     
-    def get_unique_dest_subscription(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_dest_subscription(self,current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_destsub_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_destsub_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
 
@@ -577,21 +590,15 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['DestSubscription']
 
-        # result.loc[-1] = ['all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        maindf_destsub_cache = {}
         
         return result.to_dict(orient='records')
 
-    def get_unique_dest_rg(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_dest_rg(self, current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_destrg_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_destrg_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
         
@@ -602,22 +609,16 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['DestRG']
 
-        # result.loc[-1] = ['all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        maindf_destrg_cache = {}
         
         return result.to_dict(orient='records')
     
 
-    def get_unique_dest_vnet(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_dest_vnet(self, current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_destvnet_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_destvnet_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
 
@@ -628,22 +629,16 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf['DestVNet']
 
-        # result.loc[-1] = ['all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        maindf_destvnet_cache = {}
         
         return result.to_dict(orient='records')
     
 
-    def get_unique_dest_subnet(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_dest_subnet(self, current_data_key='') -> pd.DataFrame:
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, end_time, flow_types, flow_direction, wait_for_maindf,current_data_key)
+        global maindf_destsubnet_cache
+
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_destsubnet_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
 
@@ -660,31 +655,17 @@ class NetworkMapManager:
         result['DisplayName'] = temp_result.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['SubnetName'] = temp_result['DestSubnetName']
 
-        # result.loc[-1] = ['all', 'all']  # adding a row
-        # result.index = result.index + 1  # shifting index
-        # result.sort_index(inplace=True) 
-        # result.reset_index(drop=True)  # reset index
+        maindf_destsubnet_cache = {}
         
         return result.to_dict(orient='records')
     
-    def get_unique_dest_ip(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               current_data_key='') -> pd.DataFrame:
+    def get_unique_dest_ip(self, current_data_key='') -> pd.DataFrame:
         '''
         wait_for_maindf is mainly for testing this function without having to call 
         '''
         global maindf_destip_cache
 
-        ok, maindf = self._get_maindf_from_cache_for_filter(start_time, 
-                                                            end_time, 
-                                                            flow_types, 
-                                                            flow_direction, 
-                                                            wait_for_maindf,
-                                                            maindf_destip_cache,
-                                                            current_data_key)
+        ok, maindf = self._get_maindf_from_cache_for_filter(maindf_destip_cache, current_data_key)
         if not ok:
             return {'status': 'timeout as maindf took too long to complete'}
 
@@ -721,27 +702,16 @@ class NetworkMapManager:
             
         return False, pd.DataFrame()
     
-    def _get_maindf_from_cache_for_filter(self, start_time: datetime, 
-                               end_time: datetime,
-                               flow_types: list[str] = [],
-                               flow_direction: str = 'all',
-                               wait_for_maindf=True,
-                               cache = {},
-                               current_data_key='') -> pd.DataFrame:
+    def _get_maindf_from_cache_for_filter(self, cache = {}, current_data_key='') -> pd.DataFrame:
         
-        maindf = pd.DataFrame()
+        # wait for get_network_map to complete fetching data and hydrating cache
+        self._wait_for_maindf(cache, current_data_key)
 
-        if wait_for_maindf:
-            self._wait_for_maindf(cache, current_data_key)
-        else:
-            maindf = self.get_network_map(start_time, end_time, flow_types, flow_direction)
+        if current_data_key in cache:
+            return True, cache[current_data_key]
 
-        ok, maindf = self._get_maindf_cache(cache, current_data_key)
-        
-        if not ok:
-            return False, pd.DataFrame()
-        
-        return True, maindf
+
+        return False, pd.DataFrame()
         
         
     def _wait_for_maindf(self, cache, current_data_key):
@@ -757,7 +727,6 @@ class NetworkMapManager:
         should_wait_until = filter_data_fetcher_wait_for_maindf_sec
         
         while current_data_key not in cache:
-        #current_data_key != global_current_data_key or (maindf_in_progress and not maindf_completed):
             
             # waited more than 7 secs, break out
             if waited_sec >= should_wait_until:

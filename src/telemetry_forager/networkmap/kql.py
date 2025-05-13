@@ -13,10 +13,13 @@ class NetworkMapKQL:
       '''
 
     @staticmethod
-    def vnet_flow_without_externalpublic_malicious_query(flow_types: list[str] = []):
+    def vnet_flow_logs_kql(flow_types: list[str] = [], flow_direction: str = 'all') -> str:
 
       ft = ', '.join([f"'{flow_type}'" for flow_type in flow_types])
       flowType = ft if flow_types else "''"
+
+      if flow_direction == 'all':
+        flowDirection = "'Inbound', 'Outbound'"
 
       return f'''
 
@@ -30,7 +33,8 @@ NTANetAnalytics
 | where (FlowType != '' and SubType == 'FlowLog')
 
 
-| where FlowType in ({flowType})
+| where FlowType in ({flowType}) 
+| where FlowDirection in ({flowDirection})
 
 | take 4000
 
