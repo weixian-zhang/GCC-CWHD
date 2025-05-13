@@ -59,8 +59,7 @@ class NetworkMapManager:
         # dest_ip: str = 'all'
 
 
-    def get_network_map(self, 
-                               start_time: datetime, 
+    def get_network_map(self,  start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
                                flow_direction: str = 'all',
@@ -98,8 +97,9 @@ class NetworkMapManager:
             # maindf_in_progress = True
             # maindf_completed = False
             
+            row_limit = self.config.networkMap_VNetFlowLog_Limit_Rows
 
-            kql_query = self.kql.vnet_flow_logs_kql(flow_types=flow_types, flow_direction=flow_direction)
+            kql_query = self.kql.vnet_flow_logs_kql(flow_types=flow_types, flow_direction=flow_direction, row_limit=row_limit)
 
 
             maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)

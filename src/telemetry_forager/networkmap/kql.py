@@ -13,7 +13,7 @@ class NetworkMapKQL:
       '''
 
     @staticmethod
-    def vnet_flow_logs_kql(flow_types: list[str] = [], flow_direction: str = 'all') -> str:
+    def vnet_flow_logs_kql(flow_types: list[str] = [], flow_direction: str = 'all', row_limit=8000) -> str:
 
       ft = ', '.join([f"'{flow_type}'" for flow_type in flow_types])
       flowType = ft if flow_types else "''"
@@ -36,7 +36,7 @@ NTANetAnalytics
 | where FlowType in ({flowType}) 
 | where FlowDirection in ({flowDirection})
 
-| take 4000
+| take {row_limit}
 
 | extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
 | extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
