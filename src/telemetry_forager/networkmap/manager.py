@@ -406,7 +406,6 @@ class NetworkMapManager:
         return result.to_dict(orient='records')
     
     def _create_unique_dest_ip(self, maindf: pd.DataFrame) -> dict:
-        maindf = maindf.drop_duplicates(subset=['SrcIp', 'DestIp'], keep='first')
         
         maindf = maindf.drop_duplicates('DestIp', keep='first')
         maindf= maindf[maindf['DestIp'] != '']
