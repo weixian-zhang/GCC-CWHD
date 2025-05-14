@@ -563,7 +563,7 @@ class NetworkMapManager:
         
         rgs = [x.lower() for x in rgs]
         
-        return maindf[maindf['SrcRG'].str.lower() == rgs.lower()]
+        return maindf[maindf['SrcRG'].str.lower().isin(rgs)]
     
     def _apply_filter_dest_subscription(self, maindf: pd.DataFrame, subs) -> pd.DataFrame:
 
