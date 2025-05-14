@@ -430,7 +430,7 @@ class NetworkMapManager:
             # update SrcName with Subnet name if SrcName is empty        
             df['SrcName'] = df.apply(lambda x: x['SrcSubnetName'] if x['SrcName']=='' else x['SrcName'], axis=1)
 
-            maindf = df.drop_duplicates(subset=['SrcName', 'DestName'])
+            maindf = df.drop_duplicates(subset=['SrcIp', 'DestIp']) #df.drop_duplicates(subset=['SrcName', 'DestName'])
 
             maindf['timeGenerated'] = maindf['TimeGenerated'].dt.strftime('%a %d %b %Y %H:%M:%S')
 
