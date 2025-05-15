@@ -476,43 +476,33 @@ class NetworkMapManager:
             return {}
         
 
-    def _get_existing_vnets(self) -> pd.DataFrame:
+    def _get_existing_vnets(self):
+            
+            # get subscription ids
+            sub_client = SubscriptionClient(self.azcred)
+            subscription_list = sub_client.subscriptions.list()
+            subids = [item.subscription_id for item in subscription_list]
 
-        # get subscription ids
-        sub_client = SubscriptionClient(self.azcred)
-        subscription_list = sub_client.subscriptions.list()
-        subids = [item.subscription_id for item in subscription_list]
+            resourcegraph_client = ResourceGraphClient(credential=self.azcred)
 
-        resourcegraph_client = ResourceGraphClient(credential=self.azcred)
-
-        kql_query = self.kql.vnet_resource_graph_query()
-
-        # Create Azure Resource Graph client and set options
-        query = QueryRequest(
-                    query=kql_query,
-                    subscriptions=subids,
-                    options=QueryRequestOptions(
-                        result_format=ResultFormat.TABLE
-                    )
-                )
-        query_response = resourcegraph_client.resources(query)
-
-
-        data_cols = [x['name'] for x in query_response.data['columns']]
-        data_row = query_response.data['rows']
-        vnet_subnet_names = pd.DataFrame(data_row, columns=data_cols)
-
-    
-        vnet_subnet_names = pd.DataFrame()
-
-        if self.config.networkmap_workspace_id:
             kql_query = self.kql.vnet_resource_graph_query()
-            response =  self.rg_client.resources(query=kql_query)
-            vnet_subnet_names = pd.DataFrame(data=response.data, columns=response.columns)
 
-        return vnet_subnet_names
-        
+            # Create Azure Resource Graph client and set options
+            query = QueryRequest(
+                        query=kql_query,
+                        subscriptions=subids,
+                        options=QueryRequestOptions(
+                            result_format=ResultFormat.TABLE
+                        )
+                    )
+            query_response = resourcegraph_client.resources(query)
 
+
+            data_cols = [x['name'] for x in query_response.data['columns']]
+            data_row = query_response.data['rows']
+            vnets = pd.DataFrame(data_row, columns=data_cols)
+
+            return vnets
 
     def _resolve_src_dest_name_for_unknown_traffic(self, maindf: pd.DataFrame):
         """
@@ -522,7 +512,7 @@ class NetworkMapManager:
 
         try:
 
-            vnet_subnet_names = self._get_existing_vnets()
+            vnets = self._get_existing_vnets()
 
             # resolve vnet name and subnet name in maind from existing vnets
             for index, ukprow in maindf.iterrows():
@@ -533,7 +523,7 @@ class NetworkMapManager:
                 destname= ukprow['DestName']
 
                 if srcname == '':
-                    for index, vnet_subnet in vnet_subnet_names.iterrows():
+                    for index, vnet_subnet in vnets.iterrows():
                         subnet_cidr = vnet_subnet['SubnetAddressPrefix']
                         vnet_name = vnet_subnet['VNet']
                         subnet_name = vnet_subnet['SubnetName']
@@ -545,7 +535,7 @@ class NetworkMapManager:
                             break
                     
                 if destname == '':
-                    for index, vnet_subnet in vnet_subnet_names.iterrows():
+                    for index, vnet_subnet in vnets.iterrows():
                         subnet_cidr = vnet_subnet['SubnetAddressPrefix']
                         vnet_name = vnet_subnet['VNet']
                         subnet_name = vnet_subnet['SubnetName']
