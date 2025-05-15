@@ -454,39 +454,39 @@ class NetworkMapManager:
 
         try:
 
-            # vnets = self._get_existing_vnets()
+            vnets = self._get_existing_vnets()
 
-            # # resolve vnet name and subnet name in maind from existing vnets
-            # for index, ukprow in maindf.iterrows():
+            # resolve vnet name and subnet name in maind from existing vnets
+            for index, ukprow in maindf.iterrows():
 
-            #     srcip = ukprow['SrcIp']
-            #     srcname = ukprow['SrcName']
-            #     destip = ukprow['DestIp']
-            #     destname= ukprow['DestName']
+                srcip = ukprow['SrcIp']
+                srcname = ukprow['SrcName']
+                destip = ukprow['DestIp']
+                destname= ukprow['DestName']
 
-            #     if srcname == '':
-            #         for index, vnet_subnet in vnets.iterrows():
-            #             subnet_cidr = vnet_subnet['SubnetAddressPrefix']
-            #             vnet_name = vnet_subnet['VNet']
-            #             subnet_name = vnet_subnet['SubnetName']
+                if srcname == '':
+                    for index, vnet_subnet in vnets.iterrows():
+                        subnet_cidr = vnet_subnet['SubnetAddressPrefix']
+                        vnet_name = vnet_subnet['VNet']
+                        subnet_name = vnet_subnet['SubnetName']
                     
-            #             if  ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cidr):
-            #                 maindf.at[index,'SrcVNet'] = vnet_name
-            #                 maindf.at[index,'SrcSubnetName'] = subnet_name
-            #                 maindf.at[index,'SrcName'] = 'unknown node in ' +  subnet_name
-            #                 break
+                        if  ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cidr):
+                            maindf.at[index,'SrcVNet'] = vnet_name
+                            maindf.at[index,'SrcSubnetName'] = subnet_name
+                            maindf.at[index,'SrcName'] = 'unknown node in ' +  subnet_name
+                            break
                     
-            #     if destname == '':
-            #         for index, vnet_subnet in vnets.iterrows():
-            #             subnet_cidr = vnet_subnet['SubnetAddressPrefix']
-            #             vnet_name = vnet_subnet['VNet']
-            #             subnet_name = vnet_subnet['SubnetName']
+                if destname == '':
+                    for index, vnet_subnet in vnets.iterrows():
+                        subnet_cidr = vnet_subnet['SubnetAddressPrefix']
+                        vnet_name = vnet_subnet['VNet']
+                        subnet_name = vnet_subnet['SubnetName']
 
-            #             if ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cidr):
-            #                 maindf.at[index,'DestVNet'] = vnet_name
-            #                 maindf.at[index,'DestSubnetName'] = subnet_name
-            #                 maindf.at[index,'DestName'] = 'unknown node in ' +  subnet_name
-            #                 break
+                        if ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cidr):
+                            maindf.at[index,'DestVNet'] = vnet_name
+                            maindf.at[index,'DestSubnetName'] = subnet_name
+                            maindf.at[index,'DestName'] = 'unknown node in ' +  subnet_name
+                            break
 
 
             maindf['SrcName'] = maindf.apply(lambda x: 'Unknown' if x['SrcName'] == '' else x['SrcName'], axis=1)
