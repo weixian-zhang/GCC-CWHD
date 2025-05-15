@@ -136,7 +136,6 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 ### WARA Dashboard ([pending update due to WARA module changed](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/#quick-workflow-example))
 
-With version [0.2-wara-preview](https://github.com/weixian-zhang/GCC-CWHD/tree/cwhd-wara.v0.2-preview_130325) ([docker pull wxzd/cwhd:v0.2.0-wara-preview_130325](https://hub.docker.com/repository/docker/wxzd/cwhd/tags/v0.2.0-wara-preview_130325/sha256:7ff2fb139c5b5f1a497a6dae844016abad2b3adb4d34aee1b2e5383b657b7509)),  
 CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability states of your Azure environment.
 <p>
  Under the hood, on every WARA run, CWHD downloads the latest copy of <a href="https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector">collector.ps1</a> and <a href="https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/analyzer">analyzer.ps1</a> and executes these 2 scripts to produce assessment result.  
@@ -156,7 +155,7 @@ Able to select by past and latest reports and filter by subscription
 
 ### Network Map (Preview)  
 
-Latest dashboard still in preview.  
+This latest dashboard helps you visualize [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) processed [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) in directed graph.
 
 
 ## What is a Color-coded tile?
