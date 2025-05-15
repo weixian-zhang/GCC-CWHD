@@ -41,12 +41,13 @@ router = APIRouter()
 
 nmap = NetworkMapManager(config=appconfig)
 
+min_row_limit = 1
 max_row_limit = 15000
 
 @router.post("/api/nmap/vnetflowlog", status_code=200, response_model=None)
 def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> NetworkMapResult:
 
-    if body.rowLimit > max_row_limit:
+    if not min_row_limit <= body.rowLimit <= max_row_limit:
         body.rowLimit = max_row_limit
 
     result = nmap.get_network_map(
@@ -71,7 +72,7 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
 @router.post("/api/nmap/filterdata", status_code=200, response_model=None)
 def get_filter_data(body: FilterDataRequestBody, response: fastapi.Response) -> FilterDataResult:
 
-    if body.rowLimit > max_row_limit:
+    if not min_row_limit <= body.rowLimit <= max_row_limit:
         body.rowLimit = max_row_limit
         
     result = nmap.get_filter_data(start_time=body.startTime,
