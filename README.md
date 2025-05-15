@@ -157,6 +157,8 @@ Able to select by past and latest reports and filter by subscription
 ### Network Map (Preview)  
 
 This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) processed by [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) as directed graph.
+* try to keep data small as large amount of nodes in thousands can cause graph to render slowly
+* to zoom and move graph, move cursor closer to graph.
 
 ![image](https://github.com/weixian-zhang/GCC-CWHD/blob/main/doc/networkmap.gif)
 
