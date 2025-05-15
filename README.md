@@ -154,7 +154,9 @@ Able to select by past and latest reports and filter by subscription
 
 ### Network Map (Preview)  
 
-This latest dashboard helps you visualize [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) processed [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) in directed graph.
+This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) processed by [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) as directed graph.
+
+![image](https://github.com/weixian-zhang/GCC-CWHD/blob/main/doc/networkmap.gif)
 
 
 ## What is a Color-coded tile?
