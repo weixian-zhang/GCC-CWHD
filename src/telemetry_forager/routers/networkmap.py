@@ -72,72 +72,72 @@ def get_filter_data(body: FilterDataRequestBody, response: fastapi.Response) -> 
     return result
 
 
-@router.post("/api/nmap/src/subscription", status_code=200, response_model=None)
-def get_src_subscription(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+# @router.post("/api/nmap/src/subscription", status_code=200, response_model=None)
+# def get_src_subscription(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
     
-    result = nmap.get_unique_src_subscription(current_data_key=body.current_data_key)
-    return result
+#     result = nmap.get_unique_src_subscription(current_data_key=body.current_data_key)
+#     return result
 
 
-@router.post("/api/nmap/src/rg", status_code=200, response_model=None)
-def get_src_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+# @router.post("/api/nmap/src/rg", status_code=200, response_model=None)
+# def get_src_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
 
-    result = nmap.get_unique_src_rg(current_data_key=body.current_data_key)
-    return result
+#     result = nmap.get_unique_src_rg(current_data_key=body.current_data_key)
+#     return result
 
-@router.post("/api/nmap/src/vnet", status_code=200, response_model=None)
-def get_src_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
-
-
-    result = nmap.get_unique_src_vnet(current_data_key=body.current_data_key)
-    return result
+# @router.post("/api/nmap/src/vnet", status_code=200, response_model=None)
+# def get_src_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
 
-
-@router.post("/api/nmap/src/subnet", status_code=200, response_model=None)
-def get_src_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
-
-    result = nmap.get_unique_src_subnet(current_data_key=body.current_data_key)
-    return result
+#     result = nmap.get_unique_src_vnet(current_data_key=body.current_data_key)
+#     return result
 
 
-@router.post("/api/nmap/src/ip", status_code=200, response_model=None)
-# def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
-def get_src_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    result = nmap.get_unique_src_ip(current_data_key=body.current_data_key)
-    return result
+# @router.post("/api/nmap/src/subnet", status_code=200, response_model=None)
+# def get_src_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-
-@router.post("/api/nmap/dest/subscription", status_code=200, response_model=None)
-def get_dest_subscription(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+#     result = nmap.get_unique_src_subnet(current_data_key=body.current_data_key)
+#     return result
 
 
-    result = nmap.get_unique_dest_subscription(current_data_key=body.current_data_key)
-    return result
+# @router.post("/api/nmap/src/ip", status_code=200, response_model=None)
+# # def get_main_vnetflowlog(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+# def get_src_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-@router.post("/api/nmap/dest/rg", status_code=200, response_model=None)
-def get_dest_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+#     result = nmap.get_unique_src_ip(current_data_key=body.current_data_key)
+#     return result
 
-    result = nmap.get_unique_dest_rg(current_data_key=body.current_data_key)
-    return result
 
-@router.post("/api/nmap/dest/vnet", status_code=200, response_model=None)
-def get_dest_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+# @router.post("/api/nmap/dest/subscription", status_code=200, response_model=None)
+# def get_dest_subscription(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    result = nmap.get_unique_dest_vnet(current_data_key=body.current_data_key)
-    return result
 
-@router.post("/api/nmap/dest/subnet", status_code=200, response_model=None)
-def get_dest_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+#     result = nmap.get_unique_dest_subscription(current_data_key=body.current_data_key)
+#     return result
 
-    result = nmap.get_unique_dest_subnet(current_data_key=body.current_data_key)
-    return result
+# @router.post("/api/nmap/dest/rg", status_code=200, response_model=None)
+# def get_dest_rg(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-@router.post("/api/nmap/dest/ip", status_code=200, response_model=None)
-def get_dest_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+#     result = nmap.get_unique_dest_rg(current_data_key=body.current_data_key)
+#     return result
 
-    result = nmap.get_unique_dest_ip(current_data_key=body.current_data_key)
+# @router.post("/api/nmap/dest/vnet", status_code=200, response_model=None)
+# def get_dest_vnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
 
-    return result
+#     result = nmap.get_unique_dest_vnet(current_data_key=body.current_data_key)
+#     return result
+
+# @router.post("/api/nmap/dest/subnet", status_code=200, response_model=None)
+# def get_dest_subnet(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+
+#     result = nmap.get_unique_dest_subnet(current_data_key=body.current_data_key)
+#     return result
+
+# @router.post("/api/nmap/dest/ip", status_code=200, response_model=None)
+# def get_dest_ip(body: FilterDataRequestBody, response: fastapi.Response) -> dict:
+
+#     result = nmap.get_unique_dest_ip(current_data_key=body.current_data_key)
+
+#     return result

@@ -51,7 +51,7 @@ class AppConfig:
 
             self.networkmap_workspace_id = os.environ.get('NetworkMap_Workspace_ID') if os.environ.get('NetworkMap_Workspace_ID') else ''
             
-            self.networkMap_VNetFlowLog_Limit_Rows = int(os.environ.get('NetworkMap_VNetFlowLog_Limit_Rows')) if os.environ.get('NetworkMap_VNetFlowLog_Limit_Rows') else 8000
+            self.networkMap_VNetFlowLog_Limit_Rows = int(os.environ.get('NetworkMap_VNetFlowLog_Limit_Rows')) if os.environ.get('NetworkMap_VNetFlowLog_Limit_Rows') else 6000
             
             self.loaded = True
 
