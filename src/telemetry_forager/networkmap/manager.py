@@ -476,6 +476,44 @@ class NetworkMapManager:
             return {}
         
 
+    def _get_existing_vnets(self) -> pd.DataFrame:
+
+        # get subscription ids
+        sub_client = SubscriptionClient(self.azcred)
+        subscription_list = sub_client.subscriptions.list()
+        subids = [item.subscription_id for item in subscription_list]
+
+        resourcegraph_client = ResourceGraphClient(credential=self.azcred)
+
+        kql_query = self.kql.vnet_resource_graph_query()
+
+        # Create Azure Resource Graph client and set options
+        query = QueryRequest(
+                    query=kql_query,
+                    subscriptions=subids,
+                    options=QueryRequestOptions(
+                        result_format=ResultFormat.TABLE
+                    )
+                )
+        query_response = resourcegraph_client.resources(query)
+
+
+        data_cols = [x['name'] for x in query_response.data['columns']]
+        data_row = query_response.data['rows']
+        vnet_subnet_names = pd.DataFrame(data_row, columns=data_cols)
+
+    
+        vnet_subnet_names = pd.DataFrame()
+
+        if self.config.networkmap_workspace_id:
+            kql_query = self.kql.vnet_resource_graph_query()
+            response =  self.rg_client.resources(query=kql_query)
+            vnet_subnet_names = pd.DataFrame(data=response.data, columns=response.columns)
+
+        return vnet_subnet_names
+        
+
+
     def _resolve_src_dest_name_for_unknown_traffic(self, maindf: pd.DataFrame):
         """
         Resolve the source and destination names for known traffic.
@@ -484,30 +522,7 @@ class NetworkMapManager:
 
         try:
 
-            # get subscription ids
-            sub_client = SubscriptionClient(self.azcred)
-            subscription_list = sub_client.subscriptions.list()
-            subids = [item.subscription_id for item in subscription_list]
-
-            resourcegraph_client = ResourceGraphClient(credential=self.azcred)
-
-            kql_query = self.kql.vnet_resource_graph_query()
-
-            # Create Azure Resource Graph client and set options
-            query = QueryRequest(
-                        query=kql_query,
-                        subscriptions=subids,
-                        options=QueryRequestOptions(
-                            result_format=ResultFormat.TABLE
-                        )
-                    )
-            query_response = resourcegraph_client.resources(query)
-
-
-            data_cols = [x['name'] for x in query_response.data['columns']]
-            data_row = query_response.data['rows']
-            vnet_subnet_names = pd.DataFrame(data_row, columns=data_cols)
-
+            vnet_subnet_names = self._get_existing_vnets()
 
             # resolve vnet name and subnet name in maind from existing vnets
             for index, ukprow in maindf.iterrows():
@@ -526,7 +541,7 @@ class NetworkMapManager:
                         if  ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cidr):
                             maindf.at[index,'SrcVNet'] = vnet_name
                             maindf.at[index,'SrcSubnetName'] = subnet_name
-                            maindf.at[index,'SrcName'] = 'vm in ' +  subnet_name
+                            maindf.at[index,'SrcName'] = 'unknown node in ' +  subnet_name
                             break
                     
                 if destname == '':
@@ -538,7 +553,7 @@ class NetworkMapManager:
                         if ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cidr):
                             maindf.at[index,'DestVNet'] = vnet_name
                             maindf.at[index,'DestSubnetName'] = subnet_name
-                            maindf.at[index,'DestName'] = 'vm in ' +  subnet_name
+                            maindf.at[index,'DestName'] = 'unknown node in ' +  subnet_name
                             break
 
 
