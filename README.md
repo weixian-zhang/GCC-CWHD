@@ -16,7 +16,7 @@
   - [Tier 0 Dashboard (tailor-made)](#tier-0-dashboard-tailor-made)
   - [Tier 2 Dashboards (ready-to-use)](#tier-2-dashboards-ready-to-use)
     - [Network Map (Preview)](#network-map-preview)
-    - [WARA Dashboard](#wara-dashboard-pending-update-due-to-wara-module-changed)
+    - [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-module-changed)
     - [Activity Audit Dashboard](#activity-audit-dashboard)
     - [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
     - [Firewall Dashboard](#firewall-dashboard)
