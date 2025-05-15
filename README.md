@@ -1,6 +1,5 @@
 <h2>
- <p>Azure Monitoring with Grafana</p>
- <p><sup>powered by</sup> Central Workload Health Dashboard (CWHD)</p>
+ <p>Central Workload Health Dashboard (CWHD) | Project Heimdall</p>
 </h2>
 </h2>
 
