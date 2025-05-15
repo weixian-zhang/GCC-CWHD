@@ -1,32 +1,35 @@
-context.grafana.eventBus.subscribe({ type: "variables-changed" }, () => {
-  console.log("var changed");
-});
+// context.grafana.eventBus.subscribe({ type: "variables-changed" }, () => {
+//   console.log("var changed");
+// });
+
 
 // refresh dashbaord to refresh echart panel
 //neededdue to variable dependency makes panel fire request last while other filter data requests get fired first
-var flowTypeVar = context.grafana.replaceVariables('${flowTypes:doublequote}');
+// var flowTypeVar = context.grafana.replaceVariables('${flowTypes:doublequote}');
 
-if (!window.oldFlowType) {
-  window.oldFlowType = flowTypeVar
-  console.log(`1st time flow type changed, ${window.oldFlowType}`)
-}
-else if (window.oldFlowType != flowTypeVar) {
-  console.log(`subsequent time flow type changed, ${flowTypeVar}..refresh dashboard as flow type has changed`);
-  window.oldFlowType = flowTypeVar;
-  context.grafana.refresh();
-}
+// if (!window.oldFlowType) {
+//   window.oldFlowType = flowTypeVar
+//   context.grafana.refresh();
+//   console.log(`1st time flow type changed, ${window.oldFlowType}`)
+// }
+// else if (window.oldFlowType != flowTypeVar) {
+//   console.log(`subsequent time flow type changed, [${flowTypeVar}] refreshing dashboard...`);
+//   window.oldFlowType = flowTypeVar;
+//   context.grafana.refresh();
+// }
 
-var flowDirectionVar = context.grafana.replaceVariables('$flowDirection');
+// var flowDirectionVar = context.grafana.replaceVariables('$flowDirection');
 
-if (!window.oldFlowDirection) {
-  window.oldFlowDirection = flowDirectionVar
-  console.log(`1st time flow direction changed, ${window.oldFlowDirection}`)
-}
-else if (window.oldFlowDirection != flowDirectionVar) {
-  console.log(`subsequent time flow direction changed, ${flowDirectionVar}..refresh dashboard as flow type has changed`);
-  window.oldFlowDirection = flowDirectionVar;
-  context.grafana.refresh();
-}
+// if (!window.oldFlowDirection) {
+//   window.oldFlowDirection = flowDirectionVar
+//   context.grafana.refresh();
+//   console.log(`1st time flow direction changed, ${window.oldFlowDirection}`)
+// }
+// else if (window.oldFlowDirection != flowDirectionVar) {
+//   console.log(`subsequent time flow direction changed, [${flowDirectionVar}] refreshing dashboard...`);
+//   window.oldFlowDirection = flowDirectionVar;
+//   context.grafana.refresh();
+// }
 
 
 // echarts starts here
@@ -232,7 +235,7 @@ return {
         repulsion: 80000,
         gravity: 0.1,
         friction: 1,
-        layoutAnimation: false
+        layoutAnimation: context.grafana.replaceVariables("${enable_graph_animation}")?.toLowerCase?.() === 'true'
       },
 
 

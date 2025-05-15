@@ -127,6 +127,7 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
+
             # hydrate cache
             # maindf_srcsub_cache[current_data_key] = maindf
             # maindf_srcrg_cache[current_data_key] = maindf
@@ -483,57 +484,74 @@ class NetworkMapManager:
 
         try:
 
-            # get subscription ids
-            sub_client = SubscriptionClient(self.azcred)
-            subscription_list = sub_client.subscriptions.list()
-            subids = [item.subscription_id for item in subscription_list]
+            maindf['SrcName'] = maindf.apply(lambda x: 'Unknown' if x['SrcName'] == '' else x['SrcName'], axis=1)
+            maindf['SrcNodeType'] = maindf.apply(lambda x: 'UNKNOWN' if x['SrcName'] == 'Unknown' else x['SrcNodeType'], axis=1)
 
-            resourcegraph_client = ResourceGraphClient(credential=self.azcred)
+            maindf['DestName'] = maindf.apply(lambda x: 'Unknown' if x['DestName'] == '' else x['DestName'], axis=1)
+            maindf['DestNodeType'] = maindf.apply(lambda x: 'UNKNOWN' if x['DestName'] == 'Unknown' else x['DestNodeType'], axis=1)
 
-            kql_query = self.kql.vnet_resource_graph_query()
+            # # get subscription ids
+            # sub_client = SubscriptionClient(self.azcred)
+            # subscription_list = sub_client.subscriptions.list()
+            # subids = [item.subscription_id for item in subscription_list]
 
-            # Create Azure Resource Graph client and set options
-            query = QueryRequest(
-                        query=kql_query,
-                        subscriptions=subids,
-                        options=QueryRequestOptions(
-                            result_format=ResultFormat.TABLE
-                        )
-                    )
-            query_response = resourcegraph_client.resources(query)
+            # resourcegraph_client = ResourceGraphClient(credential=self.azcred)
+
+            # kql_query = self.kql.vnet_resource_graph_query()
+
+            # # Create Azure Resource Graph client and set options
+            # query = QueryRequest(
+            #             query=kql_query,
+            #             subscriptions=subids,
+            #             options=QueryRequestOptions(
+            #                 result_format=ResultFormat.TABLE
+            #             )
+            #         )
+            # query_response = resourcegraph_client.resources(query)
 
 
-            data_cols = [x['name'] for x in query_response.data['columns']]
-            data_row = query_response.data['rows']
-            vnet_subnet_names = pd.DataFrame(data_row, columns=data_cols)
+            # data_cols = [x['name'] for x in query_response.data['columns']]
+            # data_row = query_response.data['rows']
+            # vnet_subnet_names = pd.DataFrame(data_row, columns=data_cols)
 
 
-            # resolve vnet name and subnet name in maind from existing vnets
-            unknownprivate_df = maindf[(maindf['FlowType'] == 'UnknownPrivate') | (maindf['FlowType'] == 'Unknown')]
+            # # resolve vnet name and subnet name in maind from existing vnets
+            # unknownprivate_df = maindf[(maindf['FlowType'] == 'UnknownPrivate') | (maindf['FlowType'] == 'Unknown')]
 
-            for index, ukprow in unknownprivate_df.iterrows():
-                srcip = ukprow['SrcIp']
-                destip = ukprow['DestIp']
+            # for index, ukprow in unknownprivate_df.iterrows():
+            #     srcip = ukprow['SrcIp']
+            #     srcname = ukprow['SrcName']
+            #     destip = ukprow['DestIp']
+            #     destname= ukprow['DestName']
 
-                for index, vnet_subnet in vnet_subnet_names.iterrows():
-                    subnet_cid = vnet_subnet['SubnetAddressPrefix']
+            #     for index, vnet_subnet in vnet_subnet_names.iterrows():
+            #         subnet_cid = vnet_subnet['SubnetAddressPrefix']
+            #         vnet_name = vnet_subnet['VNet']
+            #         subnet_name = vnet_subnet['SubnetName']
                     
-                    try:
+            #         try:
 
-                        if ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cid):
-                            unknownprivate_df['SrcVNet'] = vnet_subnet['VNet']
-                            unknownprivate_df['SrcSubnetName'] = vnet_subnet['SubnetName']
-                            unknownprivate_df['SrcName'] = 'vm in ' +  unknownprivate_df["SrcSubnetName"]
+            #             if  srcname == '' and ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cid):
+            #                 unknownprivate_df['SrcVNet'] = vnet_name #vnet_subnet['VNet']
+            #                 unknownprivate_df['SrcSubnetName'] = subnet_name #vnet_subnet['SubnetName']
+            #                 unknownprivate_df['SrcName'] = 'vm in ' +  subnet_name #subnet_name #unknownprivate_df["SrcSubnetName"]
 
-                        if ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cid):
-                            unknownprivate_df['DestName'] = vnet_subnet['VNet']
-                            unknownprivate_df['DestSubnetName'] = vnet_subnet['SubnetName']
-                            unknownprivate_df['DestName'] = 'vm in ' +  unknownprivate_df["SrcSubnetName"]
 
-                    except Exception as e:
-                        continue
+            #             if  destname == '' and ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cid):
+            #                 unknownprivate_df['DestName'] = vnet_name #vnet_subnet['VNet']
+            #                 unknownprivate_df['DestSubnetName'] = subnet_name #vnet_subnet['SubnetName']
+            #                 unknownprivate_df['DestName'] = 'vm in ' +  subnet_name #unknownprivate_df["DestSubnetName"]
 
-            maindf.update(unknownprivate_df)
+            #         except Exception as e:
+            #             continue
+
+            #     unknownprivate_df['SrcName'] = unknownprivate_df.apply(lambda x: 'Unknown' if x['SrcName'] == '' else x['SrcName'], axis=1)
+            #     unknownprivate_df['SrcNodeType'] = unknownprivate_df.apply(lambda x: 'UNKNOWN' if x['SrcName'] == '' else x['SrcNodeType'], axis=1)
+
+            #     unknownprivate_df['DestName'] = unknownprivate_df.apply(lambda x: 'Unknown' if x['DestName'] == '' else x['DestName'], axis=1)
+            #     unknownprivate_df['DestNodeType'] = unknownprivate_df.apply(lambda x: 'UNKNOWN' if x['DestName'] == '' else x['DestNodeType'], axis=1)
+
+            #     maindf.update(unknownprivate_df)
 
         except Exception as e:
             Log.exception(f'NetworkMapManager - error occured: {str(e)}')

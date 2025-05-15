@@ -107,7 +107,7 @@ on $left.DestPIP == $right.DestPIP_Ip
                    iif(SrcSubnetName == 'azurebastionsubnet', 'bastion-vm',
                    iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateEndpointName,
                    iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
-                         iif(SrcVm != '', SrcVm, '-' ))))))))
+                         iif(SrcVm != '', SrcVm, '' ))))))))
 
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
 
