@@ -15,14 +15,15 @@
   - [Tier 1 Dashboard (tailor-made)](#tier-1-dashboard-tailor-made)
   - [Tier 0 Dashboard (tailor-made)](#tier-0-dashboard-tailor-made)
   - [Tier 2 Dashboards (ready-to-use)](#tier-2-dashboards-ready-to-use)
+    - [Network Map (Preview)](#network-map-preview)
+    - [WARA Dashboard](#wara-dashboard-pending-update-due-to-wara-module-changed)
     - [Activity Audit Dashboard](#activity-audit-dashboard)
     - [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
     - [Firewall Dashboard](#firewall-dashboard)
     - [API Management Dashboard](#api-management-dashboard)
     - [Key Vault Dashboard](#key-vault-dashboard)
     - [Storage dashboard (a modifed version from Azure Monitor)](#storage-dashboard-a-modifed-version-from-azure-monitor)
-    - [Wara Dashboard](#wara-dashboard-pending-update-due-to-wara-module-changed)
-    - [Network Map](#network-map-preview)
+
 - [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 - [Tech Stack](#tech-stack)
 - [Logs Required](#logs-required)
@@ -119,6 +120,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 #### API Management Dashboard
 
+Courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
 ![image](https://github.com/user-attachments/assets/7ae11525-03ad-4e9d-b1a9-ef5195ffd8d2)
 
 
