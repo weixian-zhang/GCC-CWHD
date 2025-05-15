@@ -22,8 +22,8 @@
     - [API Management Dashboard](#api-management-dashboard)
     - [Key Vault Dashboard](#key-vault-dashboard)
     - [Storage dashboard (a modifed version from Azure Monitor)](#storage-dashboard-a-modifed-version-from-azure-monitor)
-- [Specialized Dashboards (ready-to-use)](#specialized-dashboards-ready-to-use)
-  - [Wara Dashboard](#wara-dashboard)
+    - [Wara Dashboard](wara-dashboard-pending-update-due-to-wara-module-changed)
+    - [Network Map](network-map-preview)
 - [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 - [Tech Stack](#tech-stack)
 - [Logs Required](#logs-required)
@@ -133,9 +133,8 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />  
 
-## Specialized Dashboards (ready-to-use)
 
-### Wara Dashboard
+### WARA Dashboard ([pending update due to WARA module changed](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/#quick-workflow-example))
 
 With version [0.2-wara-preview](https://github.com/weixian-zhang/GCC-CWHD/tree/cwhd-wara.v0.2-preview_130325) ([docker pull wxzd/cwhd:v0.2.0-wara-preview_130325](https://hub.docker.com/repository/docker/wxzd/cwhd/tags/v0.2.0-wara-preview_130325/sha256:7ff2fb139c5b5f1a497a6dae844016abad2b3adb4d34aee1b2e5383b657b7509)),  
 CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability states of your Azure environment.
@@ -153,7 +152,12 @@ CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resili
 
 Able to select by past and latest reports and filter by subscription  
 
-![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)
+![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)  
+
+### Network Map (Preview)  
+
+Latest dashboard still in preview.  
+
 
 ## What is a Color-coded tile?
 
