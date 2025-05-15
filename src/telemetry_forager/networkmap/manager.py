@@ -41,7 +41,8 @@ class NetworkMapManager:
                                src_subnet: list[str] = [],
                                dest_subnet: list[str] = [],
                                src_ip: list[str] = [],
-                               dest_ip: list[str] = []) -> NetworkMapResult:
+                               dest_ip: list[str] = [],
+                               row_limit = 5000) -> NetworkMapResult:
         
         global maindf_srcsub_cache
         global maindf_srcrg_cache
@@ -56,17 +57,11 @@ class NetworkMapManager:
 
         try:
 
-            row_limit = self.config.networkMap_VNetFlowLog_Limit_Rows
-
             kql_query = self.kql.vnet_flow_logs_kql(flow_types=flow_types, flow_direction=flow_direction, row_limit=row_limit)
 
-
             maindf = self._get_main_dataframe(kql_query, start_time=start_time, end_time=end_time)
-
         
             self._resolve_src_dest_name_for_unknown_traffic(maindf)
-
-            #maindf = self._apply_filter_flow_direction(maindf, flow_direction)
 
             maindf = self._apply_filter_src_subscription(maindf, src_subscrition)
 
@@ -89,27 +84,28 @@ class NetworkMapManager:
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
             nodes = self._create_echart_nodes(maindf=maindf)
+
             edges = self._create_echart_edges(maindf=maindf)
+
             categories = self._create_echart_categories(maindf=maindf)
             
             nmap = NetworkMapResult(nodes=nodes, edges=edges, categories=categories)
 
-            return nmap #if df == False else maindf
+            return nmap
 
         except Exception as e:
-            maindf_in_progress = False
-            maindf_completed = False
             Log.exception(f'NetworkMapManager - error occured: {str(e)}')
             return {}
+        
+
         
     def get_filter_data(self, start_time: datetime, 
                                end_time: datetime,
                                flow_types: list[str] = [],
-                               flow_direction: str = 'all') -> FilterDataResult:
+                               flow_direction: str = 'all',
+                               row_limit = 5000) -> FilterDataResult:
 
         try:
-
-            row_limit = self.config.networkMap_VNetFlowLog_Limit_Rows
 
             kql_query = self.kql.vnet_flow_logs_kql(flow_types=flow_types, flow_direction=flow_direction, row_limit=row_limit)
 
@@ -454,7 +450,7 @@ class NetworkMapManager:
         """
 
         try:
-            
+
             # vnets = self._get_existing_vnets()
 
             # # resolve vnet name and subnet name in maind from existing vnets

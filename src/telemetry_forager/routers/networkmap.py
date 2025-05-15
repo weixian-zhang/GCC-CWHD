@@ -27,22 +27,27 @@ class NetworkMapRequestBody(BaseModel):
     destSubnet: list[str] = []
     srcIP: list[str] = []
     destIP: list[str] = []
+    rowLimit: int = 5000
 
 class FilterDataRequestBody(BaseModel):
   startTime: datetime
   endTime: datetime
   flowTypes: list[str] = []
   flowDirection: str = 'all'
-#   wait_for_maindf: bool = True
-#  current_data_key: str = ''
+  rowLimit: int = 5000
 
 
 router = APIRouter()
 
 nmap = NetworkMapManager(config=appconfig)
 
+max_row_limit = 15000
+
 @router.post("/api/nmap/vnetflowlog", status_code=200, response_model=None)
 def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response) -> NetworkMapResult:
+
+    if body.rowLimit > max_row_limit:
+        body.rowLimit = max_row_limit
 
     result = nmap.get_network_map(
                                   start_time=body.startTime,
@@ -58,17 +63,22 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
                                   src_subnet=body.srcSubnet,
                                   dest_subnet=body.destSubnet,
                                   src_ip=body.srcIP,
-                                  dest_ip=body.destIP
+                                  dest_ip=body.destIP,
+                                  row_limit=body.rowLimit
                                   )
     return result
 
 @router.post("/api/nmap/filterdata", status_code=200, response_model=None)
 def get_filter_data(body: FilterDataRequestBody, response: fastapi.Response) -> FilterDataResult:
 
+    if body.rowLimit > max_row_limit:
+        body.rowLimit = max_row_limit
+        
     result = nmap.get_filter_data(start_time=body.startTime,
                                   end_time=body.endTime,
                                   flow_types=body.flowTypes,
-                                  flow_direction=body.flowDirection)
+                                  flow_direction=body.flowDirection,
+                                  row_limit=body.rowLimit)
     return result
 
 
