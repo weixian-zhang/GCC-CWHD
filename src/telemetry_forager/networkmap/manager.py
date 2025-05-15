@@ -365,7 +365,6 @@ class NetworkMapManager:
         
         return result.to_dict(orient='records')
     
-
     def _get_main_dataframe(self, kql_query, start_time, end_time) -> pd.DataFrame:
 
         try:
@@ -446,6 +445,8 @@ class NetworkMapManager:
 
             return vnets
 
+    # TBD the usefulness of trying to resolve src and dest name with existing vnets.
+    # Performance is a major concern here.
     def _resolve_src_dest_name_for_unknown_traffic(self, maindf: pd.DataFrame):
         """
         Resolve the source and destination names for known traffic.
@@ -453,40 +454,40 @@ class NetworkMapManager:
         """
 
         try:
+            
+            # vnets = self._get_existing_vnets()
 
-            vnets = self._get_existing_vnets()
+            # # resolve vnet name and subnet name in maind from existing vnets
+            # for index, ukprow in maindf.iterrows():
 
-            # resolve vnet name and subnet name in maind from existing vnets
-            for index, ukprow in maindf.iterrows():
+            #     srcip = ukprow['SrcIp']
+            #     srcname = ukprow['SrcName']
+            #     destip = ukprow['DestIp']
+            #     destname= ukprow['DestName']
 
-                srcip = ukprow['SrcIp']
-                srcname = ukprow['SrcName']
-                destip = ukprow['DestIp']
-                destname= ukprow['DestName']
-
-                if srcname == '':
-                    for index, vnet_subnet in vnets.iterrows():
-                        subnet_cidr = vnet_subnet['SubnetAddressPrefix']
-                        vnet_name = vnet_subnet['VNet']
-                        subnet_name = vnet_subnet['SubnetName']
+            #     if srcname == '':
+            #         for index, vnet_subnet in vnets.iterrows():
+            #             subnet_cidr = vnet_subnet['SubnetAddressPrefix']
+            #             vnet_name = vnet_subnet['VNet']
+            #             subnet_name = vnet_subnet['SubnetName']
                     
-                        if  ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cidr):
-                            maindf.at[index,'SrcVNet'] = vnet_name
-                            maindf.at[index,'SrcSubnetName'] = subnet_name
-                            maindf.at[index,'SrcName'] = 'unknown node in ' +  subnet_name
-                            break
+            #             if  ipaddress.ip_address(srcip) in ipaddress.ip_network(subnet_cidr):
+            #                 maindf.at[index,'SrcVNet'] = vnet_name
+            #                 maindf.at[index,'SrcSubnetName'] = subnet_name
+            #                 maindf.at[index,'SrcName'] = 'unknown node in ' +  subnet_name
+            #                 break
                     
-                if destname == '':
-                    for index, vnet_subnet in vnets.iterrows():
-                        subnet_cidr = vnet_subnet['SubnetAddressPrefix']
-                        vnet_name = vnet_subnet['VNet']
-                        subnet_name = vnet_subnet['SubnetName']
+            #     if destname == '':
+            #         for index, vnet_subnet in vnets.iterrows():
+            #             subnet_cidr = vnet_subnet['SubnetAddressPrefix']
+            #             vnet_name = vnet_subnet['VNet']
+            #             subnet_name = vnet_subnet['SubnetName']
 
-                        if ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cidr):
-                            maindf.at[index,'DestVNet'] = vnet_name
-                            maindf.at[index,'DestSubnetName'] = subnet_name
-                            maindf.at[index,'DestName'] = 'unknown node in ' +  subnet_name
-                            break
+            #             if ipaddress.ip_address(destip) in ipaddress.ip_network(subnet_cidr):
+            #                 maindf.at[index,'DestVNet'] = vnet_name
+            #                 maindf.at[index,'DestSubnetName'] = subnet_name
+            #                 maindf.at[index,'DestName'] = 'unknown node in ' +  subnet_name
+            #                 break
 
 
             maindf['SrcName'] = maindf.apply(lambda x: 'Unknown' if x['SrcName'] == '' else x['SrcName'], axis=1)
