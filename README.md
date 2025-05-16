@@ -16,13 +16,13 @@
   - [Tier 0 Dashboard (tailor-made)](#tier-0-dashboard-tailor-made)
   - [Tier 2 Dashboards (ready-to-use)](#tier-2-dashboards-ready-to-use)
     - [Network Map (Preview)](#network-map-preview)
-    - [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-module-changed)
+    - [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
     - [Activity Audit Dashboard](#activity-audit-dashboard)
     - [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
     - [Firewall Dashboard](#firewall-dashboard)
     - [API Management Dashboard](#api-management-dashboard)
     - [Key Vault Dashboard](#key-vault-dashboard)
-    - [Storage dashboard (a modifed version from Azure Monitor)](#storage-dashboard-a-modifed-version-from-azure-monitor)
+    - [Storage Dashboard](#storage-dashboard)
 
 - [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 - [Tech Stack](#tech-stack)
@@ -94,48 +94,29 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 ### Tier 2 Dashboards (ready-to-use)
 
+* [Network Map (Preview)](#network-map-preview)
+* [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
 * [Activity Audit Dashboard](#activity-audit-dashboard)
 * [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
 * [Firewall Dashboard](#firewall-dashboard)
 * [API Management Dashboard](#api-management-dashboard)
-* [Key Vault Dashboard ](#key-vault-dashboard)
+* [Key Vault Dashboard](#key-vault-dashboard)
+* [Storage Dashboard](#storage-dashboard)
 
-#### Activity Audit Dashboard
-  <p>Shows you who made changes to Firewall rules, NSG rules, Key Vaults opearations and oerations of all other Azure services</p>  
-  
-  ![image](https://github.com/user-attachments/assets/ef0ca381-bcf6-4d1d-84c1-7fd61d301283)
+<br />
+<br />
 
-#### Applcation Gateway Dashboard 
+### Network Map (Preview)  
 
-  ![image](https://github.com/user-attachments/assets/ac881731-6c2f-4cbf-a1e7-a7b1fc44daf1)
+This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) processed by [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) as directed graph.
+* try to keep data small as large amount of nodes in thousands can cause graph to render slowly
+* to zoom and move graph, move cursor closer to graph.
 
-  ![image](https://github.com/user-attachments/assets/915a4916-3263-425e-aac0-036f8ed8c4e8)
+![image](https://github.com/weixian-zhang/GCC-CWHD/blob/main/doc/networkmap.gif)  
 
+<br />
 
-
-#### Firewall Dashboard
-  ![image](https://github.com/user-attachments/assets/413d5f54-760f-4ac6-8423-7190860835d3)
-  ![image](https://github.com/user-attachments/assets/7aa1993c-c590-494a-9bc0-e2dd500bde83)
-
-
-#### API Management Dashboard
-
-Courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
-![image](https://github.com/user-attachments/assets/7ae11525-03ad-4e9d-b1a9-ef5195ffd8d2)
-
-
-#### Key Vault Dashboard 
-<p>Shows you Key Vault metrics and operations (a modifed version from Azure Monitor) </p>  
-
-![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
-
-
-#### Storage dashboard (a modifed version from Azure Monitor)
-
-<br />  
-
-
-### WARA Dashboard ([pending update due to WARA module changed](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/#quick-workflow-example))
+### WARA Dashboard ([pending update due to WARA repo changed](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/#quick-workflow-example))
 
 CWHD runs [Azure WARA assessment](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/welcome/) on startup and subsequently every 6 hourly schedule to bring you the past and latest reliability states of your Azure environment.
 <p>
@@ -154,13 +135,51 @@ Able to select by past and latest reports and filter by subscription
 
 ![image](https://github.com/user-attachments/assets/3ac15834-be09-4aa4-af3d-69763a8a5085)  
 
-### Network Map (Preview)  
+<br />
 
-This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) processed by [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) as directed graph.
-* try to keep data small as large amount of nodes in thousands can cause graph to render slowly
-* to zoom and move graph, move cursor closer to graph.
+#### Activity Audit Dashboard
+  <p>Shows you who made changes to Firewall rules, NSG rules, Key Vaults opearations and oerations of all other Azure services</p>  
+  
+  ![image](https://github.com/user-attachments/assets/ef0ca381-bcf6-4d1d-84c1-7fd61d301283)
 
-![image](https://github.com/weixian-zhang/GCC-CWHD/blob/main/doc/networkmap.gif)
+<br />
+
+### Applcation Gateway Dashboard  
+
+a modifed version from Azure Monitor
+
+  ![image](https://github.com/user-attachments/assets/ac881731-6c2f-4cbf-a1e7-a7b1fc44daf1)
+
+  ![image](https://github.com/user-attachments/assets/915a4916-3263-425e-aac0-036f8ed8c4e8)
+
+<br />
+
+### Firewall Dashboard
+  ![image](https://github.com/user-attachments/assets/413d5f54-760f-4ac6-8423-7190860835d3)
+  ![image](https://github.com/user-attachments/assets/7aa1993c-c590-494a-9bc0-e2dd500bde83)
+
+
+### API Management Dashboard
+
+Courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
+![image](https://github.com/user-attachments/assets/7ae11525-03ad-4e9d-b1a9-ef5195ffd8d2)
+
+<br />
+
+### Key Vault Dashboard  
+
+a modifed version from Azure Monitor
+<p>Shows you Key Vault metrics and operations (a modifed version from Azure Monitor) </p>  
+
+![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
+
+<br />
+
+#### Storage Dashboard
+
+a modifed version from Azure Monitor
+
+<br />  
 
 
 ## What is a Color-coded tile?
