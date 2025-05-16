@@ -110,6 +110,9 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 ### Network Map (Preview)  
 
 This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview?tabs=Americas) processed by [Azure Traffic Analytics](https://learn.microsoft.com/en-us/azure/network-watcher/traffic-analytics?tabs=Americas) as directed graph.
+* Currently previewing on Windows container image [wxzd/cwhd:networkmap-v0.2.0 ](https://hub.docker.com/r/wxzd/cwhd/tags)
+* host backend on App Service Windows Container
+* Network Map Grafana dashboard can be imported [here](https://github.com/weixian-zhang/GCC-CWHD/blob/feat/networkmap/src/dashboards/tier-2/networkmap.json)
 * try to keep data small as large amount of nodes in thousands can cause graph to render slowly
 * to zoom and move graph, move cursor closer to graph.
 
