@@ -6,14 +6,15 @@
  <mark>Warning: Important information for customers using Central Workload Health Dashboard</b> <br />
  This solution, offered by the Open-Source community, does not receive contributions nor support by Microsoft.</mark>
 
+<br />
 
-#### Used by gov agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/), CWHD uses Grafana to visualize performance and health of Azure resources
+#### Used by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/), CWHD uses Grafana to visualize performance and health of Azure resources
 
 <br />
 
 - [What are Tier 0, 1 \& 2 dashboards?](#what-are-tier-0-1--2-dashboards)
-  - [Tier 1 Dashboard (tailor-made)](#tier-1-dashboard-tailor-made)
-  - [Tier 0 Dashboard (tailor-made)](#tier-0-dashboard-tailor-made)
+  - [Tier 1 Dashboard (tailor made to requirements)](#tier-1-dashboard-tailor-made)
+  - [Tier 0 Dashboard (tailor made to requirements)](#tier-0-dashboard-tailor-made)
   - [Tier 2 Dashboards (ready-to-use)](#tier-2-dashboards-ready-to-use)
     - [Network Map (Preview)](#network-map-preview)
     - [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
