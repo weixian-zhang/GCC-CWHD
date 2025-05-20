@@ -12,20 +12,17 @@
 
 <br />
 
-- [What are Tier 0, 1 \& 2 dashboards?](#what-are-tier-0-1--2-dashboards)
-  - [Tier 1 Dashboard (tailor made to requirements)](#tier-1-dashboard-tailor-made)
-  - [Tier 0 Dashboard (tailor made to requirements)](#tier-0-dashboard-tailor-made)
-  - [Tier 2 Dashboards (ready-made)](#tier-2-dashboards-ready-made)
+* [Tailor-Made](#tailor-made-dashboards)
+    - [Tier 1 Dashboard](#tier-1-dashboard)
+    - [Tier 0 Dashboard](#tier-0-dashboard)
+    - [The Colored Tile Concept](#the-colored-tile-concept)
+      
+* [Ready-Made](#ready-made-dashboards)
     - [Network Map (Preview)](#network-map-preview)
     - [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
     - [Activity Audit Dashboard](#activity-audit-dashboard)
-    - [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
     - [Firewall Dashboard](#firewall-dashboard)
-    - [API Management Dashboard](#api-management-dashboard)
-    - [Key Vault Dashboard](#key-vault-dashboard)
-    - [Storage Dashboard](#storage-dashboard)
 
-- [What is a Color-coded tile?](#what-is-a-color-coded-tile)
 - [Tech Stack](#tech-stack)
 - [Logs Required](#logs-required)
 - [Deployment \& Configuration](#deployment--configuration)
@@ -34,9 +31,12 @@
 
 <br />  
 
-## What are Tier 0, 1 & 2 dashboards?
+## Tailor-Made Dashboards  
 
-### Tier 1 Dashboard (tailor-made)
+ Tier 0 and 1 dashboards below are samples following a predefined structure.  
+ As each monitoring scenario is unique, Tier 0 and Tier 1 dashboards are built from scratch from custom requirements yet having a choice to adopt the predefined structure below.
+
+### Tier 1 Dashboard
 
 You aim to to cohesively group up all dependent Azure resources into a Tier 1 dashboard. How do you want to group resources is entirely up to you, below is a general guideline:
 <ul>
@@ -81,7 +81,7 @@ You aim to to cohesively group up all dependent Azure resources into a Tier 1 da
 
 <br />  
 
-### Tier 0 Dashboard (tailor-made)
+### Tier 0 Dashboard
 
 This dashboard is a summary view of all Tier 1 dashboards.  
 Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 and 1 are fully customized and adapted to your specific grouping of resources.
@@ -92,17 +92,44 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 <img alt="image" src="https://github.com/user-attachments/assets/1cc9baa2-27a8-464a-ba0f-8300f23bf5f1">
 
 <br />  
+<br />  
 
-### Tier 2 Dashboards (ready-made)
+## The Colored Tile Concept
+
+Colored tiles exist in Tier 0 and 1 dashboards only and each Azure resource is represented by a color-coded tile.  
+Each color-coded tile displays one of the 3 colors at any one time: Green, Amber and Red which represents the different health status.   
+<img src ="https://github.com/user-attachments/assets/2ec6e7b4-0f75-49a3-9894-82f3701eeb46" height="150px" width="500px" />
+
+* Green
+  * health status from Azure Resource Health API is healthy
+  * for App Service specifically, health status are determined by either one of the following data source
+    * Application Insights Availability Test
+    * Network Watcher Connection Monitor
+    * Azure Resource Health API
+  * when all resources in Tier 1 color-coded tiles are Green, Tier 0 summarizes system status as Green
+  <img src="https://github.com/user-attachments/assets/7c9b6c15-b36c-4a07-9e05-75aef7ea67c0" height="250px" width="600px" />
+  
+* Amber
+  * affects only Virtual Machine resources. if VM's CPU, Memory and/or Disk usage percentage hits threshold. amber color will be shown. See [Deployment & Configuration](#deployment--configuration)
+  * when any one of VM in Tier 1 color-coded tiles is Amber, Tier 0 dashboard summarizes system status as Amber
+    <img src="https://github.com/user-attachments/assets/f2a29c10-899a-48d8-92d2-d8ae8043bf94" height="250px" width="600px" />
+
+* Red
+  * when Resource Health API returns unhealthy result
+  * for App Service specifically, if either of the following returns unhealthy status
+    * Application Insights Availability Test
+    * Network Watcher Connection Monitor
+    * Azure Resource Health API
+  * when any one resource in Tier 1 color-coded tiles is Red, Tier 0 dashboard summarizes system status as Red. Red is "larger" than Amber.
+  
+    <img src="https://github.com/user-attachments/assets/98540059-8286-4c4b-8795-aeb23c0dc991" height="300px" width="650px" />
+
+## Ready-Made Dashboards
 
 * [Network Map (Preview)](#network-map-preview)
 * [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
 * [Activity Audit Dashboard](#activity-audit-dashboard)
-* [Applcation Gateway Dashboard](#applcation-gateway-dashboard)
 * [Firewall Dashboard](#firewall-dashboard)
-* [API Management Dashboard](#api-management-dashboard)
-* [Key Vault Dashboard](#key-vault-dashboard)
-* [Storage Dashboard](#storage-dashboard)
 
 <br />
 <br />
@@ -148,76 +175,12 @@ Able to select by past and latest reports and filter by subscription
 
 <br />
 
-### Applcation Gateway Dashboard  
-
-a modifed version from Azure Monitor
-
-  ![image](https://github.com/user-attachments/assets/ac881731-6c2f-4cbf-a1e7-a7b1fc44daf1)
-
-  ![image](https://github.com/user-attachments/assets/915a4916-3263-425e-aac0-036f8ed8c4e8)
-
-<br />
 
 ### Firewall Dashboard
   ![image](https://github.com/user-attachments/assets/413d5f54-760f-4ac6-8423-7190860835d3)
   ![image](https://github.com/user-attachments/assets/7aa1993c-c590-494a-9bc0-e2dd500bde83)
 
-
-### API Management Dashboard
-
-Courtesy from [Vikram Bala](https://grafana.com/grafana/dashboards/16604-azure-api-management/)
-![image](https://github.com/user-attachments/assets/7ae11525-03ad-4e9d-b1a9-ef5195ffd8d2)
-
 <br />
-
-### Key Vault Dashboard  
-
-a modifed version from Azure Monitor
-<p>Shows you Key Vault metrics and operations (a modifed version from Azure Monitor) </p>  
-
-![image](https://github.com/user-attachments/assets/1aef6624-cc54-4f39-83d0-3d94ecab8b15)
-
-<br />
-
-#### Storage Dashboard
-
-a modifed version from Azure Monitor
-
-<br />  
-
-
-## What is a Color-coded tile?
-
-Color-coded tiles exist in Tier 0 and 1 dashboards only and each Azure resource is represented by a color-coded tile.  
-Each color-coded tile displays one of the 3 colors at any one time: Green, Amber and Red which represents the different health status.   
-<img src ="https://github.com/user-attachments/assets/2ec6e7b4-0f75-49a3-9894-82f3701eeb46" height="150px" width="500px" />
-
-
-* Green
-  * health status from Azure Resource Health API is healthy
-  * for App Service specifically, health status are determined by either one of the following data source
-    * Application Insights Availability Test
-    * Network Watcher Connection Monitor
-    * Azure Resource Health API
-  * when all resources in Tier 1 color-coded tiles are Green, Tier 0 summarizes system status as Green
-  <img src="https://github.com/user-attachments/assets/7c9b6c15-b36c-4a07-9e05-75aef7ea67c0" height="250px" width="600px" />
-  
-* Amber
-  * affects only Virtual Machine resources. if VM's CPU, Memory and/or Disk usage percentage hits threshold. amber color will be shown. See [Deployment & Configuration](#deployment--configuration)
-  * when any one of VM in Tier 1 color-coded tiles is Amber, Tier 0 dashboard summarizes system status as Amber
-    <img src="https://github.com/user-attachments/assets/f2a29c10-899a-48d8-92d2-d8ae8043bf94" height="250px" width="600px" />
-
-* Red
-  * when Resource Health API returns unhealthy result
-  * for App Service specifically, if either of the following returns unhealthy status
-    * Application Insights Availability Test
-    * Network Watcher Connection Monitor
-    * Azure Resource Health API
-  * when any one resource in Tier 1 color-coded tiles is Red, Tier 0 dashboard summarizes system status as Red. Red is "larger" than Amber.
-  
-    <img src="https://github.com/user-attachments/assets/98540059-8286-4c4b-8795-aeb23c0dc991" height="300px" width="650px" />
-    
-<br /> 
 
 ## Tech Stack  
 * Python 3.11
