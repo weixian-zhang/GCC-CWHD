@@ -15,7 +15,7 @@
 - [What are Tier 0, 1 \& 2 dashboards?](#what-are-tier-0-1--2-dashboards)
   - [Tier 1 Dashboard (tailor made to requirements)](#tier-1-dashboard-tailor-made)
   - [Tier 0 Dashboard (tailor made to requirements)](#tier-0-dashboard-tailor-made)
-  - [Tier 2 Dashboards (ready-to-use)](#tier-2-dashboards-ready-to-use)
+  - [Tier 2 Dashboards (ready-made)](#tier-2-dashboards-ready-made)
     - [Network Map (Preview)](#network-map-preview)
     - [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
     - [Activity Audit Dashboard](#activity-audit-dashboard)
@@ -93,7 +93,7 @@ Similar to Tier 1 dashboards, CWHD cannot offer pre-built dashboards as Tier 0 a
 
 <br />  
 
-### Tier 2 Dashboards (ready-to-use)
+### Tier 2 Dashboards (ready-made)
 
 * [Network Map (Preview)](#network-map-preview)
 * [WARA Dashboard (Pending Update)](#wara-dashboard-pending-update-due-to-wara-repo-changed)
