@@ -29,8 +29,8 @@
 - [Tech Stack](#tech-stack)
 - [Logs Required](#logs-required)
 - [Deployment \& Configuration](#deployment--configuration)
-  - [CWHD Backend REST API Spec](#cwhd-backend-rest-api-spec)
-  - [Architecture](#architecture)
+- [CWHD Backend REST API Spec](#cwhd-backend-rest-api-spec)
+- [Architecture](#architecture)
 
 <br />  
 
