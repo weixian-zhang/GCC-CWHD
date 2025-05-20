@@ -8,7 +8,7 @@
 
 <br />
 
-### Used by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/), CWHD uses Grafana to visualize performance and health of Azure resources
+### Trusted by agencies on [GCC](https://www.tech.gov.sg/products-and-services/for-government-agencies/software-development/government-on-commercial-cloud/), CWHD uses Grafana for Azure Monitoring
 
 <br />
 
