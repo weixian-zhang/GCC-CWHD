@@ -13,7 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.subscription import SubscriptionClient
 from azure.mgmt.resourcegraph import ResourceGraphClient
 from azure.mgmt.resourcegraph.models import *
-import ipaddress
+from ..util import DatetimeUtil
 import json
 import time
 
@@ -358,8 +358,7 @@ class NetworkMapManager:
         result['SubnetName'] = temp_result['DestSubnetName']
 
         return result.to_dict(orient='records')
-    
-    
+     
     def _create_unique_dest_ip(self, maindf: pd.DataFrame) -> dict:
         
         maindf = maindf.drop_duplicates('DestIp', keep='first')
@@ -424,7 +423,9 @@ class NetworkMapManager:
 
             maindf = df.drop_duplicates(subset=['SrcIp', 'DestIp']) #df.drop_duplicates(subset=['SrcName', 'DestName'])
 
-            maindf['timeGenerated'] = maindf['TimeGenerated'].dt.strftime('%a %d %b %Y %H:%M:%S')
+            #maindf['timeGenerated'] = maindf['TimeGenerated'].dt.strftime("%a %d %b %Y %H:%M:%S")
+            maindf['FlowStartTime'] = maindf['FlowStartTime'].dt.strftime("%a %d %b %Y %H:%M:%S")
+            maindf['FlowEndTime'] = maindf['FlowEndTime'].dt.strftime("%a %d %b %Y %H:%M:%S")
 
             maindf.fillna('', inplace=True)
 
