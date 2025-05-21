@@ -18,8 +18,9 @@ class NetworkMapKQL:
       ft = ', '.join([f"'{flow_type}'" for flow_type in flow_types])
       flowType = ft if flow_types else "''"
 
-      if flow_direction == 'all':
-        flowDirection = "'Inbound', 'Outbound'"
+      flowDirection = "'Inbound', 'Outbound'"
+      if flow_direction != 'all':
+         flowDirection = f"'{flow_direction}'"
 
       return f'''
 
@@ -32,8 +33,8 @@ NTANetAnalytics
 
 | where (FlowType != '' and SubType == 'FlowLog')
 
-
 | where FlowType in ({flowType}) 
+
 | where FlowDirection in ({flowDirection})
 
 | take {row_limit}
@@ -51,18 +52,17 @@ NTANetAnalytics
 | extend DestVNet = tostring(DestSubnetSplitted[1])
 | extend DestSubnetName = tostring(DestSubnetSplitted[2])
 
-
 // resolve Azure Public IP from NTAIpDetails table
 | join kind=leftouter
 (
     traffic_analytics_pip_table
-| project 
-    ['SrcPIP_Ip']=PublicIP, 
-    ['AzurePublic_Src_PublicIpDetails']=PIP_PublicIpDetails, 
-    ['AzurePublic_SrcPIP_Location']=PIP_Location,
-    ['Malicious_SrcPIP_Url']=PIP_Url,
-    ['Malicious_SrcPIP_ThreatType']=PIP_ThreatType, 
-    ['Malicious_SrcPIP_ThreatDescription']=PIP_ThreatDescription
+    | project 
+        ['SrcPIP_Ip']=PublicIP, 
+        ['AzurePublic_Src_PublicIpDetails']=PIP_PublicIpDetails, 
+        ['AzurePublic_SrcPIP_Location']=PIP_Location,
+        ['Malicious_SrcPIP_Url']=PIP_Url,
+        ['Malicious_SrcPIP_ThreatType']=PIP_ThreatType, 
+        ['Malicious_SrcPIP_ThreatDescription']=PIP_ThreatDescription
 )
 on $left.SrcPIP == $right.SrcPIP_Ip
 
@@ -100,6 +100,7 @@ on $left.DestPIP == $right.DestPIP_Ip
                        iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 
                        iif(FlowType == 'MaliciousFlow'and FlowDirection == 'Inbound', 'MALICIOUSFLOW', 'NODE')))))))))
 
+                       
 | extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway,
                    iif(SrcLoadBalancer != '', SrcLoadBalancer,
                    iif(AzurePublic_Src_PublicIpDetails != '', AzurePublic_Src_PublicIpDetails,
@@ -109,7 +110,9 @@ on $left.DestPIP == $right.DestPIP_Ip
                    iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
                          iif(SrcVm != '', SrcVm, '' ))))))))
 
+                         
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
+
 
 | extend DestNodeType = iif(DestApplicationGateway != '', 'APPGW',
                         iif(DestLoadBalancer != '', 'ALB',
@@ -121,6 +124,7 @@ on $left.DestPIP == $right.DestPIP_Ip
                         iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 
                         iif(FlowType == 'MaliciousFlow' and FlowDirection == 'Outbound', 'MALICIOUSFLOW', 'NODE')))))))))
 
+                        
 | extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway,
                      iif(DestLoadBalancer != '', DestLoadBalancer,
                       iif(AzurePublic_Dest_PublicIpDetails != '', AzurePublic_Dest_PublicIpDetails,
@@ -129,7 +133,6 @@ on $left.DestPIP == $right.DestPIP_Ip
                         iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName,
                          iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))),
                           iif(DestVm != '',  DestVm, '' ))))))))
-
 
 | extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
 
@@ -142,12 +145,21 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend NSG = iif(AclGroup startswith '/', split(AclGroup, '/')[-1], '')
 | extend NSGRule = iif(AclGroup startswith '/', AclRule, '')
 
+// estimated duration
+| extend src_pip = split(SrcPublicIps, '|')[0]
+| extend dest_pip = split(DestPublicIps, '|')[0]
+| extend diff_secs = datetime_diff('second', FlowEndTime, FlowStartTime)
+| extend tuple_4_key = strcat(SrcIp,'_', src_pip, '_', SrcPorts, '_', DestIp, '_', dest_pip, '_', DestPort)
 
-| summarize 
+| summarize
+    tuple4_count = count(),
+    DiffSecs=avg(diff_secs),
+
     BytesSrcToDest = max(BytesSrcToDest),
     BytesDestToSrc = max(BytesDestToSrc),
-    TimeGenerated = max(TimeGenerated) by
+    TimeGenerated = max(FlowStartTime) by
     
+    tuple_4_key, //for uniqueness and not use in result
     FlowType, 
     FlowDirection,
     FlowEncryption,
@@ -156,6 +168,8 @@ on $left.DestPIP == $right.DestPIP_Ip
     IsFlowCapturedAtUdrHop,
     NSG,
     NSGRule,
+    FlowStartTime,
+    FlowEndTime,
     
     SrcNodeType,
     AzurePublic_SrcPIP_Location, 
@@ -193,17 +207,23 @@ on $left.DestPIP == $right.DestPIP_Ip
 | distinct 
 
     TimeGenerated,
+    NumberOfRequests=tuple4_count,
     FlowType, 
     FlowDirection,
     FlowEncryption,
     ConnectionType, 
     protocol,
     IsFlowCapturedAtUdrHop,
+    BytesSrcToDest,
     SrcToDestDataSize,
+    BytesDestToSrc,
     DestToSrcDataSize,
     NSG,
     NSGRule,
-    
+    EstAvgDurationSec = round(todouble(DiffSecs) / todouble(tuple4_count), 1),
+    FlowStartTime,
+    FlowEndTime,
+
     SrcNodeType,
     AzurePublic_SrcPIP_Location, 
     ExternalPublic_Src_Country, 

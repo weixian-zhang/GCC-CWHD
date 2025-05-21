@@ -42,18 +42,11 @@ class NetworkMapManager:
                                dest_subnet: list[str] = [],
                                src_ip: list[str] = [],
                                dest_ip: list[str] = [],
+                               duration: list[int] = [],
+                               src_payload_size: list[str] = [],
+                               dest_payload_size: list[str] = [],
                                row_limit = 5000) -> NetworkMapResult:
         
-        global maindf_srcsub_cache
-        global maindf_srcrg_cache
-        global maindf_srcvnet_cache
-        global maindf_srcsubnet_cache
-        global maindf_srcip_cache
-        global maindf_destsub_cache
-        global maindf_destrg_cache
-        global maindf_destvnet_cache
-        global maindf_destsubnet_cache
-        global maindf_destip_cache
 
         try:
 
@@ -83,6 +76,13 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_dest_ip(maindf, dest_ip)
 
+            maindf = self._apply_filter_estimated_duration_sec(maindf, duration)
+
+            maindf = self._apply_filter_estimated_src_payload_size(maindf, src_payload_size)
+
+            maindf = self._apply_filter_estimated_dest_payload_size(maindf, dest_payload_size)
+
+            # create nodes, edges and categories for echart
             nodes = self._create_echart_nodes(maindf=maindf)
 
             edges = self._create_echart_edges(maindf=maindf)
@@ -133,6 +133,12 @@ class NetworkMapManager:
 
             dest_ip = self._create_unique_dest_ip(maindf=maindf)
 
+            estimated_duration_sec = self._create_unique_estimated_duration_sec(maindf=maindf)
+
+            src_payload_size = self._create_unique_src_payload_size(maindf=maindf)
+
+            dest_payload_size = self._create_unique_dest_payload_size(maindf=maindf)
+
             fd = FilterDataResult(src_subscription=src_subscription,
                                   src_rg=src_rg,
                                   src_vnet=src_vnet,
@@ -142,7 +148,10 @@ class NetworkMapManager:
                                   dest_rg=dest_rg,
                                   dest_vnet=dest_vnet,
                                   dest_subnet=dest_subnet,
-                                  dest_ip=dest_ip)
+                                  dest_ip=dest_ip,
+                                  estimated_duration_sec=estimated_duration_sec,
+                                  src_payload_size=src_payload_size,
+                                  dest_payload_size=dest_payload_size)
 
             return fd
         
@@ -211,7 +220,7 @@ class NetworkMapManager:
         edges_df['category'] = maindf['FlowType']
         edges_df['source'] = maindf['SrcIp']
         edges_df['target'] = maindf['DestIp']
-        # edges_df['value'] = tempdf['SrcToDestDataSize'] + '-> <-' + tempdf['DestToSrcDataSize'] + '<div> flowtype: ' + tempdf['FlowType'] + '</div>' + '<div> protocol: ' +  tempdf['protocol'] + '/div>'
+
         edges_df['src_to_dest_data_size'] = maindf['SrcToDestDataSize']
         edges_df['dest_to_srct_data_size'] = maindf['DestToSrcDataSize']
         edges_df['flowType'] = maindf['FlowType']
@@ -220,7 +229,11 @@ class NetworkMapManager:
         edges_df['protocol'] = maindf['protocol']
         edges_df['connectionType'] = maindf['ConnectionType']
         edges_df['isUDRHop'] = maindf['IsFlowCapturedAtUdrHop']
-        
+
+        edges_df['numberOfRequests'] = maindf['NumberOfRequests']
+        edges_df['estAvgDurationSec'] = maindf['EstAvgDurationSec']
+        edges_df['flowStartTime'] = maindf['FlowStartTime']
+        edges_df['flowEndTime'] = maindf['FlowEndTime']
 
         edges_df = edges_df.drop_duplicates(subset=['source', 'target'])
 
@@ -346,6 +359,7 @@ class NetworkMapManager:
 
         return result.to_dict(orient='records')
     
+    
     def _create_unique_dest_ip(self, maindf: pd.DataFrame) -> dict:
         
         maindf = maindf.drop_duplicates('DestIp', keep='first')
@@ -358,6 +372,44 @@ class NetworkMapManager:
         result = pd.DataFrame()
         result['DisplayName'] = tempdf.apply(lambda x: ' / '.join(x.dropna()), axis=1)
         result['DestIp'] = tempdf['DestIp']
+        
+        return result.to_dict(orient='records')
+    
+    def _create_unique_estimated_duration_sec(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('EstAvgDurationSec', keep='first')
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['EstAvgDurationSec']
+
+        result = result.sort_values(by='DisplayName', ascending=False)
+        
+        return result.to_dict(orient='records')
+    
+    def _create_unique_src_payload_size(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('SrcToDestDataSize', keep='first')
+
+        result = pd.DataFrame()
+        result['BytesSrcToDest'] = tempdf['BytesSrcToDest']
+        result['DisplayName'] = tempdf['SrcToDestDataSize']
+
+        result = result.sort_values(by='BytesSrcToDest', ascending=False)
+        
+        return result.to_dict(orient='records')
+    
+    def _create_unique_dest_payload_size(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('SrcToDestDataSize', keep='first')
+
+        result = pd.DataFrame()
+        result['BytesDestToSrc'] = tempdf['BytesDestToSrc']
+        result['DisplayName'] = tempdf['DestToSrcDataSize']
+
+        result = result.sort_values(by='BytesDestToSrc', ascending=False)
         
         return result.to_dict(orient='records')
     
@@ -586,6 +638,27 @@ class NetworkMapManager:
             return maindf
         
         return  maindf[maindf['DestIp'].isin(dest_ips)]
+    
+    def _apply_filter_estimated_duration_sec(self, maindf: pd.DataFrame, duration) -> pd.DataFrame:
+
+        if not duration or len(duration) == 1 and duration[0] == -1:
+            return maindf
+        
+        return  maindf[maindf['EstAvgDurationSec'].isin(duration)]
+    
+    def _apply_filter_estimated_src_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
+
+        if not size or len(size) == 1 and size[0] == 'all':
+            return maindf
+        
+        return  maindf[maindf['SrcToDestDataSize'].isin(size)]
+    
+    def _apply_filter_estimated_dest_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
+
+        if not size or len(size) == 1 and size[0] == 'all':
+            return maindf
+        
+        return  maindf[maindf['DestToSrcDataSize'].isin(size)]
     
 
     # def get_unique_src_subscription(self, current_data_key='') -> pd.DataFrame:

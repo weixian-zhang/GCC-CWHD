@@ -27,6 +27,9 @@ class NetworkMapRequestBody(BaseModel):
     destSubnet: list[str] = []
     srcIP: list[str] = []
     destIP: list[str] = []
+    duration: list[int] = []
+    src_payload_size: list[str] = []
+    dest_payload_size: list[str] = []
     rowLimit: int = 5000
 
 class FilterDataRequestBody(BaseModel):
@@ -65,7 +68,10 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
                                   dest_subnet=body.destSubnet,
                                   src_ip=body.srcIP,
                                   dest_ip=body.destIP,
-                                  row_limit=body.rowLimit
+                                  duration=body.duration,
+                                  src_payload_size=body.src_payload_size,
+                                  dest_payload_size=body.dest_payload_size,
+                                  row_limit=body.rowLimit,
                                   )
     return result
 

@@ -42,7 +42,10 @@ class NetworkMapResult:
         self.categories = categories
 
 class FilterDataResult:
-     def __init__(self, src_subscription,src_rg,src_vnet,src_subnet, src_ip,dest_subscription,dest_rg,dest_vnet,dest_subnet, dest_ip):
+     def __init__(self, src_subscription,src_rg,src_vnet,src_subnet, 
+                  src_ip,dest_subscription,dest_rg,dest_vnet,dest_subnet, dest_ip,
+                  estimated_duration_sec, src_payload_size, dest_payload_size):
+        
         self.src_subscription = src_subscription
         self.src_rg= src_rg
         self.src_vnet= src_vnet
@@ -53,4 +56,7 @@ class FilterDataResult:
         self.dest_vnet = dest_vnet
         self.dest_subnet = dest_subnet
         self.dest_ip = dest_ip
+        self.estimated_duration_sec = estimated_duration_sec
+        self.src_payload_size = src_payload_size
+        self.dest_payload_size = dest_payload_size
         
