@@ -143,6 +143,8 @@ This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microso
 * try to keep data small as large amount of nodes in thousands can cause graph to render slowly
 * to zoom and move graph, move cursor closer to graph.
 
+![image](https://github.com/weixian-zhang/GCC-CWHD/blob/main/doc/networkmap.gif)
+
 ![image](https://github.com/user-attachments/assets/7a15bb76-bc69-4529-b78f-c963e94173f4)
 
 <br />
