@@ -213,13 +213,13 @@ return {
 
             var noOfRequests = ((params.data.numberOfRequests) ? `<div>total calls:&nbsp${params.data.numberOfRequests}</div>` : '');
 
-            var estAvgDurationSec = ((params.data.estAvgDurationSec) ? `<div>first-last observed diff sec:&nbsp${params.data.estAvgDurationSec}</div>` : '');
+            var estAvgDurationSec = ((params.data.estAvgDurationSec) ? `<div>first-last observed diff:&nbsp${params.data.estAvgDurationSec} sec</div>` : '');
 
             var flowStartTime = ((params.data.flowStartTime) ? `<div>first observed at:&nbsp${params.data.flowStartTime}</div>` : '');
 
             var flowEndTime = ((params.data.flowEndTime) ? `<div>last observed at:&nbsp${params.data.flowEndTime}</div>` : '');
 
-            return timeGenerated + dataSize + flowType + protocol + flowDirection + connectionType + nsg + nsgRule + isUDRHop + noOfRequests + estAvgDurationSec + flowStartTime + flowEndTime;
+            return timeGenerated + dataSize + flowType + protocol + flowDirection + connectionType + nsg + nsgRule + isUDRHop + noOfRequests + flowStartTime + flowEndTime + estAvgDurationSec;
           }
         },
 
