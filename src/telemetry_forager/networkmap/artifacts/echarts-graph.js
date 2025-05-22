@@ -213,7 +213,7 @@ return {
 
             var noOfRequests = ((params.data.numberOfRequests) ? `<div>total calls:&nbsp${params.data.numberOfRequests}</div>` : '');
 
-            var estAvgDurationSec = ((params.data.estAvgDurationSec) ? `<div>est. avg duration sec:&nbsp${params.data.estAvgDurationSec}</div>` : '');
+            var estAvgDurationSec = ((params.data.estAvgDurationSec) ? `<div>first-last observed diff sec:&nbsp${params.data.estAvgDurationSec}</div>` : '');
 
             var flowStartTime = ((params.data.flowStartTime) ? `<div>first observed at:&nbsp${params.data.flowStartTime}</div>` : '');
 

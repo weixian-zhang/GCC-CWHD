@@ -430,6 +430,8 @@ class NetworkMapManager:
             maindf['FlowStartTime'] = maindf['FlowStartTime'].dt.strftime("%a %d %b %Y %H:%M:%S")
             maindf['FlowEndTime'] = maindf['FlowEndTime'].dt.strftime("%a %d %b %Y %H:%M:%S")
 
+            maindf['EstAvgDurationSec'].fillna(0, inplace=True)
+
             maindf.fillna('', inplace=True)
 
             return maindf

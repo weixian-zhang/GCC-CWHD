@@ -253,4 +253,6 @@ on $left.DestPIP == $right.DestPIP_Ip
     Malicious_DestPIP_ThreatType,
     Malicious_DestPIP_ThreatDescription
 
+    | where EstAvgDurationSec == 0
+
       '''
