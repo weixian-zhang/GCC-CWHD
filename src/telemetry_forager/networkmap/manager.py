@@ -77,9 +77,9 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_estimated_duration_sec(maindf, duration)
 
-            maindf = self._apply_filter_estimated_src_payload_size(maindf, src_payload_size)
+            maindf = self._apply_filter_src_payload_size(maindf, src_payload_size)
 
-            maindf = self._apply_filter_estimated_dest_payload_size(maindf, dest_payload_size)
+            maindf = self._apply_filter_dest_payload_size(maindf, dest_payload_size)
 
             # create nodes, edges and categories for echart
             nodes = self._create_echart_nodes(maindf=maindf)
@@ -395,6 +395,8 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf['SrcToDestDataSize']
 
         result = result.sort_values(by='BytesSrcToDest', ascending=False)
+
+        result = result.drop('BytesSrcToDest', axis=1)
         
         return result.to_dict(orient='records')
     
@@ -408,6 +410,8 @@ class NetworkMapManager:
         result['DisplayName'] = tempdf['DestToSrcDataSize']
 
         result = result.sort_values(by='BytesDestToSrc', ascending=False)
+
+        result = result.drop('BytesDestToSrc', axis=1)
         
         return result.to_dict(orient='records')
     
@@ -646,14 +650,14 @@ class NetworkMapManager:
         
         return  maindf[maindf['EstAvgDurationSec'].isin(duration)]
     
-    def _apply_filter_estimated_src_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
+    def _apply_filter_src_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
 
         if not size or len(size) == 1 and size[0] == 'all':
             return maindf
         
         return  maindf[maindf['SrcToDestDataSize'].isin(size)]
     
-    def _apply_filter_estimated_dest_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
+    def _apply_filter_dest_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
 
         if not size or len(size) == 1 and size[0] == 'all':
             return maindf
