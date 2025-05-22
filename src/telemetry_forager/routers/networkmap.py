@@ -27,7 +27,7 @@ class NetworkMapRequestBody(BaseModel):
     destSubnet: list[str] = []
     srcIP: list[str] = []
     destIP: list[str] = []
-    duration: list[int] = []
+    duration: list[float] = []
     src_payload_size: list[str] = []
     dest_payload_size: list[str] = []
     rowLimit: int = 5000

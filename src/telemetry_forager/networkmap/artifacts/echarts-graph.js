@@ -152,7 +152,6 @@ return {
         tooltip: {
           formatter: function (params) {
 
-            var timeGenerated = ((params.data.estTimeOfTraffic) ? `<div>est. time of traffic:&nbsp${params.data.estTimeOfTraffic}</div>` : '');
             var subnet = ((params.data.subnet != '') ? `<div>subnet:&nbsp${params.data.subnet}</div>` : '');
             var vnet = ((params.data.vnet != '') ? `<div>vnet:&nbsp${params.data.vnet}</div>` : '');
             var subscription = ((params.data.subscription) ? `<div>subscription:&nbsp${params.data.subscription}</div>` : '');
@@ -175,7 +174,7 @@ return {
 
             var maliciousDestPIPThreatDescription = ((params.data.maliciousDestPIPThreatDescription) ? `<div>malicious dest threat desc:&nbsp${params.data.maliciousDestPIPThreatDescription}</div>` : '');
 
-            return subnet + vnet + subscription + rg + azPublicPIPLocation + externalPublicPIPLocation + maliciousSrcPIPUrl + maliciousSrcPipThreatType + maliciousSrcPIPThreatDescription + maliciousDestPIPUrl + maliciousDestPIPThreatType + maliciousDestPIPThreatDescription + timeGenerated;
+            return subnet + vnet + subscription + rg + azPublicPIPLocation + externalPublicPIPLocation + maliciousSrcPIPUrl + maliciousSrcPipThreatType + maliciousSrcPIPThreatDescription + maliciousDestPIPUrl + maliciousDestPIPThreatType + maliciousDestPIPThreatDescription;
           }
         },
 
@@ -212,8 +211,15 @@ return {
 
             var flowDirection = ((params.data.flowDirection) ? `<div>direction:&nbsp${params.data.flowDirection}</div>` : '');
 
+            var noOfRequests = ((params.data.numberOfRequests) ? `<div>total calls:&nbsp${params.data.numberOfRequests}</div>` : '');
 
-            return timeGenerated + dataSize + flowType + protocol + flowDirection + connectionType + nsg + nsgRule + isUDRHop;
+            var estAvgDurationSec = ((params.data.estAvgDurationSec) ? `<div>est. avg duration sec:&nbsp${params.data.estAvgDurationSec}</div>` : '');
+
+            var flowStartTime = ((params.data.flowStartTime) ? `<div>first observed at:&nbsp${params.data.flowStartTime}</div>` : '');
+
+            var flowEndTime = ((params.data.flowEndTime) ? `<div>last observed at:&nbsp${params.data.flowEndTime}</div>` : '');
+
+            return timeGenerated + dataSize + flowType + protocol + flowDirection + connectionType + nsg + nsgRule + isUDRHop + noOfRequests + estAvgDurationSec + flowStartTime + flowEndTime;
           }
         },
 
