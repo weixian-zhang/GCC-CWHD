@@ -145,6 +145,9 @@ This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microso
 
 ![image](https://github.com/weixian-zhang/GCC-CWHD/blob/main/doc/networkmap.gif)  
 
+
+![image](https://github.com/user-attachments/assets/7a15bb76-bc69-4529-b78f-c963e94173f4)
+
 <br />
 
 ### WARA Dashboard ([pending update due to WARA repo changed](https://azure.github.io/Azure-Proactive-Resiliency-Library-v2/tools/collector/#quick-workflow-example))
