@@ -1,5 +1,5 @@
 <h2>
- <p>Central Workload Health Dashboard (CWHD) | Project Heimdall</p>
+ <p>Cloud Workload Health Dashboard (CWHD) | Project Heimdall</p>
 </h2>
 </h2>
 
@@ -33,8 +33,7 @@
 
 ## Tailor-Made Dashboards  
 
- Tier 0 and 1 dashboards below are samples following a predefined structure.  
- As each monitoring scenario is unique, Tier 0 and Tier 1 dashboards are built from scratch from custom requirements yet having a choice to adopt the predefined structure below.
+As each monitoring scenario is unique, Tailor-Made dashboards are built from scratch from custom requirements but have a choice to follow the hierarchical [Colored Tile](#the-colored-tile-concept) concept below.
 
 ### Tier 1 Dashboard
 
