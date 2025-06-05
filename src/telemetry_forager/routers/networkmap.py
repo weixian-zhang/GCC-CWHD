@@ -5,39 +5,11 @@ sys.path.append(str(Path(__file__).absolute().parent))
 import fastapi
 from fastapi import APIRouter
 import log as Log
-from pydantic import BaseModel
+
 from init import appconfig
 from networkmap.manager import NetworkMapManager
-from networkmap.model import NetworkMapResult, FilterDataResult
+from networkmap.model import NetworkMapResult, FilterDataResult, NetworkMapRequestBody, FilterDataRequestBody
 from datetime import datetime
-
-
-class NetworkMapRequestBody(BaseModel):
-    startTime: datetime
-    endTime: datetime
-    flowTypes: list[str] = []
-    flowDirection: str = 'all'
-    srcSubscription: list[str] = []
-    srcRG: list[str] = []
-    destSubscription: list[str] = []
-    destRG: list[str] = []
-    srcVNet: list[str] = []
-    destVNet: list[str] = []
-    srcSubnet: list[str] = []
-    destSubnet: list[str] = []
-    srcIP: list[str] = []
-    destIP: list[str] = []
-    duration: list[float] = []
-    src_payload_size: list[str] = []
-    dest_payload_size: list[str] = []
-    rowLimit: int = 5000
-
-class FilterDataRequestBody(BaseModel):
-  startTime: datetime
-  endTime: datetime
-  flowTypes: list[str] = []
-  flowDirection: str = 'all'
-  rowLimit: int = 5000
 
 
 router = APIRouter()
@@ -69,8 +41,10 @@ def get_main_vnetflowlog(body: NetworkMapRequestBody, response: fastapi.Response
                                   src_ip=body.srcIP,
                                   dest_ip=body.destIP,
                                   duration=body.duration,
-                                  src_payload_size=body.src_payload_size,
-                                  dest_payload_size=body.dest_payload_size,
+                                  src_payload_size=body.total_src_payload_size,
+                                  dest_payload_size=body.total_dest_payload_size,
+                                  dest_port=body.dest_port,
+                                  protocol=body.protocol,
                                   row_limit=body.rowLimit,
                                   )
     return result

@@ -1,35 +1,68 @@
+from pydantic import BaseModel
+from datetime import datetime
 
-class NetworkMapNode:
-    def __init__(self, subscriptionId, resource_group, resource_type, name, category, ip, subnet, vnet, srcPIPLocation):
-        self.id = ''
-        self.name = ''
-        self.category = ''
-        self.ip = ''
-        self.subnet = ''
-        self.vnet = ''
-        self.srcPIPLocation = ''
-        self.srcRegion = ''
-        self.destRegion = ''
-        self.azurePublicSrcPIPLocation = ''
-        self.azurePublicDestPIPLocation = ''
-        self.externalPublicSrcCountry = ''
-        self.externalPublicDestCountry = ''
-        self.maliciousSrcPIPUrl = '',
-        self.maliciousSrcPipThreatType = '',
-        self.maliciousSrcPIPThreatDescription = '',
-        self.maliciousDestPIPUrl = '',
-        self.maliciousDestPIPThreatType = '',
-        self.maliciousDestPIPThreatDescription = ''
+class NetworkMapRequestBody(BaseModel):
+    startTime: datetime
+    endTime: datetime
+    flowTypes: list[str] = []
+    flowDirection: str = 'all'
+    srcSubscription: list[str] = []
+    srcRG: list[str] = []
+    destSubscription: list[str] = []
+    destRG: list[str] = []
+    srcVNet: list[str] = []
+    destVNet: list[str] = []
+    srcSubnet: list[str] = []
+    destSubnet: list[str] = []
+    srcIP: list[str] = []
+    destIP: list[str] = []
+    duration: list[float] = []
+    total_src_payload_size: list[str] = []
+    total_dest_payload_size: list[str] = []
+    dest_port: list[int] = []
+    protocol: list[str] = []
+    rowLimit: int = 5000
 
-class NetworkMapEdge:
-    def __init__(self, source, target, src_to_dest_data_size, dest_to_srct_data_size, flowType, protocol, connectionType):
-        self.source= ''
-        self.target = ''
-        self.src_to_dest_data_size = ''
-        self.dest_to_srct_data_size = ''
-        self.flowType = ''
-        self.protocol = ''
-        self.connectionType = ''
+
+class FilterDataRequestBody(BaseModel):
+  startTime: datetime
+  endTime: datetime
+  flowTypes: list[str] = []
+  flowDirection: str = 'all'
+  rowLimit: int = 5000
+
+
+# class NetworkMapNode:
+#     def __init__(self, subscriptionId, resource_group, resource_type, name, category, ip, subnet, vnet, srcPIPLocation):
+#         self.id = ''
+#         self.name = ''
+#         self.category = ''
+#         self.ip = ''
+#         self.subnet = ''
+#         self.vnet = ''
+#         self.srcPIPLocation = ''
+#         self.srcRegion = ''
+#         self.destRegion = ''
+#         self.azurePublicSrcPIPLocation = ''
+#         self.azurePublicDestPIPLocation = ''
+#         self.externalPublicSrcCountry = ''
+#         self.externalPublicDestCountry = ''
+#         self.maliciousSrcPIPUrl = '',
+#         self.maliciousSrcPipThreatType = '',
+#         self.maliciousSrcPIPThreatDescription = '',
+#         self.maliciousDestPIPUrl = '',
+#         self.maliciousDestPIPThreatType = '',
+#         self.maliciousDestPIPThreatDescription = ''
+
+# class NetworkMapEdge:
+#     def __init__(self, source, target, src_to_dest_data_size, dest_to_srct_data_size, flowType, protocol, connectionType):
+#         self.source= ''
+#         self.target = ''
+#         self.src_to_dest_data_size = ''
+#         self.dest_to_srct_data_size = ''
+#         self.flowType = ''
+#         self.protocol = ''
+#         self.connectionType = ''
 
 class NetworkMapCategory:
     def __init__(self, name):
@@ -44,7 +77,7 @@ class NetworkMapResult:
 class FilterDataResult:
      def __init__(self, src_subscription,src_rg,src_vnet,src_subnet, 
                   src_ip,dest_subscription,dest_rg,dest_vnet,dest_subnet, dest_ip,
-                  estimated_duration_sec, src_payload_size, dest_payload_size):
+                  estimated_duration_sec, total_src_payload_size, total_dest_payload_size, dest_port, protocol):
         
         self.src_subscription = src_subscription
         self.src_rg= src_rg
@@ -57,6 +90,8 @@ class FilterDataResult:
         self.dest_subnet = dest_subnet
         self.dest_ip = dest_ip
         self.estimated_duration_sec = estimated_duration_sec
-        self.src_payload_size = src_payload_size
-        self.dest_payload_size = dest_payload_size
+        self.total_src_payload_size = total_src_payload_size
+        self.total_dest_payload_size = total_dest_payload_size
+        self.dest_port = dest_port
+        self.protocol = protocol
         

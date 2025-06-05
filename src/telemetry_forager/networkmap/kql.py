@@ -24,7 +24,6 @@ class NetworkMapKQL:
 
       return f'''
 
-
 let traffic_analytics_pip_table = NTAIpDetails
               | project ['PublicIP']=Ip, ['PIP_PublicIpDetails']=PublicIpDetails, ['PIP_ThreatType']=ThreatType, ['PIP_Location']=Location, ['PIP_Url']=Url, ['PIP_ThreatDescription']=ThreatDescription;
 
@@ -37,7 +36,7 @@ NTANetAnalytics
 
 | where FlowDirection in ({flowDirection})
 
-| take {row_limit}
+| take 5000//{row_limit}
 
 | extend SrcPIP = substring(SrcPublicIps, 0, indexof(SrcPublicIps, "|"))
 | extend DestPIP = substring(DestPublicIps, 0, indexof(DestPublicIps, "|"))
@@ -100,7 +99,6 @@ on $left.DestPIP == $right.DestPIP_Ip
                        iif(FlowType == 'ExternalPublic' and FlowDirection == 'Inbound', 'INTERNET', 
                        iif(FlowType == 'MaliciousFlow'and FlowDirection == 'Inbound', 'MALICIOUSFLOW', 'NODE')))))))))
 
-                       
 | extend SrcName = iif(SrcApplicationGateway != '', SrcApplicationGateway,
                    iif(SrcLoadBalancer != '', SrcLoadBalancer,
                    iif(AzurePublic_Src_PublicIpDetails != '', AzurePublic_Src_PublicIpDetails,
@@ -110,9 +108,7 @@ on $left.DestPIP == $right.DestPIP_Ip
                    iif(SrcNic startswith 'unknown', strcat('managed vm in ', iif(SrcSubnetName has 'subnet', SrcSubnetName, strcat(SrcSubnetName, ' subnet'))),
                          iif(SrcVm != '', SrcVm, '' ))))))))
 
-                         
 | extend SrcName = iif(indexof(SrcName, '/',0) > 0, split(SrcName, '/')[-1], SrcName)
-
 
 | extend DestNodeType = iif(DestApplicationGateway != '', 'APPGW',
                         iif(DestLoadBalancer != '', 'ALB',
@@ -124,7 +120,6 @@ on $left.DestPIP == $right.DestPIP_Ip
                         iif(FlowType == 'ExternalPublic' and FlowDirection == 'Outbound', 'INTERNET', 
                         iif(FlowType == 'MaliciousFlow' and FlowDirection == 'Outbound', 'MALICIOUSFLOW', 'NODE')))))))))
 
-                        
 | extend DestName = iif(DestApplicationGateway != '', DestApplicationGateway,
                      iif(DestLoadBalancer != '', DestLoadBalancer,
                       iif(AzurePublic_Dest_PublicIpDetails != '', AzurePublic_Dest_PublicIpDetails,
@@ -133,6 +128,7 @@ on $left.DestPIP == $right.DestPIP_Ip
                         iif(PrivateEndpointResourceId != '' and PrivateLinkResourceId != '',  PrivateLinkName,
                          iif(DestNic startswith 'unknown', strcat('managed vm in ', iif(DestSubnetName has 'subnet', DestSubnetName, strcat(DestSubnetName, ' subnet'))),
                           iif(DestVm != '',  DestVm, '' ))))))))
+
 
 | extend DestName = iif(indexof(DestName, '/',0) > 0, split(DestName, '/')[-1], DestName)
 
@@ -151,12 +147,15 @@ on $left.DestPIP == $right.DestPIP_Ip
 | extend diff_secs = datetime_diff('second', FlowEndTime, FlowStartTime)
 | extend tuple_4_key = strcat(SrcIp,'_', src_pip, '_', SrcPorts, '_', DestIp, '_', dest_pip, '_', DestPort)
 
+
 | summarize
     tuple4_count = count(),
     DiffSecs=avg(diff_secs),
 
     BytesSrcToDest = max(BytesSrcToDest),
     BytesDestToSrc = max(BytesDestToSrc),
+    TotalBytesSrcToDest = sum(BytesSrcToDest),
+    TotalBytesDestToSrc = sum(BytesDestToSrc),
     TimeGenerated = max(FlowStartTime) by
     
     tuple_4_key, //for uniqueness and not use in result
@@ -203,6 +202,9 @@ on $left.DestPIP == $right.DestPIP_Ip
 
 | extend SrcToDestDataSize = format_bytes(BytesSrcToDest, 2)
 | extend DestToSrcDataSize = format_bytes(BytesDestToSrc, 2)
+| extend TotalBytesSrcToDestDataSize = format_bytes(TotalBytesSrcToDest, 2)
+| extend TotalBytesDestToSrcDataSize = format_bytes(TotalBytesDestToSrc, 2)
+
 
 | distinct 
 
@@ -218,6 +220,10 @@ on $left.DestPIP == $right.DestPIP_Ip
     SrcToDestDataSize,
     BytesDestToSrc,
     DestToSrcDataSize,
+    TotalBytesSrcToDest,
+    TotalBytesSrcToDestDataSize,
+    TotalBytesDestToSrc,
+    TotalBytesDestToSrcDataSize,
     NSG,
     NSGRule,
     EstAvgDurationSec = round(todouble(DiffSecs) / todouble(tuple4_count), 1),
@@ -252,7 +258,5 @@ on $left.DestPIP == $right.DestPIP_Ip
     Malicious_DestPIP_Url,
     Malicious_DestPIP_ThreatType,
     Malicious_DestPIP_ThreatDescription
-
-    | where EstAvgDurationSec == 0
 
       '''

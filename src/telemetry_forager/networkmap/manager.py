@@ -42,8 +42,10 @@ class NetworkMapManager:
                                src_ip: list[str] = [],
                                dest_ip: list[str] = [],
                                duration: list[int] = [],
-                               src_payload_size: list[str] = [],
-                               dest_payload_size: list[str] = [],
+                               total_src_payload_size: list[str] = [],
+                               total_dest_payload_size: list[str] = [],
+                               dest_port: list[int] = [],
+                               protocol: list[str] = [],
                                row_limit = 5000) -> NetworkMapResult:
         
 
@@ -77,9 +79,13 @@ class NetworkMapManager:
 
             maindf = self._apply_filter_estimated_duration_sec(maindf, duration)
 
-            maindf = self._apply_filter_src_payload_size(maindf, src_payload_size)
+            maindf = self._apply_filter_src_total_payload_size(maindf, total_src_payload_size)
 
-            maindf = self._apply_filter_dest_payload_size(maindf, dest_payload_size)
+            maindf = self._apply_filter_dest_total_payload_size(maindf, total_dest_payload_size)
+
+            maindf = self._apply_filter_dest_port(maindf, dest_port)
+
+            maindf = self._apply_filter_protocol(maindf, protocol)
 
             # create nodes, edges and categories for echart
             nodes = self._create_echart_nodes(maindf=maindf)
@@ -134,9 +140,13 @@ class NetworkMapManager:
 
             estimated_duration_sec = self._create_unique_estimated_duration_sec(maindf=maindf)
 
-            src_payload_size = self._create_unique_src_payload_size(maindf=maindf)
+            total_src_payload_size = self._create_unique_src_total_payload_size(maindf=maindf)
 
-            dest_payload_size = self._create_unique_dest_payload_size(maindf=maindf)
+            total_dest_payload_size = self._create_unique_dest_total_payload_size(maindf=maindf)
+
+            dest_port = self._create_unique_dest_port(maindf=maindf)
+
+            protocol = self._create_unique_protocol(maindf=maindf)
 
             fd = FilterDataResult(src_subscription=src_subscription,
                                   src_rg=src_rg,
@@ -149,8 +159,10 @@ class NetworkMapManager:
                                   dest_subnet=dest_subnet,
                                   dest_ip=dest_ip,
                                   estimated_duration_sec=estimated_duration_sec,
-                                  src_payload_size=src_payload_size,
-                                  dest_payload_size=dest_payload_size)
+                                  total_src_payload_size=total_src_payload_size,
+                                  ttoal_dest_payload_size=total_dest_payload_size,
+                                  dest_port=dest_port,
+                                  protocol=protocol)
 
             return fd
         
@@ -220,8 +232,10 @@ class NetworkMapManager:
         edges_df['source'] = maindf['SrcIp']
         edges_df['target'] = maindf['DestIp']
 
-        edges_df['src_to_dest_data_size'] = maindf['SrcToDestDataSize']
-        edges_df['dest_to_srct_data_size'] = maindf['DestToSrcDataSize']
+        edges_df['src_to_dest_max_data_size'] = maindf['SrcToDestDataSize']
+        edges_df['dest_to_srct_max_data_size'] = maindf['DestToSrcDataSize']
+        edges_df['src_to_dest_total_data_size'] = maindf['TotalBytesSrcToDestDataSize']
+        edges_df['dest_to_srct_total_data_size'] = maindf['TotalBytesDestToSrcDataSize']
         edges_df['flowType'] = maindf['FlowType']
         edges_df['flowDirection'] = maindf['FlowDirection']
         edges_df['flowEncryption'] = maindf['FlowEncryption']
@@ -385,36 +399,65 @@ class NetworkMapManager:
         
         return result.to_dict(orient='records')
     
-    def _create_unique_src_payload_size(self, maindf: pd.DataFrame) -> dict:
+    def _create_unique_src_total_payload_size(self, maindf: pd.DataFrame) -> dict:
 
         tempdf = pd.DataFrame()
-        tempdf = maindf.drop_duplicates('SrcToDestDataSize', keep='first')
+        tempdf = maindf.drop_duplicates('TotalBytesSrcToDestDataSize', keep='first')
 
         result = pd.DataFrame()
-        result['BytesSrcToDest'] = tempdf['BytesSrcToDest']
-        result['DisplayName'] = tempdf['SrcToDestDataSize']
+        result['TotalBytesSrcToDest'] = tempdf['TotalBytesSrcToDest']
+        result['DisplayName'] = tempdf['TotalBytesSrcToDestDataSize']
 
-        result = result.sort_values(by='BytesSrcToDest', ascending=False)
+        result = result.sort_values(by='TotalBytesSrcToDest', ascending=False)
 
-        result = result.drop('BytesSrcToDest', axis=1)
+        result = result.drop('TotalBytesSrcToDest', axis=1)
         
         return result.to_dict(orient='records')
     
-    def _create_unique_dest_payload_size(self, maindf: pd.DataFrame) -> dict:
+    def _create_unique_dest_total_payload_size(self, maindf: pd.DataFrame) -> dict:
 
         tempdf = pd.DataFrame()
-        tempdf = maindf.drop_duplicates('SrcToDestDataSize', keep='first')
+        tempdf = maindf.drop_duplicates('TotalBytesDestToSrcDataSize', keep='first')
 
         result = pd.DataFrame()
-        result['BytesDestToSrc'] = tempdf['BytesDestToSrc']
-        result['DisplayName'] = tempdf['DestToSrcDataSize']
+        result['TotalBytesDestToSrc'] = tempdf['TotalBytesDestToSrc']
+        result['DisplayName'] = tempdf['TotalBytesDestToSrcDataSize']
 
-        result = result.sort_values(by='BytesDestToSrc', ascending=False)
+        result = result.sort_values(by='TotalBytesDestToSrc', ascending=False)
 
-        result = result.drop('BytesDestToSrc', axis=1)
+        result = result.drop('TotalBytesDestToSrc', axis=1)
         
         return result.to_dict(orient='records')
     
+
+    def _create_unique_dest_port(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('DestPort', keep='first')
+        tempdf = tempdf[tempdf['DestPort'] != '']
+
+        result = pd.DataFrame()
+
+        result['DisplayName'] = pd.to_numeric(tempdf['DestPort'], errors='coerce')
+
+        result = result.sort_values(by='DisplayName', ascending=True)
+        
+        return result.to_dict(orient='records')
+    
+
+    def _create_unique_protocol(self, maindf: pd.DataFrame) -> dict:
+
+        tempdf = pd.DataFrame()
+        tempdf = maindf.drop_duplicates('protocol', keep='first')
+
+        result = pd.DataFrame()
+        result['DisplayName'] = tempdf['protocol']
+        
+        return result.to_dict(orient='records')
+    
+
+
+    # get main dataset
     def _get_main_dataframe(self, kql_query, start_time, end_time) -> pd.DataFrame:
 
         try:
@@ -554,6 +597,7 @@ class NetworkMapManager:
             Log.exception(f'NetworkMapManager - error occured: {str(e)}')
             return maindf
 
+
     def _apply_filter_flow_direction(self, maindf: pd.DataFrame, flow_direction) -> pd.DataFrame:
 
         if flow_direction == 'all':
@@ -652,19 +696,35 @@ class NetworkMapManager:
         
         return  maindf[maindf['EstAvgDurationSec'].isin(duration)]
     
-    def _apply_filter_src_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
+    def _apply_filter_src_total_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
 
         if not size or len(size) == 1 and size[0] == 'all':
             return maindf
         
-        return  maindf[maindf['SrcToDestDataSize'].isin(size)]
+        return  maindf[maindf['TotalBytesSrcToDestDataSize'].isin(size)]
     
-    def _apply_filter_dest_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
+    def _apply_filter_dest_total_payload_size(self, maindf: pd.DataFrame, size) -> pd.DataFrame:
 
         if not size or len(size) == 1 and size[0] == 'all':
             return maindf
         
-        return  maindf[maindf['DestToSrcDataSize'].isin(size)]
+        return  maindf[maindf['TotalBytesDestToSrcDataSize'].isin(size)]
+    
+
+    def _apply_filter_dest_port(self, maindf: pd.DataFrame, port) -> pd.DataFrame:
+
+        if not port or len(port) == 1 and port[0] == 'all':
+            return maindf
+        
+        return  maindf[maindf['DestPort'].isin(port)]
+    
+
+    def _apply_filter_protocol(self, maindf: pd.DataFrame, protocol) -> pd.DataFrame:
+
+        if not protocol or len(protocol) == 1 and protocol[0] == 'all':
+            return maindf
+        
+        return  maindf[maindf['protocol'].isin(protocol)]
     
 
     # def get_unique_src_subscription(self, current_data_key='') -> pd.DataFrame:
