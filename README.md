@@ -144,6 +144,7 @@ This latest dashboard helps you visualize [VNet Flow Logs](https://learn.microso
     * Infinity
     * Business Charts
     * Business Table
+    * Business Variable
 * Network Map Grafana dashboard can be imported [here](https://github.com/weixian-zhang/GCC-CWHD/blob/feat/networkmap/src/dashboards/tier-2/networkmap.json)
 * try to keep data small as large amount of nodes in thousands can cause graph to render slowly
 * to zoom and move graph, move cursor closer to graph.
